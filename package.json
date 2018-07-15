@@ -1,0 +1,109 @@
+{
+	"name": "tsce",
+	"displayName": "TypeScript Code Explorer",
+	"description": "Making navigating TypeScript code easier",
+	"version": "1.0.1",
+	"publisher": "aljazsim",
+	"author": {
+		"name": "aljazsim",
+		"url": "https://github.com/aljazsim/"
+	},
+	"icon": ".\\doc\\logo.png",
+	"galleryBanner": {
+		"color": "#4c725d",
+		"theme": "dark"
+	},
+	"bugs": {
+		"url": "https://github.com/aljazsim/vs-code-typescript-code-explorer/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/aljazsim/vs-code-typescript-code-explorer.git"
+	},
+	"homepage": "https://github.com/aljazsim/vs-code-typescript-code-explorer",
+	"engines": {
+		"vscode": "^1.25.0"
+	},
+	"enableProposedApi": true,
+	"license": "MIT",
+	"categories": [
+		"Other"
+	],
+	"keywords": [
+		"TypeScript",
+		"outline",
+		"navigate",
+		"class view",
+		"code",
+		"explorer"
+	],
+	"activationEvents": [
+		"onView:typescript-code-explorer",
+		"onCommand:tsce.showCodeExplorer"
+	],
+	"contributes": {
+		"commands": [
+			{
+				"command": "tsce.showCodeExplorer",
+				"title": "Show Code Explorer",
+				"category": "TypeScript Code Explorer",
+				"when": "editorTextFocus && editorLangId == 'typescript'"
+			}
+		],
+		"menus": {
+			"editor/context": [
+				{
+					"command": "tsce.showCodeExplorer",
+					"group": "navigation",
+					"when": "editorTextFocus && editorLangId == 'typescript'"
+				}
+			]
+		},
+		"keybindings": [
+			{
+				"command": "tsce.showCodeExplorer",
+				"key": "ctrl+shift+k",
+				"mac": "cmd+alt+k",
+				"when": "editorTextFocus editorLangId == 'typescript'"
+			}
+		],
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "typescript-code-explorer",
+					"title": "TypeScript",
+					"icon": "media/dep.svg",
+					"when": ""
+				}
+			]
+		},
+		"views": {
+			"typescript-code-explorer": [
+				{
+					"id": "tsce.codeExplorer",
+					"name": "Code Explorer"
+				}
+			]
+		},
+		"languages": [
+			{
+				"id": "typescript",
+				"extensions": [
+					".ts"
+				]
+			}
+		]
+	},
+	"main": "./out/extension",
+	"scripts": {
+		"vscode:prepublish": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"postinstall": "node ./node_modules/vscode/bin/install"
+	},
+	"devDependencies": {
+		"typescript": "^2.1.4",
+		"vscode": "^1.1.18",
+		"@types/node": "*"
+	},
+	"dependencies": {}
+}
