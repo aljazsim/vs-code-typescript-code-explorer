@@ -47,7 +47,7 @@
 				"command": "tsce.showCodeExplorer",
 				"title": "Show Code Explorer",
 				"category": "TypeScript Code Explorer",
-				"when": "editorTextFocus && editorLangId == 'typescript'"
+				"when": "editorTextFocus && editorLangId == typescript"
 			}
 		],
 		"menus": {
@@ -55,7 +55,7 @@
 				{
 					"command": "tsce.showCodeExplorer",
 					"group": "navigation",
-					"when": "editorTextFocus && editorLangId == 'typescript'"
+					"when": "editorTextFocus && editorLangId == typescript"
 				}
 			]
 		},
@@ -64,7 +64,7 @@
 				"command": "tsce.showCodeExplorer",
 				"key": "ctrl+shift+k",
 				"mac": "cmd+alt+k",
-				"when": "editorTextFocus editorLangId == 'typescript'"
+				"when": "editorTextFocus editorLangId == typescript"
 			}
 		],
 		"viewsContainers": {
