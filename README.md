@@ -6,7 +6,7 @@ View and navigate TypeScript code by using the custom view.
 
 ![TypeScript Code Explorer](./doc/demo.gif "TypeScript Code Explorer")
 
-## Usage S
+## Usage
 
 ### Sidebar
 
