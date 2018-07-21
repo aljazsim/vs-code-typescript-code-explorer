@@ -10,7 +10,7 @@ export class FunctionDeclarationNode extends DeclarationNode
 		super();
 
 		this.name = functionName;
-		this.label = `${functionName}(${parameters.map(x => `${x.name}: ${x.type}`).join(", ")}): ${returnType}`;
+		this.label = `${functionName} (${parameters.map(x => `${x.name}: ${x.type}`).join(", ")}): ${returnType}`;
 
 		this.start = start;
 		this.end = end;
@@ -20,8 +20,13 @@ export class FunctionDeclarationNode extends DeclarationNode
 		this.command = command;
 
 		this.iconPath = {
-			light: path.join(__filename, '..', '..', '..', 'resources', 'Function_16x.svg'),
-			dark: path.join(__filename, '..', '..', '..', 'resources', 'Function_inverse_16x.svg')
+			light: path.join(this.imageDir, 'Function_light.svg'),
+			dark: path.join(this.imageDir, 'Function_dark.svg')
 		};
+
+		if (!isExport)
+		{
+			this.label += " " + this.privateImage;
+		}
 	}
 }

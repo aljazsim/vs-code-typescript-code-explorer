@@ -10,7 +10,7 @@ export class MethodDeclarationNode extends DeclarationNode
 		super();
 
 		this.name = methodName;
-		this.label = `${methodName}(${parameters.map(x => `${x.name}: ${x.type}`).join(", ")})`;
+		this.label = `${methodName} (${parameters.map(x => `${x.name}: ${x.type}`).join(", ")})`;
 
 		if (returnType)
 		{
@@ -25,50 +25,18 @@ export class MethodDeclarationNode extends DeclarationNode
 		this.command = command;
 
 		this.iconPath = {
-			light: path.join(__filename, '..', '..', '..', 'resources', 'Method_16x.svg'),
-			dark: path.join(__filename, '..', '..', '..', 'resources', 'Method_inverse_16x.svg')
+			light: path.join(this.imageDir, 'Method_light.svg'),
+			dark: path.join(this.imageDir, 'Method_dark.svg')
 		};
 
-		// // if (accessModifier == "public")
-		// // {
-		// // 	if (isStatic)
-		// // 	{
-		// // 		this.iconPath = "../../resources/public_static_method.svg";
-		// // 	}
-		// // 	else if (isAbstract)
-		// // 	{
-		// // 		this.iconPath = "../../resources/public_abstract_method.svg";
-		// // 	}
-		// // 	else
-		// // 	{
-		// // 		this.iconPath = "../../resources/public_method.svg";
-		// // 	}
-		// // }
-		// // else if (accessModifier == "protected")
-		// // {
-		// // 	if (isStatic)
-		// // 	{
-		// // 		this.iconPath = "../../resources/protected_static_method.svg";
-		// // 	}
-		// // 	else if (isAbstract)
-		// // 	{
-		// // 		this.iconPath = "../../resources/protected_abstract_method.svg";
-		// // 	}
-		// // 	else
-		// // 	{
-		// // 		this.iconPath = "../../resources/protected_method.svg";
-		// // 	}
-		// // }
-		// // else
-		// // {
-		// // 	if (isStatic)
-		// // 	{
-		// // 		this.iconPath = "../../resources/private_static_method.svg";
-		// // 	}
-		// // 	else
-		// // 	{
-		// // 		this.iconPath = "../../resources/private_method.svg";
-		// // 	}
-		// // }
+		if (accessModifier == "protected")
+		{
+			this.label += " " + this.protectedImage;
+		}
+
+		if (accessModifier == "private")
+		{
+			this.label += " " + this.privateImage;
+		}
 	}
 }

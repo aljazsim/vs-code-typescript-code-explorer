@@ -4,7 +4,7 @@ import { DeclarationNode } from "./DeclarationNode";
 
 export class InterfaceDeclarationNode extends DeclarationNode
 {
-	constructor(interfaceName: string, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+	constructor(interfaceName: string, isExport: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
 	{
 		super();
 
@@ -19,8 +19,13 @@ export class InterfaceDeclarationNode extends DeclarationNode
 		this.command = command;
 
 		this.iconPath = {
-			light: path.join(__filename, '..', '..', '..', 'resources', 'Interface_16x.svg'),
-			dark: path.join(__filename, '..', '..', '..', 'resources', 'Interface_inverse_16x.svg')
+			light: path.join(this.imageDir, 'Interface_light.svg'),
+			dark: path.join(this.imageDir, 'Interface_dark.svg')
 		};
+
+		if (!isExport)
+		{
+			this.label += " " + this.privateImage;
+		}
 	}
 }

@@ -4,12 +4,12 @@ import { DeclarationNode } from "./DeclarationNode";
 
 export class GetterDeclarationNode extends DeclarationNode
 {
-	constructor(getterName: string, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+	constructor(getterName: string, getterType: string, public accessModifier: string, public isStatic: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
 	{
 		super();
 
 		this.name = getterName;
-		this.label = getterName;
+		this.label = `${getterName}: ${getterType}`;
 
 		this.start = start;
 		this.end = end;
@@ -19,8 +19,18 @@ export class GetterDeclarationNode extends DeclarationNode
 		this.command = command;
 
 		this.iconPath = {
-			light: path.join(__filename, '..', '..', '..', 'resources', 'Getter_16x.svg'),
-			dark: path.join(__filename, '..', '..', '..', 'resources', 'Getter_inverse_16x.svg')
+			light: path.join(this.imageDir, 'Getter_light.svg'),
+			dark: path.join(this.imageDir, 'Getter_dark.svg')
 		};
+
+		if (accessModifier == "protected")
+		{
+			this.label += " " + this.protectedImage;
+		}
+
+		if (accessModifier == "private")
+		{
+			this.label += " " + this.privateImage;
+		}
 	}
 }

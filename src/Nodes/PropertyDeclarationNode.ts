@@ -18,20 +18,44 @@ export class PropertyDeclarationNode extends DeclarationNode
 		this.children = children;
 		this.command = command;
 
-		if (accessModifier == "public" ||
+		if (isConst ||
+			isReadOnly)
+		{
+			this.iconPath = {
+				light: path.join(this.imageDir, "Constant_light.svg"),
+				dark: path.join(this.imageDir, "Constant_dark.svg")
+			};
+
+			if (accessModifier == "protected")
+			{
+				this.label += " " + this.protectedImage;
+			}
+
+			if (accessModifier == "private")
+			{
+				this.label += " " + this.privateImage;
+			}
+		}
+		else if (accessModifier == "public" ||
 			accessModifier == "protected")
 		{
 			this.iconPath = {
-				light: path.join(__filename, '..', '..', '..', 'resources', 'Property_16x.svg'),
-				dark: path.join(__filename, '..', '..', '..', 'resources', 'Property_inverse_16x.svg')
+				light: path.join(this.imageDir, "Property_light.svg"),
+				dark: path.join(this.imageDir, "Property_dark.svg")
 			};
+
+			if (accessModifier == "protected")
+			{
+				this.label += " " + this.protectedImage;
+			}
 		}
 		else
 		{
 			this.iconPath = {
-				light: path.join(__filename, '..', '..', '..', 'resources', 'Field_16x.svg'),
-				dark: path.join(__filename, '..', '..', '..', 'resources', 'Field_inverse_16x.svg')
+				light: path.join(this.imageDir, "Field_light.svg"),
+				dark: path.join(this.imageDir, "Field_dark.svg")
 			};
 		}
+
 	}
 }

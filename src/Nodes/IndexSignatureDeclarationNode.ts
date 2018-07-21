@@ -4,7 +4,7 @@ import { DeclarationNode } from "./DeclarationNode";
 
 export class IndexSignatureDeclarationNode extends DeclarationNode
 {
-	constructor(indexType: string, isReadOnly: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+	constructor(indexType: string, public isStatic: boolean, isReadOnly: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
 	{
 		super();
 
@@ -19,8 +19,8 @@ export class IndexSignatureDeclarationNode extends DeclarationNode
 		this.command = command;
 
 		this.iconPath = {
-			light: path.join(__filename, '..', '..', '..', 'resources', 'Property_16x.svg'),
-			dark: path.join(__filename, '..', '..', '..', 'resources', 'Property_inverse_16x.svg')
+			light: path.join(this.imageDir, 'Property_light.svg'),
+			dark: path.join(this.imageDir, 'Property_dark.svg')
 		};
 	}
 }

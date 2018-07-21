@@ -10,7 +10,7 @@ export class MethodSignatureDeclarationNode extends DeclarationNode
 		super();
 
 		this.name = methodName;
-		this.label = `${methodName}(${parameters.map(x => `${x.name}: ${x.type}`).join(", ")}): ${returnType}`;
+		this.label = `${methodName} (${parameters.map(x => `${x.name}: ${x.type}`).join(", ")}): ${returnType}`;
 
 		this.start = start;
 		this.end = end;
@@ -20,8 +20,8 @@ export class MethodSignatureDeclarationNode extends DeclarationNode
 		this.command = command;
 
 		this.iconPath = {
-			light: path.join(__filename, '..', '..', '..', 'resources', 'Method_16x.svg'),
-			dark: path.join(__filename, '..', '..', '..', 'resources', 'Method_inverse_16x.svg')
+			light: path.join(this.imageDir, 'Method_light.svg'),
+			dark: path.join(this.imageDir, 'Method_dark.svg')
 		};
 	}
 }

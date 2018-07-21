@@ -20,31 +20,13 @@ export class ClassDeclarationNode extends DeclarationNode
 		this.command = command;
 
 		this.iconPath = {
-			light: path.join(__filename, '..', '..', '..', 'resources', 'Class_16x.svg'),
-			dark: path.join(__filename, '..', '..', '..', 'resources', 'Class_inverse_16x.svg')
+			light: path.join(this.imageDir, 'Class_light.svg'),
+			dark: path.join(this.imageDir, 'Class_dark.svg')
 		};
 
-		// // if (isExport)
-		// // {
-		// // 	if (isAbstract)
-		// // 	{
-		// // 		this.iconPath = "../../resources/abstract_public_class.svg";
-		// // 	}
-		// // 	else
-		// // 	{
-		// // 		this.iconPath = "../../resources/public_class.svg";
-		// // 	}
-		// // }
-		// // else
-		// // {
-		// // 	if (isAbstract)
-		// // 	{
-		// // 		this.iconPath = "../../resources/abstract_private_class.svg";
-		// // 	}
-		// // 	else
-		// // 	{
-		// // 		this.iconPath = "../../resources/private_class.svg";
-		// // 	}
-		// // }
+		if (!isExport)
+		{
+			this.label += " " + this.privateImage;
+		}
 	}
 }

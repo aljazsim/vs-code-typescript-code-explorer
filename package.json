@@ -2,7 +2,7 @@
 	"name": "tsce",
 	"displayName": "TypeScript Code Explorer",
 	"description": "Making navigating TypeScript code easier",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"publisher": "aljazsim",
 	"author": {
 		"name": "aljazsim",
@@ -37,6 +37,7 @@
 		"explorer"
 	],
 	"activationEvents": [
+		"onLanguage:typescript",
 		"onView:typescript-code-explorer",
 		"onCommand:tsce.showCodeExplorer"
 	],
@@ -71,7 +72,7 @@
 				{
 					"id": "typescript-code-explorer",
 					"title": "TypeScript",
-					"icon": "media/dep.svg",
+					"icon": "resources/view.svg",
 					"when": ""
 				}
 			]
@@ -103,7 +104,7 @@
 		"@types/node": "*"
 	},
 	"dependencies": {
-		"typescript": "^2.1.4",
+		"typescript": "^2.9.2",
 		"vscode": "^1.1.18"
 	}
 }

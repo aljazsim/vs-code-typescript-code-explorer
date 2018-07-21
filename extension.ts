@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import { DeclarationNode } from "./Nodes/DeclarationNode";
-import { SyntaxTreeNodeProvider } from "./SyntaxTreeNodeProvider";
+import { DeclarationNode } from "./src/Nodes/DeclarationNode";
+import { SyntaxTreeNodeProvider } from "./src/SyntaxTreeNodeProvider";
 
 'use strict';
 
@@ -11,11 +11,6 @@ export function activate(context: vscode.ExtensionContext)
 	let selecting: boolean = false;
 
 	nodeDependenciesProvider = new SyntaxTreeNodeProvider(vscode.workspace.rootPath!);
-
-	if (vscode.window.activeTextEditor)
-	{
-		nodeDependenciesProvider.refresh(vscode.window.activeTextEditor);
-	}
 
 	// register the tree provider with the view
 	view = vscode.window.createTreeView('tsce.codeExplorer', { treeDataProvider: nodeDependenciesProvider });
@@ -88,4 +83,9 @@ export function activate(context: vscode.ExtensionContext)
 			view.reveal(nodeDependenciesProvider.rootElement, { select: true, focus: true });
 		}
 	}));
+
+	if (vscode.window.activeTextEditor)
+	{
+		nodeDependenciesProvider.refresh(vscode.window.activeTextEditor);
+	}
 }

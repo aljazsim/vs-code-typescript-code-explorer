@@ -10,7 +10,7 @@ export class ConstructorDeclarationNode extends DeclarationNode
 		super();
 
 		this.name = constructorName;
-		this.label = `${constructorName}(${parameters.map(x => `${x.name}: ${x.type}`).join(", ")})`;
+		this.label = `${constructorName} (${parameters.map(x => `${x.name}: ${x.type}`).join(", ")})`;
 
 		this.start = start;
 		this.end = end;
@@ -20,8 +20,8 @@ export class ConstructorDeclarationNode extends DeclarationNode
 		this.command = command;
 
 		this.iconPath = {
-			light: path.join(__filename, '..', '..', '..', 'resources', 'Constructor_16x.svg'),
-			dark: path.join(__filename, '..', '..', '..', 'resources', 'Constructor_inverse_16x.svg')
+			light: path.join(this.imageDir, "Constructor_light.svg"),
+			dark: path.join(this.imageDir, "Constructor_dark.svg")
 		};
 	}
 }
