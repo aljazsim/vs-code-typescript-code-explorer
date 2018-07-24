@@ -4,6 +4,8 @@ import { DeclarationNode } from "./DeclarationNode";
 
 export class PropertySignatureDeclarationNode extends DeclarationNode
 {
+	// #region Constructors (1)
+
 	constructor(propertyName: string, propertyType: string, isConst: boolean, isReadOnly: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
 	{
 		super();
@@ -23,4 +25,6 @@ export class PropertySignatureDeclarationNode extends DeclarationNode
 			dark: path.join(this.imageDir, 'Property_dark.svg')
 		};
 	}
+
+	// #endregion
 }

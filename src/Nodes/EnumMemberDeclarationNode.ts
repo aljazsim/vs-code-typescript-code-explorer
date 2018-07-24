@@ -4,6 +4,8 @@ import { DeclarationNode } from "./DeclarationNode";
 
 export class EnumMemberDeclarationNode extends DeclarationNode
 {
+	// #region Constructors (1)
+
 	constructor(enumMemberName: string, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
 	{
 		super();
@@ -23,4 +25,6 @@ export class EnumMemberDeclarationNode extends DeclarationNode
 			dark: path.join(this.imageDir, 'EnumItem_dark.svg')
 		};
 	}
+
+	// #endregion
 }

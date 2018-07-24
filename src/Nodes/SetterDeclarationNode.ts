@@ -4,6 +4,8 @@ import { DeclarationNode } from "./DeclarationNode";
 
 export class SetterDeclarationNode extends DeclarationNode
 {
+	// #region Constructors (1)
+
 	constructor(setterName: string, setterType: string, public accessModifier: string, public isStatic: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
 	{
 		super();
@@ -33,4 +35,6 @@ export class SetterDeclarationNode extends DeclarationNode
 			this.label += " " + this.privateImage;
 		}
 	}
+
+	// #endregion
 }

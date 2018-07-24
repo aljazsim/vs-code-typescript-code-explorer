@@ -5,6 +5,8 @@ import { Parameter } from "./Parameter";
 
 export class ConstructorDeclarationNode extends DeclarationNode
 {
+	// #region Constructors (1)
+
 	constructor(constructorName: string, parameters: Parameter[], parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
 	{
 		super();
@@ -24,4 +26,6 @@ export class ConstructorDeclarationNode extends DeclarationNode
 			dark: path.join(this.imageDir, "Constructor_dark.svg")
 		};
 	}
+
+	// #endregion
 }

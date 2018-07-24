@@ -5,6 +5,8 @@ import { Parameter } from "./Parameter";
 
 export class FunctionDeclarationNode extends DeclarationNode
 {
+	// #region Constructors (1)
+
 	constructor(functionName: string, isExport: boolean, parameters: Parameter[], returnType: string | null, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
 	{
 		super();
@@ -29,4 +31,6 @@ export class FunctionDeclarationNode extends DeclarationNode
 			this.label += " " + this.privateImage;
 		}
 	}
+
+	// #endregion
 }

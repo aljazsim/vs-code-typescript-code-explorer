@@ -4,6 +4,8 @@ import { DeclarationNode } from "./DeclarationNode";
 
 export class PropertyDeclarationNode extends DeclarationNode
 {
+	// #region Constructors (1)
+
 	constructor(propertyName: string, propertyType: string, public accessModifier: string, public isStatic: boolean, isConst: boolean, isReadOnly: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
 	{
 		super();
@@ -56,6 +58,7 @@ export class PropertyDeclarationNode extends DeclarationNode
 				dark: path.join(this.imageDir, "Field_dark.svg")
 			};
 		}
-
 	}
+
+	// #endregion
 }

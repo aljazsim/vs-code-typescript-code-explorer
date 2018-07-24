@@ -96,16 +96,16 @@
 	},
 	"main": "./out/extension",
 	"scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "npm run compile && node ./node_modules/vscode/bin/test"
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "npm run compile && node ./node_modules/vscode/bin/test"
 	},
 	"devDependencies": {
 		"@types/node": "*"
     "eslint": "5.0.0",
-    "tslint": "5.10.0"
+		"tslint": "5.10.0"
 	},
 	"dependencies": {
 		"typescript": "^2.9.2",

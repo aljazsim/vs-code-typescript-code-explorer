@@ -3,6 +3,8 @@ import { DeclarationNode } from "./DeclarationNode";
 
 export class EmptyDeclarationNode extends DeclarationNode
 {
+	// #region Constructors (1)
+
 	constructor()
 	{
 		super();
@@ -19,4 +21,6 @@ export class EmptyDeclarationNode extends DeclarationNode
 		this.iconPath = undefined;
 		this.collapsibleState = vscode.TreeItemCollapsibleState.None;
 	}
+
+	// #endregion
 }
