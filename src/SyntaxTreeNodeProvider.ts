@@ -140,7 +140,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
 		return rootElements.sort((a, b) => this.compare(a, b));
 	}
 
-	private visitSyntaxTree(node: ts.Node, sourceFile: ts.SourceFile, parentElement: DeclarationNode | null | null): DeclarationNode[]
+	private visitSyntaxTree(node: ts.Node, sourceFile: ts.SourceFile, parentElement: DeclarationNode | null): DeclarationNode[]
 	{
 		let elements: DeclarationNode[] = [];
 		let childElements: DeclarationNode[] = [];
