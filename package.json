@@ -2,7 +2,7 @@
 	"name": "tsce",
 	"displayName": "TypeScript Code Explorer",
 	"description": "Making navigating TypeScript code easier",
-	"version": "1.0.5",
+	"version": "1.0.7",
 	"publisher": "aljazsim",
 	"author": {
 		"name": "aljazsim",
@@ -103,8 +103,8 @@
 		"test": "npm run compile && node ./node_modules/vscode/bin/test"
 	},
 	"devDependencies": {
-		"@types/node": "*"
-    "eslint": "5.0.0",
+		"@types/node": "*",
+		"eslint": "5.0.0",
 		"tslint": "5.10.0"
 	},
 	"dependencies": {

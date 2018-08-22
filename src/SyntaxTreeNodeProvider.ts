@@ -17,6 +17,7 @@ import { PropertyDeclarationNode } from "./Nodes/PropertyDeclarationNode";
 import { PropertySignatureDeclarationNode } from "./Nodes/PropertySignatureDeclarationNode";
 import { ProviderResult } from "vscode";
 import { SetterDeclarationNode } from "./Nodes/SetterDeclarationNode";
+import { TypeAliasDeclarationNode } from "./Nodes/getTypeAliasDeclarationNode";
 
 export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<DeclarationNode>
 {
@@ -439,6 +440,17 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
 		return new InterfaceDeclarationNode(interfaceName, isExport, parentElement, childElements, this.getCommand(position), start, end);
 	}
 
+	private getTypeAliasDeclarationNode(sourceFile: ts.SourceFile, node: ts.TypeAliasDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
+	{
+		let identifier = <ts.Identifier>node.name;
+		let position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
+		let typeAliasName = identifier.escapedText.toString();
+		let start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
+		let end = this.editor!.document.positionAt(node.getEnd());
+
+		return new TypeAliasDeclarationNode(typeAliasName, parentElement, childElements, this.getCommand(position), start, end);
+	}
+
 	private getMethodDeclarationNode(sourceFile: ts.SourceFile, node: ts.MethodDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
 	{
 		let identifier = <ts.Identifier>node.name;
@@ -761,6 +773,10 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
 		else if (ts.isFunctionDeclaration(node))
 		{
 			elements.push(this.getFunctionDeclarationNode(sourceFile, node, parentElement, childElements));
+		}
+		else if (ts.isTypeAliasDeclaration(node))
+		{
+			elements.push(this.getTypeAliasDeclarationNode(sourceFile, node, parentElement, childElements));
 		}
 
 		// get child elements
