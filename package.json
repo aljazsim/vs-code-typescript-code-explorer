@@ -104,11 +104,11 @@
 	},
 	"devDependencies": {
 		"@types/node": "*",
-		"eslint": "5.0.0",
-		"tslint": "5.10.0"
+		"eslint": "5.4.0",
+		"tslint": "5.11.0"
 	},
 	"dependencies": {
-		"typescript": "^2.9.2",
-		"vscode": "^1.1.18"
+		"typescript": "3.0.1",
+		"vscode": "1.1.21"
 	}
 }
