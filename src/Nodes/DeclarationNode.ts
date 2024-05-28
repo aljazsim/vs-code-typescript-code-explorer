@@ -3,54 +3,50 @@ import * as vscode from "vscode";
 
 export abstract class DeclarationNode extends vscode.TreeItem
 {
-	// #region Properties (8)
+    // #region Properties (9)
 
-	protected readonly imageDir = path.join(__filename, "..", "..", "..", "..", "resources");
-	protected readonly privateImage = this.convertHexToString("f09f9492");
-	protected readonly protectedImage = this.convertHexToString("f09f9493");
+    protected readonly imageDir = path.join(__filename, "..", "..", "..", "resources");
+    protected readonly privateImage = this.convertHexToString("f09f9492");
+    protected readonly protectedImage = this.convertHexToString("f09f9493");
+    protected readonly abstractImage = this.convertHexToString("e29db4") + "..." + this.convertHexToString("e29db5");
 
-	public children: DeclarationNode[] = [];
-	public end: vscode.Position = new vscode.Position(0, 0);
-	public name: string | null = null;
-	public parent: DeclarationNode | null = null;
-	public start: vscode.Position = new vscode.Position(0, 0);
+    public override readonly tooltip?: string | vscode.MarkdownString | undefined;
 
-	// #endregion
+    public children: DeclarationNode[] = [];
+    public end: vscode.Position = new vscode.Position(0, 0);
+    public name: string | null = null;
+    public parent: DeclarationNode | null = null;
+    public start: vscode.Position = new vscode.Position(0, 0);
 
-	// #region Constructors (1)
+    // #endregion Properties (9)
 
-	constructor()
-	{
-		super("", vscode.TreeItemCollapsibleState.Expanded);
-	}
+    // #region Constructors (1)
 
-	// #endregion
+    constructor()
+    {
+        super("", vscode.TreeItemCollapsibleState.Expanded);
 
-	// #region Public Accessors (1)
+        this.tooltip = this.label!.toString();
+    }
 
-	public get tooltip(): string
-	{
-		return this.label!;
-	}
+    // #endregion Constructors (1)
 
-	// #endregion
+    // #region Protected Methods (1)
 
-	// #region Protected Methods (1)
+    protected convertHexToString(input: string)
+    {
+        var inputHex = input.match(/[\s\S]{2}/g) || [];
+        var output = '';
 
-	protected convertHexToString(input: string)
-	{
-		var inputHex = input.match(/[\s\S]{2}/g) || [];
-		var output = '';
+        for (var i = 0, j = inputHex.length; i < j; i++)
+        {
+            output += '%' + ('0' + inputHex[i]).slice(-2);
+        }
 
-		for (var i = 0, j = inputHex.length; i < j; i++)
-		{
-			output += '%' + ('0' + inputHex[i]).slice(-2);
-		}
+        output = decodeURIComponent(output);
 
-		output = decodeURIComponent(output);
+        return output;
+    }
 
-		return output;
-	}
-
-	// #endregion
+    // #endregion Protected Methods (1)
 }

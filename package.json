@@ -1,114 +1,118 @@
 {
-	"name": "tsce",
-	"displayName": "TypeScript Code Explorer",
-	"description": "Making navigating TypeScript code easier",
-	"version": "1.0.7",
-	"publisher": "aljazsim",
-	"author": {
-		"name": "aljazsim",
-		"url": "https://github.com/aljazsim/"
-	},
-	"icon": "doc/logo.png",
-	"galleryBanner": {
-		"color": "#4c725d",
-		"theme": "dark"
-	},
-	"bugs": {
-		"url": "https://github.com/aljazsim/vs-code-typescript-code-explorer/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/aljazsim/vs-code-typescript-code-explorer.git"
-	},
-	"homepage": "https://github.com/aljazsim/vs-code-typescript-code-explorer",
-	"engines": {
-		"vscode": "^1.25.0"
-	},
-	"enableProposedApi": false,
-	"license": "MIT",
-	"categories": [
-		"Other"
-	],
-	"keywords": [
-		"TypeScript",
-		"outline",
-		"navigate",
-		"class view",
-		"explorer"
-	],
-	"activationEvents": [
-		"onLanguage:typescript",
-		"onView:typescript-code-explorer",
-		"onCommand:tsce.showCodeExplorer"
-	],
-	"contributes": {
-		"commands": [
-			{
-				"command": "tsce.showCodeExplorer",
-				"title": "Show Code Explorer",
-				"category": "TypeScript Code Explorer",
-				"when": "editorTextFocus && editorLangId == typescript"
-			}
-		],
-		"menus": {
-			"editor/context": [
-				{
-					"command": "tsce.showCodeExplorer",
-					"group": "navigation",
-					"when": "editorTextFocus && editorLangId == typescript"
-				}
-			]
-		},
-		"keybindings": [
-			{
-				"command": "tsce.showCodeExplorer",
-				"key": "ctrl+shift+k",
-				"mac": "cmd+alt+k",
-				"when": "editorTextFocus editorLangId == typescript"
-			}
-		],
-		"viewsContainers": {
-			"activitybar": [
-				{
-					"id": "typescript-code-explorer",
-					"title": "TypeScript",
-					"icon": "resources/view.svg",
-					"when": ""
-				}
-			]
-		},
-		"views": {
-			"typescript-code-explorer": [
-				{
-					"id": "tsce.codeExplorer",
-					"name": "Code Explorer"
-				}
-			]
-		},
-		"languages": [
-			{
-				"id": "typescript",
-				"extensions": [
-					".ts"
-				]
-			}
-		]
-	},
-	"main": "./out/extension",
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "npm run compile && node ./node_modules/vscode/bin/test"
-	},
-	"devDependencies": {
-		"@types/node": "*",
-		"eslint": "5.4.0",
-		"tslint": "5.11.0"
-	},
-	"dependencies": {
-		"typescript": "3.0.1",
-		"vscode": "1.1.21"
-	}
+    "name": "tsce",
+    "displayName": "TypeScript Code Explorer",
+    "description": "Making navigating TypeScript code easier",
+    "version": "1.0.8",
+    "publisher": "aljazsim",
+    "author": {
+        "name": "aljazsim",
+        "url": "https://github.com/aljazsim/"
+    },
+    "icon": "doc/logo.png",
+    "galleryBanner": {
+        "color": "#4c725d",
+        "theme": "dark"
+    },
+    "bugs": {
+        "url": "https://github.com/aljazsim/vs-code-typescript-code-explorer/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/aljazsim/vs-code-typescript-code-explorer.git"
+    },
+    "homepage": "https://github.com/aljazsim/vs-code-typescript-code-explorer",
+    "engines": {
+        "vscode": "^1.89.0"
+    },
+    "license": "MIT",
+    "categories": [
+        "Other"
+    ],
+    "keywords": [
+        "TypeScript",
+        "outline",
+        "navigate",
+        "class view",
+        "explorer"
+    ],
+    "activationEvents": [
+        "onLanguage:typescript",
+        "onView:typescript-code-explorer",
+        "onCommand:tsce.showCodeExplorer"
+    ],
+    "contributes": {
+        "commands": [
+            {
+                "command": "tsce.showCodeExplorer",
+                "title": "Show Code Explorer",
+                "category": "TypeScript Code Explorer",
+                "when": "editorTextFocus && editorLangId == typescript"
+            }
+        ],
+        "menus": {
+            "editor/context": [
+                {
+                    "command": "tsce.showCodeExplorer",
+                    "group": "navigation",
+                    "when": "editorTextFocus && editorLangId == typescript"
+                }
+            ]
+        },
+        "keybindings": [
+            {
+                "command": "tsce.showCodeExplorer",
+                "key": "ctrl+shift+k",
+                "mac": "cmd+alt+k",
+                "when": "editorTextFocus && editorLangId == typescript"
+            }
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "typescript-code-explorer",
+                    "title": "TypeScript",
+                    "icon": "resources/view.svg",
+                    "when": ""
+                }
+            ]
+        },
+        "views": {
+            "typescript-code-explorer": [
+                {
+                    "id": "tsce.codeExplorer",
+                    "name": "Code Explorer"
+                }
+            ]
+        },
+        "languages": [
+            {
+                "id": "typescript",
+                "extensions": [
+                    ".ts"
+                ]
+            }
+        ]
+    },
+    "main": "./out/extension.js",
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile && npm run lint",
+        "lint": "eslint src --ext ts",
+        "test": "vscode-test"
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.89.0",
+        "@types/mocha": "^10.0.6",
+        "@types/node": "18.x",
+        "@typescript-eslint/eslint-plugin": "^7.7.1",
+        "@typescript-eslint/parser": "^7.7.1",
+        "eslint": "^8.57.0",
+        "@vscode/test-cli": "^0.0.9",
+        "@vscode/test-electron": "^2.3.9"
+    },
+    "dependencies": {
+        "typescript": "^5.4.5"
+    }
 }

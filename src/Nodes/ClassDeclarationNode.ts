@@ -1,5 +1,6 @@
 import * as path from "path";
 import * as vscode from "vscode";
+
 import { DeclarationNode } from "./DeclarationNode";
 
 export class ClassDeclarationNode extends DeclarationNode
@@ -31,5 +32,5 @@ export class ClassDeclarationNode extends DeclarationNode
 		}
 	}
 
-	// #endregion
+	// #endregion Constructors (1)
 }

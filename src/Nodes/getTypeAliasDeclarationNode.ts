@@ -1,9 +1,12 @@
 import * as path from "path";
 import * as vscode from "vscode";
+
 import { DeclarationNode } from "./DeclarationNode";
 
 export class TypeAliasDeclarationNode extends DeclarationNode
 {
+	// #region Constructors (1)
+
 	constructor(interfaceName: string, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
 	{
 		super();
@@ -23,4 +26,6 @@ export class TypeAliasDeclarationNode extends DeclarationNode
 			dark: path.join(this.imageDir, 'Class_dark.svg')
 		};
 	}
+
+	// #endregion Constructors (1)
 }

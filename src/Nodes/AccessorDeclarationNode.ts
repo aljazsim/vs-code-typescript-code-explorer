@@ -3,16 +3,16 @@ import * as vscode from "vscode";
 
 import { DeclarationNode } from "./DeclarationNode";
 
-export class GetterDeclarationNode extends DeclarationNode
+export class AccessorDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(getterName: string, getterType: string, public accessModifier: string, public isStatic: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(accessorName: string, accessorType: string, public accessModifier: string, public isStatic: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 
-        this.name = getterName;
-        this.label = `${getterName}: ${getterType}`;
+        this.name = accessorName;
+        this.label = `${accessorName}: ${accessorType}`;
 
         this.start = start;
         this.end = end;

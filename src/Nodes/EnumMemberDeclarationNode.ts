@@ -1,5 +1,6 @@
 import * as path from "path";
 import * as vscode from "vscode";
+
 import { DeclarationNode } from "./DeclarationNode";
 
 export class EnumMemberDeclarationNode extends DeclarationNode
@@ -26,5 +27,5 @@ export class EnumMemberDeclarationNode extends DeclarationNode
 		};
 	}
 
-	// #endregion
+	// #endregion Constructors (1)
 }

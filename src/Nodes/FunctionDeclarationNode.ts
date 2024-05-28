@@ -1,5 +1,6 @@
 import * as path from "path";
 import * as vscode from "vscode";
+
 import { DeclarationNode } from "./DeclarationNode";
 import { Parameter } from "./Parameter";
 
@@ -32,5 +33,5 @@ export class FunctionDeclarationNode extends DeclarationNode
 		}
 	}
 
-	// #endregion
+	// #endregion Constructors (1)
 }
