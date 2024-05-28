@@ -54,8 +54,6 @@ export abstract class DeclarationNode extends vscode.TreeItem
     protected readonly structureDarkIconFilePath = path.join(this.imageDir, "member-types", 'Structure_dark.svg');
     protected readonly structureLightIconFilePath = path.join(this.imageDir, "member-types", 'Structure_light.svg');
 
-    public override readonly tooltip?: string | vscode.MarkdownString | undefined;
-
     public children: DeclarationNode[] = [];
     public end: vscode.Position = new vscode.Position(0, 0);
     public name: string | null = null;
@@ -69,8 +67,6 @@ export abstract class DeclarationNode extends vscode.TreeItem
     constructor()
     {
         super("", vscode.TreeItemCollapsibleState.Expanded);
-
-        this.tooltip = this.label!.toString();
     }
 
     // #endregion Constructors (1)

@@ -17,7 +17,7 @@ import { PropertyDeclarationNode } from "./Nodes/PropertyDeclarationNode";
 import { PropertySignatureDeclarationNode } from "./Nodes/PropertySignatureDeclarationNode";
 import { ProviderResult } from "vscode";
 import { SetterDeclarationNode } from "./Nodes/SetterDeclarationNode";
-import { TypeAliasDeclarationNode } from "./Nodes/getTypeAliasDeclarationNode";
+import { TypeAliasDeclarationNode } from "./Nodes/TypeAliasDeclarationNode";
 import { AccessorDeclarationNode } from "./Nodes/AccessorDeclarationNode";
 import { StaticCodeBlockDeclarationNode } from "./Nodes/StaticCodeBlockDeclarationNode";
 import { VariableDeclarationNode } from "./Nodes/VariableDeclarationNode";
