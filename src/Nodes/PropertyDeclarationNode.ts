@@ -7,7 +7,7 @@ export class PropertyDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(propertyName: string, propertyType: string, public accessModifier: string, public isStatic: boolean, public readonly isConst: boolean, public readonly isReadOnly: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(propertyName: string, propertyType: string, public accessModifier: string, public isStatic: boolean, public readonly isReadOnly: boolean, public readonly isArrowFunction: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 
@@ -21,11 +21,11 @@ export class PropertyDeclarationNode extends DeclarationNode
         this.children = children;
         this.command = command;
 
-        if (isConst || isReadOnly)
+        if (isReadOnly)
         {
             this.iconPath = {
-                light: path.join(this.imageDir, "Constant_light.svg"),
-                dark: path.join(this.imageDir, "Constant_dark.svg")
+                light: this.constantLightIconFilePath,
+                dark: this.constantDarkIconFilePath
             };
 
 
@@ -42,8 +42,8 @@ export class PropertyDeclarationNode extends DeclarationNode
         else if (accessModifier == "public" || accessModifier == "protected")
         {
             this.iconPath = {
-                light: path.join(this.imageDir, "Property_light.svg"),
-                dark: path.join(this.imageDir, "Property_dark.svg")
+                light: this.propertyLightIconFilePath,
+                dark: this.propertyDarkIconFilePath
             };
 
 
@@ -55,8 +55,8 @@ export class PropertyDeclarationNode extends DeclarationNode
         else
         {
             this.iconPath = {
-                light: path.join(this.imageDir, "Field_light.svg"),
-                dark: path.join(this.imageDir, "Field_dark.svg")
+                light: this.fieldItemLightIconFilePath,
+                dark: this.fieldItemDarkIconFilePath
             };
         }
     }

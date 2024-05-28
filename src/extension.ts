@@ -21,11 +21,13 @@ export function activate(context: vscode.ExtensionContext)
         // editor contents changed -> refresh view with the current window
         nodeDependenciesProvider.refresh(vscode.window.activeTextEditor!);
     });
+
     vscode.workspace.onDidOpenTextDocument(_ =>
     {
         // editor opened -> refresh view with the current window
         nodeDependenciesProvider.refresh(vscode.window.activeTextEditor!);
     });
+
     vscode.workspace.onDidCloseTextDocument(_ =>
     {
         // editor closed -> refresh view with the current window
@@ -37,6 +39,7 @@ export function activate(context: vscode.ExtensionContext)
         // switched editors -> refresh view with the current window
         nodeDependenciesProvider.refresh(editor!);
     });
+
     vscode.window.onDidChangeTextEditorSelection(e =>
     {
         if (!selecting)

@@ -23,8 +23,8 @@ export class ConstructorDeclarationNode extends DeclarationNode
         this.command = command;
 
         this.iconPath = {
-            light: path.join(this.imageDir, "Constructor_light.svg"),
-            dark: path.join(this.imageDir, "Constructor_dark.svg")
+            light: this.constructorLightIconFilePath,
+            dark: this.constructorDarkIconFilePath
         };
     }
 

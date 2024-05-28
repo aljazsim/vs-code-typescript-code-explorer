@@ -22,8 +22,8 @@ export class VariableDeclarationNode extends DeclarationNode
         this.command = command;
 
         this.iconPath = {
-            light: path.join(this.imageDir, "Constant_light.svg"),
-            dark: path.join(this.imageDir, "Constant_dark.svg")
+            light: this.variableItemLightIconFilePath,
+            dark: this.variableItemDarkIconFilePath
         };
 
         if (isExport)

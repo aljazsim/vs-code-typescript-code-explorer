@@ -22,8 +22,8 @@ export class StaticCodeBlockDeclarationNode extends DeclarationNode
         this.command = command;
 
         this.iconPath = {
-            light: path.join(this.imageDir, "Constructor_light.svg"),
-            dark: path.join(this.imageDir, "Constructor_dark.svg")
+            light: this.staticCodeBlocLightIconFilePath,
+            dark: this.staticCodeBlocDarkIconFilePath
         };
     }
 

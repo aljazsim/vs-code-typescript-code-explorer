@@ -8,7 +8,7 @@ export class MethodDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(methodName: string, accessModifier: string, isStatic: boolean, isAbstract: boolean, parameters: Parameter[], returnType: string | null, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(methodName: string, accessModifier: string, isStatic: boolean, isAbstract: boolean, isAsync: boolean, parameters: Parameter[], returnType: string | null, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 
@@ -28,8 +28,8 @@ export class MethodDeclarationNode extends DeclarationNode
         this.command = command;
 
         this.iconPath = {
-            light: path.join(this.imageDir, 'Method_light.svg'),
-            dark: path.join(this.imageDir, 'Method_dark.svg')
+            light: this.methodLightIconFilePath,
+            dark: this.methodDarkIconFilePath
         };
 
         if (accessModifier == "protected")

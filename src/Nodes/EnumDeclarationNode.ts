@@ -1,31 +1,35 @@
-import * as path from "path";
 import * as vscode from "vscode";
 
 import { DeclarationNode } from "./DeclarationNode";
 
 export class EnumDeclarationNode extends DeclarationNode
 {
-	// #region Constructors (1)
+    // #region Constructors (1)
 
-	constructor(enumName: string, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
-	{
-		super();
+    constructor(enumName: string, isExport: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    {
+        super();
 
-		this.name = enumName;
-		this.label = enumName;
+        this.name = enumName;
+        this.label = enumName;
 
-		this.start = start;
-		this.end = end;
+        this.start = start;
+        this.end = end;
 
-		this.parent = parent;
-		this.children = children;
-		this.command = command;
+        this.parent = parent;
+        this.children = children;
+        this.command = command;
 
-		this.iconPath = {
-			light: path.join(this.imageDir, 'Enumerator_light.svg'),
-			dark: path.join(this.imageDir, 'Enumerator_dark.svg')
-		};
-	}
+        this.iconPath = {
+            light: this.enumeratorLightIconFilePath,
+            dark: this.enumeratorDarkIconFilePath
+        };
 
-	// #endregion Constructors (1)
+        if (!isExport)
+        {
+            this.label += " " + this.privateImage;
+        }
+    }
+
+    // #endregion Constructors (1)
 }

@@ -1,4 +1,3 @@
-import * as path from "path";
 import * as vscode from "vscode";
 
 import { DeclarationNode } from "./DeclarationNode";
@@ -22,8 +21,8 @@ export class GetterDeclarationNode extends DeclarationNode
         this.command = command;
 
         this.iconPath = {
-            light: path.join(this.imageDir, 'Getter_light.svg'),
-            dark: path.join(this.imageDir, 'Getter_dark.svg')
+            light: this.getterLightIconFilePath,
+            dark: this.getterDarkIconFilePath
         };
 
         if (accessModifier == "protected")

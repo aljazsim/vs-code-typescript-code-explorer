@@ -22,8 +22,8 @@ export class AccessorDeclarationNode extends DeclarationNode
         this.command = command;
 
         this.iconPath = {
-            light: path.join(this.imageDir, 'Getter_light.svg'),
-            dark: path.join(this.imageDir, 'Getter_dark.svg')
+            light: this.accessorLightIconFilePath,
+            dark: this.accessorDarkIconFilePath
         };
 
         if (accessModifier == "protected")
