@@ -10,7 +10,7 @@ export class StaticCodeBlockDeclarationNode extends DeclarationNode
     {
         super();
 
-        this.name = "static block declaration";
+        this.name = "static constructor";
         this.label = this.name;
 
         this.start = start;
@@ -21,8 +21,8 @@ export class StaticCodeBlockDeclarationNode extends DeclarationNode
         this.command = command;
 
         this.iconPath = {
-            light: this.staticCodeBlocLightIconFilePath,
-            dark: this.staticCodeBlocDarkIconFilePath
+            light: this.constructorPublicStatic,
+            dark: this.constructorPublicStatic
         };
     }
 

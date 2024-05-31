@@ -7,9 +7,10 @@ export abstract class DeclarationNode extends vscode.TreeItem
 
     private readonly imageDir = path.join(__filename, "..", "..", "..", "resources");
 
-    protected readonly abstractImage = this.convertHexToString("e29db4") + "..." + this.convertHexToString("e29db5");
-    protected readonly privateImage = this.convertHexToString("f09f9492");
-    protected readonly protectedImage = this.convertHexToString("f09f9493");
+    protected readonly abstractCharacter = this.convertHexToString("f09f9fa0");
+    protected readonly readOnlyCharacter = this.convertHexToString("f09f9fa1");
+    protected readonly asyncCharacter = this.convertHexToString("f09f9fa2");
+    protected readonly staticCharacter = this.convertHexToString("f09f9fa3");
 
     protected readonly classDarkIconFilePath = path.join(this.imageDir, "member-types", 'Class_dark.svg');
     protected readonly classLightIconFilePath = path.join(this.imageDir, "member-types", 'Class_light.svg');
@@ -53,6 +54,25 @@ export abstract class DeclarationNode extends vscode.TreeItem
     protected readonly setterLightIconFilePath = path.join(this.imageDir, "member-types", 'Setter_light.svg');
     protected readonly structureDarkIconFilePath = path.join(this.imageDir, "member-types", 'Structure_dark.svg');
     protected readonly structureLightIconFilePath = path.join(this.imageDir, "member-types", 'Structure_light.svg');
+
+    protected readonly methodPrivate = path.join(this.imageDir, "members", 'method-private.svg');
+    protected readonly methodProtected = path.join(this.imageDir, "members", 'method-protected.svg');
+    protected readonly methodPublic = path.join(this.imageDir, "members", 'method-public.svg');
+
+    protected readonly methodPrivateStatic = path.join(this.imageDir, "members", 'method-private-static.svg');
+    protected readonly methodProtectedStatic = path.join(this.imageDir, "members", 'method-protected-static.svg');
+    protected readonly methodPublicStatic = path.join(this.imageDir, "members", 'method-public-static.svg');
+
+    protected readonly propertyPrivate = path.join(this.imageDir, "members", 'property-private.svg');
+    protected readonly propertyProtected = path.join(this.imageDir, "members", 'property-protected.svg');
+    protected readonly propertyPublic = path.join(this.imageDir, "members", 'property-public.svg');
+
+    protected readonly propertyPrivateStatic = path.join(this.imageDir, "members", 'property-private-static.svg');
+    protected readonly propertyProtectedStatic = path.join(this.imageDir, "members", 'property-protected-static.svg');
+    protected readonly propertyPublicStatic = path.join(this.imageDir, "members", 'property-public-static.svg');
+
+    protected readonly constructorPublic = path.join(this.imageDir, "members", 'constructor-public.svg');
+    protected readonly constructorPublicStatic = path.join(this.imageDir, "members", 'constructor-public-static.svg');
 
     public children: DeclarationNode[] = [];
     public end: vscode.Position = new vscode.Position(0, 0);

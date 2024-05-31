@@ -11,7 +11,13 @@ export class VariableDeclarationNode extends DeclarationNode
         super();
 
         this.name = variableName;
-        this.label = `${variableName}: ${variableType}`;
+        this.label = variableName;
+        this.description = variableType ? `: ${variableType}` : "";
+
+        if (isConst)
+        {
+            this.description += " " + this.readOnlyCharacter;
+        }
 
         this.start = start;
         this.end = end;
@@ -24,11 +30,6 @@ export class VariableDeclarationNode extends DeclarationNode
             light: this.variableItemLightIconFilePath,
             dark: this.variableItemDarkIconFilePath
         };
-
-        if (isExport)
-        {
-            this.label += " " + this.protectedImage;
-        }
     }
 
     // #endregion Constructors (1)

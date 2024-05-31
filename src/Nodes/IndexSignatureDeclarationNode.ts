@@ -11,7 +11,8 @@ export class IndexSignatureDeclarationNode extends DeclarationNode
         super();
 
         this.name = indexType;
-        this.label = `index: ${indexType}`;
+        this.label = "index";
+        this.description = indexType ? `: ${indexType}` : "";
 
         this.start = start;
         this.end = end;

@@ -12,7 +12,9 @@ export class MethodSignatureDeclarationNode extends DeclarationNode
         super();
 
         this.name = methodName;
-        this.label = `${methodName} (${parameters.map(x => `${x.name}: ${x.type}`).join(", ")}): ${returnType}`;
+        this.label = methodName;
+        this.description = `(${parameters.map(x => `${x.name}: ${x.type}`).join(", ")})${(returnType ? `: ${returnType}` : "")}`;
+
 
         this.start = start;
         this.end = end;

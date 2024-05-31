@@ -11,7 +11,8 @@ export class PropertySignatureDeclarationNode extends DeclarationNode
         super();
 
         this.name = propertyName;
-        this.label = `${propertyName}: ${propertyType}`;
+        this.label = propertyName;
+        this.description = propertyType ? `: ${propertyType}` : "";
 
         this.start = start;
         this.end = end;
@@ -20,20 +21,10 @@ export class PropertySignatureDeclarationNode extends DeclarationNode
         this.children = children;
         this.command = command;
 
-        if (isReadOnly)
-        {
-            this.iconPath = {
-                light: this.constantLightIconFilePath,
-                dark: this.constantDarkIconFilePath
-            };
-        }
-        else
-        {
-            this.iconPath = {
-                light: this.propertyLightIconFilePath,
-                dark: this.propertyDarkIconFilePath
-            };
-        }
+        this.iconPath = {
+            light: this.propertyLightIconFilePath,
+            dark: this.propertyDarkIconFilePath
+        };
     }
 
     // #endregion Constructors (1)

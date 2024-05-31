@@ -203,9 +203,10 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         const end = this.editor!.document.positionAt(node.getEnd());
         const accessModifier = accessorName.startsWith("#") || hasKeyword(node, ts.SyntaxKind.PrivateKeyword) ? "private" : (hasKeyword(node, ts.SyntaxKind.ProtectedKeyword) ? "protected" : "public");
         const isStatic = hasKeyword(node, ts.SyntaxKind.StaticKeyword);
+        const isAbstract = hasKeyword(node, ts.SyntaxKind.AbstractKeyword);
 
 
-        return new AccessorDeclarationNode(accessorName, accessorType, accessModifier, isStatic, parentElement, childElements, this.getCommand(position), start, end);
+        return new AccessorDeclarationNode(accessorName, accessorType, accessModifier, isStatic, isAbstract, parentElement, childElements, this.getGotoCommand(position), start, end);
     }
 
     private getClassDeclarationNode(sourceFile: ts.SourceFile, node: ts.ClassDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
@@ -220,10 +221,10 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         const start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
         const end = this.editor!.document.positionAt(node.getEnd());
 
-        return new ClassDeclarationNode(className, isExport, isAbstract, parentElement, childElements, this.getCommand(position), start, end);
+        return new ClassDeclarationNode(className, isExport, isAbstract, parentElement, childElements, this.getGotoCommand(position), start, end);
     }
 
-    private getCommand(position: ts.LineAndCharacter)
+    private getGotoCommand(position: ts.LineAndCharacter)
     {
         const commandName = "tsce.goto";
         const position2 = new vscode.Position(position.line, position.character);
@@ -239,16 +240,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
     private getConstructorDeclarationNode(sourceFile: ts.SourceFile, node: ts.ConstructorDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
     {
         let position = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile, false));
-        let parameterName: string;
-        let parameterType: string;
         let parameters: Parameter[] = [];
-        let parameterPosition: ts.LineAndCharacter;
-        let parameterAccessModifier: ts.Modifier | undefined = undefined;
-        let parameterIsStatic: boolean;
-        let parameterIsConst: boolean;
-        let parameterStart: vscode.Position;
-        let parameterEnd: vscode.Position;
-        let parameterIsReadOnly: boolean;
         let constructorNode: ConstructorDeclarationNode;
         let properties: PropertyDeclarationNode[] = [];
         let start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
@@ -259,19 +251,18 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
             if (parameter.modifiers &&
                 parameter.modifiers.length > 0)
             {
-                parameterName = (<ts.Identifier>parameter.name).escapedText.toString();
-                parameterType = parameter.type ? parameter.type.getText(sourceFile) : "any";
-                parameterPosition = sourceFile.getLineAndCharacterOfPosition(parameter.name.getStart(sourceFile, false));
-                parameterAccessModifier = parameter.modifiers?.find((x) => x.kind == ts.SyntaxKind.PublicKeyword || x.kind == ts.SyntaxKind.ProtectedKeyword || x.kind == ts.SyntaxKind.PrivateKeyword) as ts.Modifier;
-                parameterIsStatic = parameter.modifiers?.find((x) => x.kind == ts.SyntaxKind.StaticKeyword) != null;
-                parameterIsConst = parameter.modifiers?.find((x) => x.kind == ts.SyntaxKind.ConstKeyword) != null;
-                parameterIsReadOnly = parameter.modifiers?.find((x) => x.kind == ts.SyntaxKind.ReadonlyKeyword) != null;
-                parameterStart = this.editor!.document.positionAt(parameter.getStart(sourceFile, false));
-                parameterEnd = this.editor!.document.positionAt(parameter.getEnd());
+                const parameterName = (<ts.Identifier>parameter.name).escapedText.toString();
+                const parameterType = parameter.type ? parameter.type.getText(sourceFile) : "any";
+                const parameterPosition = sourceFile.getLineAndCharacterOfPosition(parameter.name.getStart(sourceFile, false));
+                const parameterAccessModifier = parameter.modifiers?.find((x) => x.kind == ts.SyntaxKind.PublicKeyword || x.kind == ts.SyntaxKind.ProtectedKeyword || x.kind == ts.SyntaxKind.PrivateKeyword) as ts.Modifier;
+                const parameterIsReadOnly = parameter.modifiers?.find((x) => x.kind == ts.SyntaxKind.ReadonlyKeyword) != null;
+                const parameterIsArrowFunction = typeof parameter.initializer !== "undefined" && parameter.initializer.kind === ts.SyntaxKind.ArrowFunction;
+                const parameterStart = this.editor!.document.positionAt(parameter.getStart(sourceFile, false));
+                const parameterEnd = this.editor!.document.positionAt(parameter.getEnd());
 
                 if (parameterAccessModifier)
                 {
-                    properties.push(new PropertyDeclarationNode(parameterName, parameterType, parameterAccessModifier.getText(sourceFile), parameterIsStatic, parameterIsConst || parameterIsReadOnly, parameterIsStatic, parentElement, [], this.getCommand(parameterPosition), parameterStart, parameterEnd));
+                    properties.push(new PropertyDeclarationNode(parameterName, parameterType, parameterAccessModifier.getText(sourceFile), false, false, parameterIsReadOnly, parameterIsArrowFunction, parentElement, [], this.getGotoCommand(parameterPosition), parameterStart, parameterEnd));
                 }
                 else
                 {
@@ -280,7 +271,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
             }
         }
 
-        constructorNode = new ConstructorDeclarationNode(parameters, parentElement, childElements, this.getCommand(position), start, end);
+        constructorNode = new ConstructorDeclarationNode(parameters, parentElement, childElements, this.getGotoCommand(position), start, end);
 
         return [constructorNode].concat(properties);
     }
@@ -296,7 +287,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         const start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
         const end = this.editor!.document.positionAt(node.getEnd());
 
-        return new EnumDeclarationNode(enumName, isExport, parentElement, childElements, this.getCommand(position), start, end);
+        return new EnumDeclarationNode(enumName, isExport, parentElement, childElements, this.getGotoCommand(position), start, end);
     }
 
     private getEnumMemberDeclarationNode(sourceFile: ts.SourceFile, node: ts.EnumMember, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
@@ -307,7 +298,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         const start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
         const end = this.editor!.document.positionAt(node.getEnd());
 
-        return new EnumMemberDeclarationNode(enumMemberName, parentElement, childElements, this.getCommand(position), start, end);
+        return new EnumMemberDeclarationNode(enumMemberName, parentElement, childElements, this.getGotoCommand(position), start, end);
     }
 
     private getFunctionDeclarationNode(sourceFile: ts.SourceFile, node: ts.FunctionDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
@@ -338,7 +329,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
             }
         }
 
-        return new FunctionDeclarationNode(functionName, isExport, parameters, returnType, parentElement, childElements, this.getCommand(position), start, end);
+        return new FunctionDeclarationNode(functionName, isExport, parameters, returnType, parentElement, childElements, this.getGotoCommand(position), start, end);
     }
 
     private getGetterDeclarationNode(sourceFile: ts.SourceFile, node: ts.GetAccessorDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
@@ -353,8 +344,9 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         let end = this.editor!.document.positionAt(node.getEnd());
         let accessModifier = getterName.startsWith("#") || hasKeyword(node, ts.SyntaxKind.PrivateKeyword) ? "private" : (hasKeyword(node, ts.SyntaxKind.ProtectedKeyword) ? "protected" : "public");
         let isStatic = hasKeyword(node, ts.SyntaxKind.StaticKeyword);
+        const isAbstract = hasKeyword(node, ts.SyntaxKind.AbstractKeyword);
 
-        return new GetterDeclarationNode(getterName, getterType, accessModifier, isStatic, parentElement, childElements, this.getCommand(position), start, end);
+        return new GetterDeclarationNode(getterName, getterType, accessModifier, isStatic, isAbstract, parentElement, childElements, this.getGotoCommand(position), start, end);
     }
 
     private getIndexSignatureDeclarationNode(sourceFile: ts.SourceFile, node: ts.IndexSignatureDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
@@ -372,7 +364,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
             isStatic = node.modifiers?.find((x) => x.kind == ts.SyntaxKind.StaticKeyword) != null;
         }
 
-        return new IndexSignatureDeclarationNode(indexType, isStatic, indexIsReadOnly, parentElement, childElements, this.getCommand(position), start, end);
+        return new IndexSignatureDeclarationNode(indexType, isStatic, indexIsReadOnly, parentElement, childElements, this.getGotoCommand(position), start, end);
     }
 
     private getInterfaceDeclarationNode(sourceFile: ts.SourceFile, node: ts.InterfaceDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
@@ -387,7 +379,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         const isExport = hasKeyword(node, ts.SyntaxKind.ExportKeyword);
 
 
-        return new InterfaceDeclarationNode(interfaceName, isExport, parentElement, childElements, this.getCommand(position), start, end);
+        return new InterfaceDeclarationNode(interfaceName, isExport, parentElement, childElements, this.getGotoCommand(position), start, end);
     }
 
     private getMethodDeclarationNode(sourceFile: ts.SourceFile, node: ts.MethodDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
@@ -428,7 +420,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
             returnType = node.type.getText(sourceFile);
         }
 
-        return new MethodDeclarationNode(methodName, accessModifier, isStatic, isAbstract, isAsync, parameters, returnType, parentElement, childElements, this.getCommand(position), start, end);
+        return new MethodDeclarationNode(methodName, accessModifier, isStatic, isAbstract, isAsync, parameters, returnType, parentElement, childElements, this.getGotoCommand(position), start, end);
     }
 
     private getMethodSignatureDeclarationNode(sourceFile: ts.SourceFile, node: ts.MethodSignature, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
@@ -463,7 +455,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
             returnType = node.type.getText(sourceFile);
         }
 
-        return new MethodSignatureDeclarationNode(methodName, parameters, returnType, parentElement, childElements, this.getCommand(position), start, end);
+        return new MethodSignatureDeclarationNode(methodName, parameters, returnType, parentElement, childElements, this.getGotoCommand(position), start, end);
     }
 
     private getOrder(declarationNode: DeclarationNode)
@@ -517,20 +509,15 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         // class member types
         if (declarationNode instanceof PropertyDeclarationNode)
         {
-            let propertyDeclaration = <PropertyDeclarationNode>declarationNode;
-
-            if (propertyDeclaration.isReadOnly) 
-            {
-                return 401;
-            }
-            else if (propertyDeclaration.accessModifier == "private")
-            {
-                return 402;
-            }
-            else
-            {
-                return 403;
-            }
+            return 401;
+        }
+        else if (declarationNode instanceof ConstructorDeclarationNode)
+        {
+            return 402;
+        }
+        else if (declarationNode instanceof StaticCodeBlockDeclarationNode)
+        {
+            return 403;
         }
         else if (declarationNode instanceof AccessorDeclarationNode)
         {
@@ -542,19 +529,11 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         }
         else if (declarationNode instanceof SetterDeclarationNode)
         {
-            return 405;
-        }
-        else if (declarationNode instanceof ConstructorDeclarationNode)
-        {
             return 406;
-        }
-        else if (declarationNode instanceof StaticCodeBlockDeclarationNode)
-        {
-            return 407;
         }
         else if (declarationNode instanceof MethodDeclarationNode)
         {
-            return 408;
+            return 407;
         }
 
         // empty
@@ -575,13 +554,15 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         let propertyName = identifier.escapedText.toString();
         let propertyType = node.type ? node.type.getText(sourceFile) : "any";
         let accessModifier = propertyName.startsWith("#") || hasKeyword(node, ts.SyntaxKind.PrivateKeyword) ? "private" : (hasKeyword(node, ts.SyntaxKind.ProtectedKeyword) ? "protected" : "public");
-        let isStatic = hasKeyword(node, ts.SyntaxKind.StaticKeyword);
-        let isReadOnly = hasKeyword(node, ts.SyntaxKind.ReadonlyKeyword);
-        let isArrowFunction = typeof node.initializer !== "undefined" && node.initializer.kind === ts.SyntaxKind.ArrowFunction;
         let start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
         let end = this.editor!.document.positionAt(node.getEnd());
+        let isStatic = hasKeyword(node, ts.SyntaxKind.StaticKeyword);
+        let isReadOnly = hasKeyword(node, ts.SyntaxKind.ReadonlyKeyword);
+        const isAbstract = hasKeyword(node, ts.SyntaxKind.AbstractKeyword);
 
-        return new PropertyDeclarationNode(propertyName, propertyType, accessModifier, isStatic, isReadOnly, isArrowFunction, parentElement, childElements, this.getCommand(position), start, end);
+        let isArrowFunction = typeof node.initializer !== "undefined" && node.initializer.kind === ts.SyntaxKind.ArrowFunction;
+
+        return new PropertyDeclarationNode(propertyName, propertyType, accessModifier, isStatic, isAbstract, isReadOnly, isArrowFunction, parentElement, childElements, this.getGotoCommand(position), start, end);
     }
 
     private getPropertySignatureDeclarationNode(sourceFile: ts.SourceFile, node: ts.PropertySignature, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
@@ -596,7 +577,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         const start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
         const end = this.editor!.document.positionAt(node.getEnd());
 
-        return new PropertySignatureDeclarationNode(propertyName, propertyType, isReadOnly, parentElement, childElements, this.getCommand(position), start, end);
+        return new PropertySignatureDeclarationNode(propertyName, propertyType, isReadOnly, parentElement, childElements, this.getGotoCommand(position), start, end);
     }
 
     private getSetterDeclarationNode(sourceFile: ts.SourceFile, node: ts.SetAccessorDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
@@ -611,8 +592,9 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         const end = this.editor!.document.positionAt(node.getEnd());
         const accessModifier = setterName.startsWith("#") || hasKeyword(node, ts.SyntaxKind.PrivateKeyword) ? "private" : (hasKeyword(node, ts.SyntaxKind.ProtectedKeyword) ? "protected" : "public");
         const isStatic = hasKeyword(node, ts.SyntaxKind.StaticKeyword);
+        const isAbstract = hasKeyword(node, ts.SyntaxKind.AbstractKeyword);
 
-        return new SetterDeclarationNode(setterName, setterType, accessModifier, isStatic, parentElement, childElements, this.getCommand(position), start, end);
+        return new SetterDeclarationNode(setterName, setterType, accessModifier, isStatic, isAbstract, parentElement, childElements, this.getGotoCommand(position), start, end);
     }
 
     private getStaticBlockDeclarationNode(sourceFile: ts.SourceFile, node: ts.ClassStaticBlockDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
@@ -621,7 +603,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         const start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
         const end = this.editor!.document.positionAt(node.getEnd());
 
-        return new StaticCodeBlockDeclarationNode(parentElement, childElements, this.getCommand(position), start, end);
+        return new StaticCodeBlockDeclarationNode(parentElement, childElements, this.getGotoCommand(position), start, end);
     }
 
     private getTypeAliasDeclarationNode(sourceFile: ts.SourceFile, node: ts.TypeAliasDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
@@ -632,7 +614,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         const start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
         const end = this.editor!.document.positionAt(node.getEnd());
 
-        return new TypeAliasDeclarationNode(typeAliasName, parentElement, childElements, this.getCommand(position), start, end);
+        return new TypeAliasDeclarationNode(typeAliasName, parentElement, childElements, this.getGotoCommand(position), start, end);
     }
 
     private getVariableDeclarationNode(sourceFile: ts.SourceFile, node: ts.VariableStatement, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
@@ -651,7 +633,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
             const start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
             const end = this.editor!.document.positionAt(node.getEnd());
 
-            variableDeclarationNodes.push(new VariableDeclarationNode(variableName, variableType, isExport, isConst, parentElement, childElements, this.getCommand(position), start, end));
+            variableDeclarationNodes.push(new VariableDeclarationNode(variableName, variableType, isExport, isConst, parentElement, childElements, this.getGotoCommand(position), start, end));
         }
 
         return variableDeclarationNodes;

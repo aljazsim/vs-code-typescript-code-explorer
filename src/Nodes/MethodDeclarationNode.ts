@@ -12,11 +12,12 @@ export class MethodDeclarationNode extends DeclarationNode
         super();
 
         this.name = methodName;
-        this.label = `${methodName} (${parameters.map(x => `${x.name}: ${x.type}`).join(", ")})`;
+        this.label = methodName;
+        this.description = `(${parameters.map(x => `${x.name}: ${x.type}`).join(", ")})${(returnType ? `: ${returnType}` : ": void")}`;
 
-        if (returnType)
+        if (isAsync)
         {
-            this.label = `${this.label}: ${returnType}`;
+            this.description += " " + this.asyncCharacter;
         }
 
         this.start = start;
@@ -26,24 +27,26 @@ export class MethodDeclarationNode extends DeclarationNode
         this.children = children;
         this.command = command;
 
-        this.iconPath = {
-            light: this.methodLightIconFilePath,
-            dark: this.methodDarkIconFilePath
-        };
-
-        if (accessModifier == "protected")
+        if (accessModifier === "private")
         {
-            this.label += " " + this.protectedImage;
+            this.iconPath = {
+                light: isStatic ? this.methodPrivateStatic : this.methodPrivate,
+                dark: isStatic ? this.methodPrivateStatic : this.methodPrivate
+            };
         }
-
-        if (accessModifier == "private")
+        else if (accessModifier === "protected")
         {
-            this.label += " " + this.privateImage;
+            this.iconPath = {
+                light: isStatic ? this.methodProtectedStatic : this.methodProtected,
+                dark: isStatic ? this.methodProtectedStatic : this.methodProtected
+            };
         }
-
-        if (isAbstract)
+        else if (accessModifier === "public")
         {
-            this.label += " " + this.abstractImage;
+            this.iconPath = {
+                light: isStatic ? this.methodPublicStatic : this.methodPublic,
+                dark: isStatic ? this.methodPublicStatic : this.methodPublic
+            };
         }
     }
 

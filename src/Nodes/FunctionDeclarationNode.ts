@@ -12,7 +12,8 @@ export class FunctionDeclarationNode extends DeclarationNode
         super();
 
         this.name = functionName;
-        this.label = `${functionName} (${parameters.map(x => `${x.name}: ${x.type}`).join(", ")}): ${returnType}`;
+        this.label = functionName;
+        this.description = `(${parameters.map(x => `${x.name}: ${x.type}`).join(", ")})${(returnType ? `: ${returnType}` : "")}`;
 
         this.start = start;
         this.end = end;
@@ -28,7 +29,6 @@ export class FunctionDeclarationNode extends DeclarationNode
 
         if (!isExport)
         {
-            this.label += " " + this.privateImage;
         }
     }
 

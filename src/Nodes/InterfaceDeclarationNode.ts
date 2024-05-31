@@ -27,7 +27,6 @@ export class InterfaceDeclarationNode extends DeclarationNode
 
         if (!isExport)
         {
-            this.label += " " + this.privateImage;
         }
     }
 

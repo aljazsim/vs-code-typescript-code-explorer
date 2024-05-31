@@ -12,6 +12,7 @@ export class ClassDeclarationNode extends DeclarationNode
 
         this.name = className;
         this.label = className;
+        this.description = isAbstract ? "abstract" : "";
 
         this.start = start;
         this.end = end;
@@ -27,7 +28,6 @@ export class ClassDeclarationNode extends DeclarationNode
 
         if (!isExport)
         {
-            this.label += " " + this.privateImage;
         }
     }
 

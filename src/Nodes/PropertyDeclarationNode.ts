@@ -6,12 +6,13 @@ export class PropertyDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(propertyName: string, propertyType: string, public accessModifier: string, public isStatic: boolean, public readonly isReadOnly: boolean, public readonly isArrowFunction: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(propertyName: string, propertyType: string, public accessModifier: string, public isStatic: boolean, public isAbstract: boolean, public readonly isReadOnly: boolean, public readonly isArrowFunction: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 
         this.name = propertyName;
-        this.label = `${propertyName}: ${propertyType}`;
+        this.label = propertyName;
+        this.description = propertyType ? `: ${propertyType}` : ": any";
 
         this.start = start;
         this.end = end;
@@ -19,43 +20,27 @@ export class PropertyDeclarationNode extends DeclarationNode
         this.parent = parent;
         this.children = children;
         this.command = command;
+        this.contextValue = isReadOnly ? "readonly" : undefined;
 
-        if (isReadOnly)
+        if (accessModifier === "private")
         {
             this.iconPath = {
-                light: this.constantLightIconFilePath,
-                dark: this.constantDarkIconFilePath
+                light: isStatic ? this.propertyPrivateStatic : this.propertyPrivate,
+                dark: isStatic ? this.propertyPrivateStatic : this.propertyPrivate
             };
-
-
-            if (accessModifier == "protected")
-            {
-                this.label += " " + this.protectedImage;
-            }
-
-            if (accessModifier == "private")
-            {
-                this.label += " " + this.privateImage;
-            }
         }
-        else if (accessModifier == "public" || accessModifier == "protected")
+        else if (accessModifier === "protected")
         {
             this.iconPath = {
-                light: this.propertyLightIconFilePath,
-                dark: this.propertyDarkIconFilePath
+                light: isStatic ? this.propertyProtectedStatic : this.propertyProtected,
+                dark: isStatic ? this.propertyProtectedStatic : this.propertyProtected
             };
-
-
-            if (accessModifier == "protected")
-            {
-                this.label += " " + this.protectedImage;
-            }
         }
-        else
+        else if (accessModifier === "public")
         {
             this.iconPath = {
-                light: this.fieldItemLightIconFilePath,
-                dark: this.fieldItemDarkIconFilePath
+                light: isStatic ? this.propertyPublicStatic : this.propertyPublic,
+                dark: isStatic ? this.propertyPublicStatic : this.propertyPublic
             };
         }
     }

@@ -12,7 +12,8 @@ export class ConstructorDeclarationNode extends DeclarationNode
         super();
 
         this.name = "constructor";
-        this.label = `${this.name} (${parameters.map(x => `${x.name}: ${x.type}`).join(", ")})`;
+        this.label = this.name;
+        this.description = `(${parameters.map(x => `${x.name}: ${x.type}`).join(", ")})`;
 
         this.start = start;
         this.end = end;
@@ -22,9 +23,10 @@ export class ConstructorDeclarationNode extends DeclarationNode
         this.command = command;
 
         this.iconPath = {
-            light: this.constructorLightIconFilePath,
-            dark: this.constructorDarkIconFilePath
+            light: this.constructorPublic,
+            dark: this.constructorPublic
         };
+
     }
 
     // #endregion Constructors (1)

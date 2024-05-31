@@ -27,7 +27,6 @@ export class EnumDeclarationNode extends DeclarationNode
 
         if (!isExport)
         {
-            this.label += " " + this.privateImage;
         }
     }
 

@@ -6,12 +6,13 @@ export class GetterDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(getterName: string, getterType: string, public accessModifier: string, public isStatic: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(getterName: string, getterType: string, public accessModifier: string, public isStatic: boolean, public isAbstract: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 
         this.name = getterName;
-        this.label = `${getterName}: ${getterType}`;
+        this.label = getterName;
+        this.description = getterType ? `: ${getterType}` : ": any";
 
         this.start = start;
         this.end = end;
@@ -20,19 +21,26 @@ export class GetterDeclarationNode extends DeclarationNode
         this.children = children;
         this.command = command;
 
-        this.iconPath = {
-            light: this.getterLightIconFilePath,
-            dark: this.getterDarkIconFilePath
-        };
-
-        if (accessModifier == "protected")
+        if (accessModifier === "private")
         {
-            this.label += " " + this.protectedImage;
+            this.iconPath = {
+                light: isStatic ? this.propertyPrivateStatic : this.propertyPrivate,
+                dark: isStatic ? this.propertyPrivateStatic : this.propertyPrivate
+            };
         }
-
-        if (accessModifier == "private")
+        else if (accessModifier === "protected")
         {
-            this.label += " " + this.privateImage;
+            this.iconPath = {
+                light: isStatic ? this.propertyProtectedStatic : this.propertyProtected,
+                dark: isStatic ? this.propertyProtectedStatic : this.propertyProtected
+            };
+        }
+        else if (accessModifier === "public")
+        {
+            this.iconPath = {
+                light: isStatic ? this.propertyPublicStatic : this.propertyPublic,
+                dark: isStatic ? this.propertyPublicStatic : this.propertyPublic
+            };
         }
     }
 

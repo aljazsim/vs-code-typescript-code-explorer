@@ -74,6 +74,13 @@ export function activate(context: vscode.ExtensionContext)
         selecting = false;
     });
 
+    vscode.commands.registerCommand('tsce.readonly', (editor: vscode.TextEditor, position: vscode.Position) =>
+    {
+        console.log("----------------------------------------------------");
+        console.log("readonly");
+        console.log("----------------------------------------------------");
+    });
+
     context.subscriptions.push(vscode.commands.registerCommand('tsce.showCodeExplorer', () =>
     {
         // show code explorer requested -> show view
