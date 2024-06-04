@@ -1,26 +1,12 @@
 import * as ts from "typescript";
 import * as vscode from "vscode";
-import { ClassDeclarationNode } from "./Nodes/ClassDeclarationNode";
-import { ConstructorDeclarationNode } from "./Nodes/ConstructorDeclarationNode";
+
+import { compareNodes, orderByNodeType } from "./helpers/node-order-helper";
+import { getAccessorDeclarationNode, getClassDeclarationNode, getConstructorDeclarationNode, getEnumDeclarationNode, getEnumMemberDeclarationNode, getFunctionDeclarationNode, getGetterDeclarationNode, getIndexSignatureDeclarationNode, getInterfaceDeclarationNode, getMethodDeclarationNode, getMethodSignatureDeclarationNode, getPropertyDeclarationNode, getPropertySignatureDeclarationNode, getSetterDeclarationNode, getStaticBlockDeclarationNode, getTypeAliasDeclarationNode, getVariableDeclarationNode } from "./helpers/node-helper";
+
 import { DeclarationNode } from "./Nodes/DeclarationNode";
 import { EmptyDeclarationNode } from "./Nodes/EmptyDeclarationNode";
-import { EnumDeclarationNode } from "./Nodes/EnumDeclarationNode";
-import { EnumMemberDeclarationNode } from "./Nodes/EnumMemberDeclarationNode";
-import { FunctionDeclarationNode } from "./Nodes/FunctionDeclarationNode";
-import { GetterDeclarationNode } from "./Nodes/GetterDeclarationNode";
-import { IndexSignatureDeclarationNode } from "./Nodes/IndexSignatureDeclarationNode";
-import { InterfaceDeclarationNode } from "./Nodes/InterfaceDeclarationNode";
-import { MethodDeclarationNode } from "./Nodes/MethodDeclarationNode";
-import { MethodSignatureDeclarationNode } from "./Nodes/MethodSignatureDeclarationNode";
-import { Parameter } from "./Nodes/Parameter";
-import { PropertyDeclarationNode } from "./Nodes/PropertyDeclarationNode";
-import { PropertySignatureDeclarationNode } from "./Nodes/PropertySignatureDeclarationNode";
 import { ProviderResult } from "vscode";
-import { SetterDeclarationNode } from "./Nodes/SetterDeclarationNode";
-import { TypeAliasDeclarationNode } from "./Nodes/TypeAliasDeclarationNode";
-import { AccessorDeclarationNode } from "./Nodes/AccessorDeclarationNode";
-import { StaticCodeBlockDeclarationNode } from "./Nodes/StaticCodeBlockDeclarationNode";
-import { VariableDeclarationNode } from "./Nodes/VariableDeclarationNode";
 
 export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<DeclarationNode>
 {
@@ -51,35 +37,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
 
     // #endregion Public Getters And Setters (1)
 
-    // #region Public Methods (6)
-
-    public findNode(nodes: DeclarationNode[], positionStart: vscode.Position, positionEnd: vscode.Position): DeclarationNode | null
-    {
-        let result: DeclarationNode | null;
-
-        // try to find a match among the child nodes
-        for (let node of nodes)
-        {
-            result = this.findNode(node.children, positionStart, positionEnd);
-
-            if (result)
-            {
-                return result;
-            }
-        }
-
-        // try to find a match among the nodes
-        for (let node of nodes)
-        {
-            if (node.start.isBeforeOrEqual(positionStart) &&
-                node.end.isAfterOrEqual(positionEnd))
-            {
-                return node;
-            }
-        }
-
-        return null;
-    }
+    // #region Public Methods (5)
 
     public getChildren(element?: DeclarationNode): Thenable<DeclarationNode[]>
     {
@@ -122,7 +80,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
 
         if (this.editor)
         {
-            this.rootElements = this.analyzeSyntaxTree(this.editor!.document.getText());
+            this.rootElements = this.analyzeSyntaxTree(this.editor, this.editor!.document.getText());
         }
         else
         {
@@ -132,11 +90,11 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         this._onDidChangeTreeData.fire(undefined);
     }
 
-    // #endregion Public Methods (6)
+    // #endregion Public Methods (5)
 
-    // #region Private Methods (22)
+    // #region Private Methods (4)
 
-    private analyzeSyntaxTree(sourceCode: string)
+    private analyzeSyntaxTree(editor: vscode.TextEditor, sourceCode: string)
     {
         const rootElements: DeclarationNode[] = [];
         const sourceFile = ts.createSourceFile("temp", sourceCode, ts.ScriptTarget.Latest, false, ts.ScriptKind.TS);
@@ -146,7 +104,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         // analyze ast
         for (let node of sourceFile.getChildren(sourceFile))
         {
-            for (let rootElement of this.visitSyntaxTree(node, sourceFile, null))
+            for (let rootElement of this.visitSyntaxTree(editor, node, sourceFile, null))
             {
                 rootElements.push(rootElement);
             }
@@ -158,491 +116,46 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
             rootElements.push(new EmptyDeclarationNode());
         }
 
-        return rootElements.sort((a, b) => this.compare(a, b));
+        return this.order(rootElements, orderByNodeType);
     }
 
-    private compare(a: DeclarationNode, b: DeclarationNode)
+    private findNode(nodes: DeclarationNode[], positionStart: vscode.Position, positionEnd: vscode.Position): DeclarationNode | null
     {
-        let valueA = this.getOrder(a);
-        let valueB = this.getOrder(b);
+        let result: DeclarationNode | null;
 
-        if (valueA > valueB)
+        // try to find a match among the child nodes
+        for (let node of nodes)
         {
-            return 1;
-        }
-        else if (valueA < valueB)
-        {
-            return -1;
-        }
-        else
-        {
-            if (a.label!.toString().toLowerCase() > b.label!.toString().toLowerCase())
+            result = this.findNode(node.children, positionStart, positionEnd);
+
+            if (result)
             {
-                return 1;
-            }
-            else if (a.label!.toString().toLowerCase() < b.label!.toString().toLowerCase())
-            {
-                return -1;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-    }
-
-    private getAccessorDeclarationNode(sourceFile: ts.SourceFile, node: ts.AccessorDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
-    {
-        const hasKeyword = (node: ts.AccessorDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
-
-        const identifier = <ts.Identifier>node.name;
-        const position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
-        const accessorName = identifier.escapedText.toString();
-        const accessorType = node.type ? node.type.getText(sourceFile) : "any";
-        const start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
-        const end = this.editor!.document.positionAt(node.getEnd());
-        const accessModifier = accessorName.startsWith("#") || hasKeyword(node, ts.SyntaxKind.PrivateKeyword) ? "private" : (hasKeyword(node, ts.SyntaxKind.ProtectedKeyword) ? "protected" : "public");
-        const isStatic = hasKeyword(node, ts.SyntaxKind.StaticKeyword);
-        const isAbstract = hasKeyword(node, ts.SyntaxKind.AbstractKeyword);
-
-
-        return new AccessorDeclarationNode(accessorName, accessorType, accessModifier, isStatic, isAbstract, parentElement, childElements, this.getGotoCommand(position), start, end);
-    }
-
-    private getClassDeclarationNode(sourceFile: ts.SourceFile, node: ts.ClassDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
-    {
-        const hasKeyword = (node: ts.ClassDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
-
-        const identifier = <ts.Identifier>node.name;
-        const position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
-        const className = identifier.escapedText.toString();
-        const isExport = hasKeyword(node, ts.SyntaxKind.ExportKeyword);
-        const isAbstract = hasKeyword(node, ts.SyntaxKind.AbstractKeyword);
-        const start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
-        const end = this.editor!.document.positionAt(node.getEnd());
-
-        return new ClassDeclarationNode(className, isExport, isAbstract, parentElement, childElements, this.getGotoCommand(position), start, end);
-    }
-
-    private getGotoCommand(position: ts.LineAndCharacter)
-    {
-        const commandName = "tsce.goto";
-        const position2 = new vscode.Position(position.line, position.character);
-        const command = {
-            command: commandName,
-            title: '',
-            arguments: [this.editor, position2]
-        };
-
-        return command;
-    }
-
-    private getConstructorDeclarationNode(sourceFile: ts.SourceFile, node: ts.ConstructorDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
-    {
-        let position = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile, false));
-        let parameters: Parameter[] = [];
-        let constructorNode: ConstructorDeclarationNode;
-        let properties: PropertyDeclarationNode[] = [];
-        let start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
-        let end = this.editor!.document.positionAt(node.getEnd());
-
-        for (const parameter of node.parameters)
-        {
-            if (parameter.modifiers &&
-                parameter.modifiers.length > 0)
-            {
-                const parameterName = (<ts.Identifier>parameter.name).escapedText.toString();
-                const parameterType = parameter.type ? parameter.type.getText(sourceFile) : "any";
-                const parameterPosition = sourceFile.getLineAndCharacterOfPosition(parameter.name.getStart(sourceFile, false));
-                const parameterAccessModifier = parameter.modifiers?.find((x) => x.kind == ts.SyntaxKind.PublicKeyword || x.kind == ts.SyntaxKind.ProtectedKeyword || x.kind == ts.SyntaxKind.PrivateKeyword) as ts.Modifier;
-                const parameterIsReadOnly = parameter.modifiers?.find((x) => x.kind == ts.SyntaxKind.ReadonlyKeyword) != null;
-                const parameterIsArrowFunction = typeof parameter.initializer !== "undefined" && parameter.initializer.kind === ts.SyntaxKind.ArrowFunction;
-                const parameterStart = this.editor!.document.positionAt(parameter.getStart(sourceFile, false));
-                const parameterEnd = this.editor!.document.positionAt(parameter.getEnd());
-
-                if (parameterAccessModifier)
-                {
-                    properties.push(new PropertyDeclarationNode(parameterName, parameterType, parameterAccessModifier.getText(sourceFile), false, false, parameterIsReadOnly, parameterIsArrowFunction, parentElement, [], this.getGotoCommand(parameterPosition), parameterStart, parameterEnd));
-                }
-                else
-                {
-                    parameters.push(new Parameter(parameterName, parameterType));
-                }
+                return result;
             }
         }
 
-        constructorNode = new ConstructorDeclarationNode(parameters, parentElement, childElements, this.getGotoCommand(position), start, end);
-
-        return [constructorNode].concat(properties);
-    }
-
-    private getEnumDeclarationNode(sourceFile: ts.SourceFile, node: ts.EnumDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
-    {
-        const hasKeyword = (node: ts.EnumDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
-
-        const identifier = <ts.Identifier>node.name;
-        const position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
-        const enumName = identifier.escapedText.toString();
-        const isExport = hasKeyword(node, ts.SyntaxKind.ExportKeyword);
-        const start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
-        const end = this.editor!.document.positionAt(node.getEnd());
-
-        return new EnumDeclarationNode(enumName, isExport, parentElement, childElements, this.getGotoCommand(position), start, end);
-    }
-
-    private getEnumMemberDeclarationNode(sourceFile: ts.SourceFile, node: ts.EnumMember, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
-    {
-        const identifier = <ts.Identifier>node.name;
-        const position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
-        const enumMemberName = identifier.escapedText.toString();
-        const start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
-        const end = this.editor!.document.positionAt(node.getEnd());
-
-        return new EnumMemberDeclarationNode(enumMemberName, parentElement, childElements, this.getGotoCommand(position), start, end);
-    }
-
-    private getFunctionDeclarationNode(sourceFile: ts.SourceFile, node: ts.FunctionDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
-    {
-        const hasKeyword = (node: ts.FunctionDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
-
-        const identifier = <ts.Identifier>node.name;
-        const position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
-        const functionName = identifier.escapedText.toString();
-        const parameters: Parameter[] = [];
-        const isExport = hasKeyword(node, ts.SyntaxKind.ExportKeyword);
-        const returnType = node.type?.getText(sourceFile) ?? null;
-        const start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
-        const end = this.editor!.document.positionAt(node.getEnd());
-
-        // function parameters
-        for (const parameter of node.parameters)
+        // try to find a match among the nodes
+        for (let node of nodes)
         {
-            const parameterName = (<ts.Identifier>parameter.name).escapedText.toString();
-
-            if (parameter.type)
+            if (node.start.isBeforeOrEqual(positionStart) &&
+                node.end.isAfterOrEqual(positionEnd))
             {
-                parameters.push(new Parameter(parameterName, parameter.type.getText(sourceFile)));
-            }
-            else
-            {
-                parameters.push(new Parameter(parameterName, "any"));
+                return node;
             }
         }
 
-        return new FunctionDeclarationNode(functionName, isExport, parameters, returnType, parentElement, childElements, this.getGotoCommand(position), start, end);
+        return null;
     }
 
-    private getGetterDeclarationNode(sourceFile: ts.SourceFile, node: ts.GetAccessorDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
+    private order(nodes: DeclarationNode[], orderBy: (node: DeclarationNode) => number)
     {
-        const hasKeyword = (node: ts.AccessorDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
+        nodes = nodes.sort((a, b) => compareNodes(a, b, orderBy));
+        nodes.forEach(n => this.order(n.children, orderBy));
 
-        let identifier = <ts.Identifier>node.name;
-        let position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
-        let getterName = identifier.escapedText.toString();
-        let getterType = node.type ? node.type.getText(sourceFile) : "any";
-        let start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
-        let end = this.editor!.document.positionAt(node.getEnd());
-        let accessModifier = getterName.startsWith("#") || hasKeyword(node, ts.SyntaxKind.PrivateKeyword) ? "private" : (hasKeyword(node, ts.SyntaxKind.ProtectedKeyword) ? "protected" : "public");
-        let isStatic = hasKeyword(node, ts.SyntaxKind.StaticKeyword);
-        const isAbstract = hasKeyword(node, ts.SyntaxKind.AbstractKeyword);
-
-        return new GetterDeclarationNode(getterName, getterType, accessModifier, isStatic, isAbstract, parentElement, childElements, this.getGotoCommand(position), start, end);
+        return nodes;
     }
 
-    private getIndexSignatureDeclarationNode(sourceFile: ts.SourceFile, node: ts.IndexSignatureDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
-    {
-        let position = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile, false));
-        let indexType = node.type ? node.type.getText(sourceFile) : "any";
-        let indexIsReadOnly = false;
-        let isStatic = false;
-        let start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
-        let end = this.editor!.document.positionAt(node.getEnd());
-
-        if (node.modifiers)
-        {
-            indexIsReadOnly = node.modifiers?.find((x) => x.kind == ts.SyntaxKind.ReadonlyKeyword) != null;
-            isStatic = node.modifiers?.find((x) => x.kind == ts.SyntaxKind.StaticKeyword) != null;
-        }
-
-        return new IndexSignatureDeclarationNode(indexType, isStatic, indexIsReadOnly, parentElement, childElements, this.getGotoCommand(position), start, end);
-    }
-
-    private getInterfaceDeclarationNode(sourceFile: ts.SourceFile, node: ts.InterfaceDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
-    {
-        const hasKeyword = (node: ts.InterfaceDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
-
-        const identifier = <ts.Identifier>node.name;
-        const position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
-        const interfaceName = identifier.escapedText.toString();
-        const start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
-        const end = this.editor!.document.positionAt(node.getEnd());
-        const isExport = hasKeyword(node, ts.SyntaxKind.ExportKeyword);
-
-
-        return new InterfaceDeclarationNode(interfaceName, isExport, parentElement, childElements, this.getGotoCommand(position), start, end);
-    }
-
-    private getMethodDeclarationNode(sourceFile: ts.SourceFile, node: ts.MethodDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
-    {
-        const hasKeyword = (node: ts.MethodDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
-
-        let identifier = <ts.Identifier>node.name;
-        let position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
-        let methodName = identifier.escapedText.toString();
-        let parameters: Parameter[] = [];
-        let parameterName;
-        let accessModifier = methodName.startsWith("#") || hasKeyword(node, ts.SyntaxKind.PrivateKeyword) ? "private" : (hasKeyword(node, ts.SyntaxKind.ProtectedKeyword) ? "protected" : "public");
-        let isAbstract = hasKeyword(node, ts.SyntaxKind.AbstractKeyword);
-        let isStatic = hasKeyword(node, ts.SyntaxKind.StaticKeyword);
-        let isAsync = hasKeyword(node, ts.SyntaxKind.AsyncKeyword);
-        let returnType: string | null = null;
-        let start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
-        let end = this.editor!.document.positionAt(node.getEnd());
-
-        // method parameters
-        for (const parameter of node.parameters)
-        {
-            parameterName = (<ts.Identifier>parameter.name).escapedText.toString();
-
-            if (parameter.type)
-            {
-                parameters.push(new Parameter(parameterName, parameter.type.getText(sourceFile)));
-            }
-            else
-            {
-                parameters.push(new Parameter(parameterName, "any"));
-            }
-        }
-
-        // method return type
-        if (node.type)
-        {
-            returnType = node.type.getText(sourceFile);
-        }
-
-        return new MethodDeclarationNode(methodName, accessModifier, isStatic, isAbstract, isAsync, parameters, returnType, parentElement, childElements, this.getGotoCommand(position), start, end);
-    }
-
-    private getMethodSignatureDeclarationNode(sourceFile: ts.SourceFile, node: ts.MethodSignature, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
-    {
-        let identifier = <ts.Identifier>node.name;
-        let position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
-        let methodName = identifier.escapedText.toString();
-        let parameters: Parameter[] = [];
-        let parameterName;
-        let returnType: string | null = null;
-        let start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
-        let end = this.editor!.document.positionAt(node.getEnd());
-
-        // method parameters
-        for (const parameter of node.parameters)
-        {
-            parameterName = (<ts.Identifier>parameter.name).escapedText.toString();
-
-            if (parameter.type)
-            {
-                parameters.push(new Parameter(parameterName, parameter.type.getText(sourceFile)));
-            }
-            else
-            {
-                parameters.push(new Parameter(parameterName, "any"));
-            }
-        }
-
-        // method return type
-        if (node.type)
-        {
-            returnType = node.type.getText(sourceFile);
-        }
-
-        return new MethodSignatureDeclarationNode(methodName, parameters, returnType, parentElement, childElements, this.getGotoCommand(position), start, end);
-    }
-
-    private getOrder(declarationNode: DeclarationNode)
-    {
-        // module member types
-        if (declarationNode instanceof EnumDeclarationNode)
-        {
-            return 101;
-        }
-        if (declarationNode instanceof InterfaceDeclarationNode)
-        {
-            return 102;
-        }
-        else if (declarationNode instanceof ClassDeclarationNode)
-        {
-            return 103;
-        }
-        else if (declarationNode instanceof TypeAliasDeclarationNode)
-        {
-            return 104;
-        }
-        else if (declarationNode instanceof VariableDeclarationNode)
-        {
-            return 105;
-        }
-        else if (declarationNode instanceof FunctionDeclarationNode)
-        {
-            return 106;
-        }
-
-        // interface / type alias member types
-        if (declarationNode instanceof PropertySignatureDeclarationNode)
-        {
-            return 201;
-        }
-        else if (declarationNode instanceof IndexSignatureDeclarationNode)
-        {
-            return 202;
-        }
-        else if (declarationNode instanceof MethodSignatureDeclarationNode)
-        {
-            return 203;
-        }
-
-        // enum member types
-        if (declarationNode instanceof EnumMemberDeclarationNode)
-        {
-            return 301;
-        }
-
-        // class member types
-        if (declarationNode instanceof PropertyDeclarationNode)
-        {
-            return 401;
-        }
-        else if (declarationNode instanceof ConstructorDeclarationNode)
-        {
-            return 402;
-        }
-        else if (declarationNode instanceof StaticCodeBlockDeclarationNode)
-        {
-            return 403;
-        }
-        else if (declarationNode instanceof AccessorDeclarationNode)
-        {
-            return 404;
-        }
-        else if (declarationNode instanceof GetterDeclarationNode)
-        {
-            return 405;
-        }
-        else if (declarationNode instanceof SetterDeclarationNode)
-        {
-            return 406;
-        }
-        else if (declarationNode instanceof MethodDeclarationNode)
-        {
-            return 407;
-        }
-
-        // empty
-        if (declarationNode instanceof EmptyDeclarationNode)
-        {
-            return 501;
-        }
-
-        return 601;
-    }
-
-    private getPropertyDeclarationNode(sourceFile: ts.SourceFile, node: ts.PropertyDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
-    {
-        const hasKeyword = (node: ts.PropertyDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
-
-        let identifier = <ts.Identifier>node.name;
-        let position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
-        let propertyName = identifier.escapedText.toString();
-        let propertyType = node.type ? node.type.getText(sourceFile) : "any";
-        let accessModifier = propertyName.startsWith("#") || hasKeyword(node, ts.SyntaxKind.PrivateKeyword) ? "private" : (hasKeyword(node, ts.SyntaxKind.ProtectedKeyword) ? "protected" : "public");
-        let start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
-        let end = this.editor!.document.positionAt(node.getEnd());
-        let isStatic = hasKeyword(node, ts.SyntaxKind.StaticKeyword);
-        let isReadOnly = hasKeyword(node, ts.SyntaxKind.ReadonlyKeyword);
-        const isAbstract = hasKeyword(node, ts.SyntaxKind.AbstractKeyword);
-
-        let isArrowFunction = typeof node.initializer !== "undefined" && node.initializer.kind === ts.SyntaxKind.ArrowFunction;
-
-        return new PropertyDeclarationNode(propertyName, propertyType, accessModifier, isStatic, isAbstract, isReadOnly, isArrowFunction, parentElement, childElements, this.getGotoCommand(position), start, end);
-    }
-
-    private getPropertySignatureDeclarationNode(sourceFile: ts.SourceFile, node: ts.PropertySignature, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
-    {
-        const hasKeyword = (node: ts.PropertySignature, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
-
-        const identifier = <ts.Identifier>node.name;
-        const position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
-        const propertyName = identifier.escapedText.toString();
-        const propertyType = node.type ? node.type.getText(sourceFile) : "any";
-        const isReadOnly = hasKeyword(node, ts.SyntaxKind.ReadonlyKeyword);
-        const start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
-        const end = this.editor!.document.positionAt(node.getEnd());
-
-        return new PropertySignatureDeclarationNode(propertyName, propertyType, isReadOnly, parentElement, childElements, this.getGotoCommand(position), start, end);
-    }
-
-    private getSetterDeclarationNode(sourceFile: ts.SourceFile, node: ts.SetAccessorDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
-    {
-        const hasKeyword = (node: ts.SetAccessorDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
-
-        const identifier = <ts.Identifier>node.name;
-        const position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
-        const setterName = identifier.escapedText.toString();
-        const setterType = node.type ? node.type.getText(sourceFile) : "any";
-        const start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
-        const end = this.editor!.document.positionAt(node.getEnd());
-        const accessModifier = setterName.startsWith("#") || hasKeyword(node, ts.SyntaxKind.PrivateKeyword) ? "private" : (hasKeyword(node, ts.SyntaxKind.ProtectedKeyword) ? "protected" : "public");
-        const isStatic = hasKeyword(node, ts.SyntaxKind.StaticKeyword);
-        const isAbstract = hasKeyword(node, ts.SyntaxKind.AbstractKeyword);
-
-        return new SetterDeclarationNode(setterName, setterType, accessModifier, isStatic, isAbstract, parentElement, childElements, this.getGotoCommand(position), start, end);
-    }
-
-    private getStaticBlockDeclarationNode(sourceFile: ts.SourceFile, node: ts.ClassStaticBlockDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
-    {
-        const position = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile, false));
-        const start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
-        const end = this.editor!.document.positionAt(node.getEnd());
-
-        return new StaticCodeBlockDeclarationNode(parentElement, childElements, this.getGotoCommand(position), start, end);
-    }
-
-    private getTypeAliasDeclarationNode(sourceFile: ts.SourceFile, node: ts.TypeAliasDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
-    {
-        const hasKeyword = (node: ts.TypeAliasDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
-
-        const identifier = <ts.Identifier>node.name;
-        const position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
-        const typeAliasName = identifier.escapedText.toString();
-        const start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
-        const end = this.editor!.document.positionAt(node.getEnd());
-        const isExport = hasKeyword(node, ts.SyntaxKind.ExportKeyword);
-
-        return new TypeAliasDeclarationNode(typeAliasName, isExport, parentElement, childElements, this.getGotoCommand(position), start, end);
-    }
-
-    private getVariableDeclarationNode(sourceFile: ts.SourceFile, node: ts.VariableStatement, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
-    {
-        const hasKeyword = (node: ts.VariableStatement, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
-        const variableDeclarationNodes = [];
-
-        for (const variableDeclaration of node.declarationList.declarations)
-        {
-            const identifier = <ts.Identifier>variableDeclaration.name;
-            const position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
-            const variableName = identifier.escapedText.toString();
-            const variableType = variableDeclaration.type ? variableDeclaration.type.getText(sourceFile) : "any";
-            const isExport = hasKeyword(node, ts.SyntaxKind.ExportKeyword);
-            const isConst = hasKeyword(node, ts.SyntaxKind.ConstKeyword);
-            const start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
-            const end = this.editor!.document.positionAt(node.getEnd());
-
-            variableDeclarationNodes.push(new VariableDeclarationNode(variableName, variableType, isExport, isConst, parentElement, childElements, this.getGotoCommand(position), start, end));
-        }
-
-        return variableDeclarationNodes;
-    }
-
-    private visitSyntaxTree(node: ts.Node, sourceFile: ts.SourceFile, parentElement: DeclarationNode | null): DeclarationNode[]
+    private visitSyntaxTree(editor: vscode.TextEditor, node: ts.Node, sourceFile: ts.SourceFile, parentElement: DeclarationNode | null): DeclarationNode[]
     {
         let nodes: DeclarationNode[] = [];
         let childElements: DeclarationNode[] = [];
@@ -650,83 +163,83 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         // enum elements
         if (ts.isEnumDeclaration(node))
         {
-            nodes.push(this.getEnumDeclarationNode(sourceFile, node, parentElement, childElements));
+            nodes.push(getEnumDeclarationNode(editor, sourceFile, node, parentElement, childElements));
         }
         else if (ts.isEnumMember(node))
         {
-            nodes.push(this.getEnumMemberDeclarationNode(sourceFile, node, parentElement, childElements));
+            nodes.push(getEnumMemberDeclarationNode(editor, sourceFile, node, parentElement, childElements));
         }
 
         // interface / type alias elements
         if (ts.isInterfaceDeclaration(node))
         {
-            nodes.push(this.getInterfaceDeclarationNode(sourceFile, node, parentElement, childElements));
+            nodes.push(getInterfaceDeclarationNode(editor, sourceFile, node, parentElement, childElements));
         }
         else if (ts.isTypeAliasDeclaration(node))
         {
-            nodes.push(this.getTypeAliasDeclarationNode(sourceFile, node, parentElement, childElements));
+            nodes.push(getTypeAliasDeclarationNode(editor, sourceFile, node, parentElement, childElements));
         }
         else if (ts.isPropertySignature(node))
         {
-            nodes.push(this.getPropertySignatureDeclarationNode(sourceFile, node, parentElement, childElements));
+            nodes.push(getPropertySignatureDeclarationNode(editor, sourceFile, node, parentElement, childElements));
         }
         else if (ts.isIndexSignatureDeclaration(node))
         {
-            nodes.push(this.getIndexSignatureDeclarationNode(sourceFile, node, parentElement, childElements));
+            nodes.push(getIndexSignatureDeclarationNode(editor, sourceFile, node, parentElement, childElements));
         }
         else if (ts.isMethodSignature(node))
         {
-            nodes.push(this.getMethodSignatureDeclarationNode(sourceFile, node, parentElement, childElements));
+            nodes.push(getMethodSignatureDeclarationNode(editor, sourceFile, node, parentElement, childElements));
         }
 
         // class elements
         if (ts.isClassDeclaration(node))
         {
-            nodes.push(this.getClassDeclarationNode(sourceFile, node, parentElement, childElements));
+            nodes.push(getClassDeclarationNode(editor, sourceFile, node, parentElement, childElements));
         }
         else if (ts.isConstructorDeclaration(node))
         {
-            this.getConstructorDeclarationNode(sourceFile, node, parentElement, childElements).forEach(n => nodes.push(n));
+            getConstructorDeclarationNode(editor, sourceFile, node, parentElement, childElements).forEach(n => nodes.push(n));
         }
         else if (ts.isClassStaticBlockDeclaration(node))
         {
-            nodes.push(this.getStaticBlockDeclarationNode(sourceFile, node, parentElement, childElements));
+            nodes.push(getStaticBlockDeclarationNode(editor, sourceFile, node, parentElement, childElements));
+        }
+        else if (ts.isAutoAccessorPropertyDeclaration(node))
+        {
+            nodes.push(getAccessorDeclarationNode(editor, sourceFile, node, parentElement, childElements));
         }
         else if (ts.isPropertyDeclaration(node))
         {
-            nodes.push(this.getPropertyDeclarationNode(sourceFile, node, parentElement, childElements));
+            nodes.push(getPropertyDeclarationNode(editor, sourceFile, node, parentElement, childElements));
         }
         else if (ts.isGetAccessor(node))
         {
-            nodes.push(this.getGetterDeclarationNode(sourceFile, node, parentElement, childElements));
+            nodes.push(getGetterDeclarationNode(editor, sourceFile, node, parentElement, childElements));
         }
         else if (ts.isSetAccessor(node))
         {
-            nodes.push(this.getSetterDeclarationNode(sourceFile, node, parentElement, childElements));
-        }
-        else if (ts.isAccessor(node))
-        {
-            nodes.push(this.getAccessorDeclarationNode(sourceFile, node, parentElement, childElements));
+            nodes.push(getSetterDeclarationNode(editor, sourceFile, node, parentElement, childElements));
         }
         else if (ts.isMethodDeclaration(node))
         {
-            nodes.push(this.getMethodDeclarationNode(sourceFile, node, parentElement, childElements));
+            nodes.push(getMethodDeclarationNode(editor, sourceFile, node, parentElement, childElements));
         }
 
         // module elements
         if (ts.isFunctionDeclaration(node))
         {
-            nodes.push(this.getFunctionDeclarationNode(sourceFile, node, parentElement, childElements));
+            nodes.push(getFunctionDeclarationNode(editor, sourceFile, node, parentElement, childElements));
         }
         else if (ts.isVariableStatement(node))
         {
-            this.getVariableDeclarationNode(sourceFile, node, parentElement, childElements).forEach(n => nodes.push(n));
+            getVariableDeclarationNode(editor, sourceFile, node, parentElement, childElements).forEach(n => nodes.push(n));
         }
 
         // get child elements
         for (let childNode of node.getChildren(sourceFile))
         {
-            for (let childElement of this.visitSyntaxTree(childNode, sourceFile, nodes.length > 0 ? nodes[0] : parentElement))
+            for (let childElement of this.visitSyntaxTree(editor, childNode, sourceFile, nodes.length > 0 ? nodes[0] : parentElement))
             {
                 childElements.push(childElement);
             }
@@ -734,15 +247,13 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
 
         if (nodes.length == 0)
         {
-            return childElements.sort((a, b) => this.compare(a, b));
+            nodes = childElements;
         }
-        else
-        {
-            nodes.forEach(x => x.collapsibleState = x.children.length > 0 ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.None);
 
-            return nodes;
-        }
+        nodes.forEach(n => n.collapsibleState = n.children.length > 0 ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.None);
+
+        return nodes;
     }
 
-    // #endregion Private Methods (22)
+    // #endregion Private Methods (4)
 }

@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 import { DeclarationNode } from "./DeclarationNode";
 import { NodeImages } from "./NodeImages";
 
-export class PropertyDeclarationNode extends DeclarationNode
+export class ConstDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
@@ -25,22 +25,22 @@ export class PropertyDeclarationNode extends DeclarationNode
         if (accessModifier === "private")
         {
             this.iconPath = {
-                light: isStatic ? NodeImages.propertyPrivateStatic : NodeImages.propertyPrivate,
-                dark: isStatic ? NodeImages.propertyPrivateStatic : NodeImages.propertyPrivate
+                light: isStatic ? NodeImages.constPrivateStatic : NodeImages.constPrivate,
+                dark: isStatic ? NodeImages.constPrivateStatic : NodeImages.constPrivate
             };
         }
         else if (accessModifier === "protected")
         {
             this.iconPath = {
-                light: isStatic ? NodeImages.propertyProtectedStatic : NodeImages.propertyProtected,
-                dark: isStatic ? NodeImages.propertyProtectedStatic : NodeImages.propertyProtected
+                light: isStatic ? NodeImages.constProtectedStatic : NodeImages.constProtected,
+                dark: isStatic ? NodeImages.constProtectedStatic : NodeImages.constProtected
             };
         }
         else if (accessModifier === "public")
         {
             this.iconPath = {
-                light: isStatic ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic,
-                dark: isStatic ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic
+                light: isStatic ? NodeImages.constPublicStatic : NodeImages.constPublic,
+                dark: isStatic ? NodeImages.constPublicStatic : NodeImages.constPublic
             };
         }
     }
