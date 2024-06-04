@@ -14,7 +14,7 @@ export class ConstructorDeclarationNode extends DeclarationNode
 
         this.name = "constructor";
         this.label = this.name;
-        this.description = `(${parameters.map(x => `${x.name}: ${x.type}`).join(", ")})`;
+        this.description = parameters.length > 0 ? `(${parameters.map(x => `${x.name}: ${x.type}`).join(", ")})` : "";
 
         this.start = start;
         this.end = end;
