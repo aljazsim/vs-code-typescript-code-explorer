@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 
 import { DeclarationNode } from "./DeclarationNode";
+import { NodeImages } from "./NodeImages";
 
 export class EnumMemberDeclarationNode extends DeclarationNode
 {
@@ -21,8 +22,8 @@ export class EnumMemberDeclarationNode extends DeclarationNode
         this.command = command;
 
         this.iconPath = {
-            light: this.enumeratorItemLightIconFilePath,
-            dark: this.enumeratorItemDarkIconFilePath
+            light: NodeImages.enumMember,
+            dark: NodeImages.enumMember
         };
     }
 

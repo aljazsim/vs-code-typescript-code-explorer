@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 
 import { DeclarationNode } from "./DeclarationNode";
+import { NodeImages } from "./NodeImages";
 
 export class VariableDeclarationNode extends DeclarationNode
 {
@@ -14,10 +15,7 @@ export class VariableDeclarationNode extends DeclarationNode
         this.label = variableName;
         this.description = variableType ? `: ${variableType}` : "";
 
-        if (isConst)
-        {
-            this.description += " " + this.readOnlyCharacter;
-        }
+
 
         this.start = start;
         this.end = end;
@@ -26,10 +24,25 @@ export class VariableDeclarationNode extends DeclarationNode
         this.children = children;
         this.command = command;
 
-        this.iconPath = {
-            light: this.variableItemLightIconFilePath,
-            dark: this.variableItemDarkIconFilePath
-        };
+        if (isConst)
+        {
+            // TODO
+        }
+
+        if (isExport)
+        {
+            this.iconPath = {
+                light: NodeImages.variableExported,
+                dark: NodeImages.variableExported
+            };
+        }
+        else
+        {
+            this.iconPath = {
+                light: NodeImages.variable,
+                dark: NodeImages.variable
+            };
+        }
     }
 
     // #endregion Constructors (1)

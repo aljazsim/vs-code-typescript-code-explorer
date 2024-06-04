@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 
 import { DeclarationNode } from "./DeclarationNode";
+import { NodeImages } from "./NodeImages";
 
 export class InterfaceDeclarationNode extends DeclarationNode
 {
@@ -20,13 +21,19 @@ export class InterfaceDeclarationNode extends DeclarationNode
         this.children = children;
         this.command = command;
 
-        this.iconPath = {
-            light: this.interfaceLightIconFilePath,
-            dark: this.interfaceDarkIconFilePath
-        };
-
-        if (!isExport)
+        if (isExport)
         {
+            this.iconPath = {
+                light: NodeImages.interfaceExported,
+                dark: NodeImages.interfaceExported
+            };
+        }
+        else
+        {
+            this.iconPath = {
+                light: NodeImages.interface,
+                dark: NodeImages.interface
+            };
         }
     }
 

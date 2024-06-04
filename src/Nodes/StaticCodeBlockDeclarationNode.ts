@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 
 import { DeclarationNode } from "./DeclarationNode";
+import { NodeImages } from "./NodeImages";
 
 export class StaticCodeBlockDeclarationNode extends DeclarationNode
 {
@@ -21,8 +22,8 @@ export class StaticCodeBlockDeclarationNode extends DeclarationNode
         this.command = command;
 
         this.iconPath = {
-            light: this.constructorPublicStatic,
-            dark: this.constructorPublicStatic
+            light: NodeImages.constructorPublicStatic,
+            dark: NodeImages.constructorPublicStatic
         };
     }
 

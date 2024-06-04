@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 
 import { DeclarationNode } from "./DeclarationNode";
+import { NodeImages } from "./NodeImages";
 import { Parameter } from "./Parameter";
 
 export class FunctionDeclarationNode extends DeclarationNode
@@ -22,13 +23,19 @@ export class FunctionDeclarationNode extends DeclarationNode
         this.children = children;
         this.command = command;
 
-        this.iconPath = {
-            light: this.functionLightIconFilePath,
-            dark: this.functionDarkIconFilePath
-        };
-
-        if (!isExport)
+        if (isExport)
         {
+            this.iconPath = {
+                light: NodeImages.functionExported,
+                dark: NodeImages.functionExported
+            };
+        }
+        else
+        {
+            this.iconPath = {
+                light: NodeImages.function,
+                dark: NodeImages.function
+            };
         }
     }
 

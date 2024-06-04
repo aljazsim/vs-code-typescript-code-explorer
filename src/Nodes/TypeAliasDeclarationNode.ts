@@ -1,12 +1,13 @@
 import * as vscode from "vscode";
 
 import { DeclarationNode } from "./DeclarationNode";
+import { NodeImages } from "./NodeImages";
 
 export class TypeAliasDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(typeName: string, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(typeName: string, isExport: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 
@@ -20,10 +21,20 @@ export class TypeAliasDeclarationNode extends DeclarationNode
         this.children = children;
         this.command = command;
 
-        this.iconPath = {
-            light: this.structureLightIconFilePath,
-            dark: this.structureDarkIconFilePath
-        };
+        if (isExport)
+        {
+            this.iconPath = {
+                light: NodeImages.typeExported,
+                dark: NodeImages.typeExported
+            };
+        }
+        else
+        {
+            this.iconPath = {
+                light: NodeImages.type,
+                dark: NodeImages.type
+            };
+        }
     }
 
     // #endregion Constructors (1)

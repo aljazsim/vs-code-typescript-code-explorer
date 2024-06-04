@@ -1,78 +1,8 @@
-import * as path from "path";
 import * as vscode from "vscode";
 
 export abstract class DeclarationNode extends vscode.TreeItem
 {
-    // #region Properties (46)
-
-    private readonly imageDir = path.join(__filename, "..", "..", "..", "resources");
-
-    protected readonly abstractCharacter = this.convertHexToString("f09f9fa0");
-    protected readonly readOnlyCharacter = this.convertHexToString("f09f9fa1");
-    protected readonly asyncCharacter = this.convertHexToString("f09f9fa2");
-    protected readonly staticCharacter = this.convertHexToString("f09f9fa3");
-
-    protected readonly classDarkIconFilePath = path.join(this.imageDir, "member-types", 'Class_dark.svg');
-    protected readonly classLightIconFilePath = path.join(this.imageDir, "member-types", 'Class_light.svg');
-    protected readonly constantDarkIconFilePath = path.join(this.imageDir, "member-types", 'Constant_dark.svg');
-    protected readonly constantLightIconFilePath = path.join(this.imageDir, "member-types", 'Constant_light.svg');
-    protected readonly constructorDarkIconFilePath = path.join(this.imageDir, "member-types", 'Constructor_dark.svg');
-    protected readonly constructorLightIconFilePath = path.join(this.imageDir, "member-types", 'Constructor_light.svg');
-    protected readonly staticCodeBlocDarkIconFilePath = path.join(this.imageDir, "member-types", 'StaticCodeBlock_dark.svg');
-    protected readonly staticCodeBlocLightIconFilePath = path.join(this.imageDir, "member-types", 'StaticCodeBlock_light.svg');
-    protected readonly enumeratorDarkIconFilePath = path.join(this.imageDir, "member-types", 'Enumerator_dark.svg');
-    protected readonly enumeratorItemDarkIconFilePath = path.join(this.imageDir, "member-types", 'EnumeratorItem_dark.svg');
-    protected readonly enumeratorItemLightIconFilePath = path.join(this.imageDir, "member-types", 'EnumeratorItem_light.svg');
-    protected readonly enumeratorLightIconFilePath = path.join(this.imageDir, "member-types", 'Enumerator_light.svg');
-    protected readonly eventItemDarkIconFilePath = path.join(this.imageDir, "member-types", 'Event_dark.svg');
-    protected readonly eventItemLightIconFilePath = path.join(this.imageDir, "member-types", 'Event_light.svg');
-    protected readonly fieldItemDarkIconFilePath = path.join(this.imageDir, "member-types", 'Field_dark.svg');
-    protected readonly fieldItemLightIconFilePath = path.join(this.imageDir, "member-types", 'Field_light.svg');
-    protected readonly variableItemDarkIconFilePath = path.join(this.imageDir, "member-types", 'Variable_dark.svg');
-    protected readonly variableItemLightIconFilePath = path.join(this.imageDir, "member-types", 'Variable_light.svg');
-    protected readonly fieldStaticDarkIconFilePath = path.join(this.imageDir, "member-types", 'FieldStatic_dark.svg');
-    protected readonly fieldStaticLightIconFilePath = path.join(this.imageDir, "member-types", 'FieldStatic_light.svg');
-    protected readonly functionDarkIconFilePath = path.join(this.imageDir, "member-types", 'Function_dark.svg');
-    protected readonly functionLightIconFilePath = path.join(this.imageDir, "member-types", 'Function_light.svg');
-    protected readonly getterDarkIconFilePath = path.join(this.imageDir, "member-types", 'Getter_dark.svg');
-    protected readonly getterLightIconFilePath = path.join(this.imageDir, "member-types", 'Getter_light.svg');
-    protected readonly accessorDarkIconFilePath = path.join(this.imageDir, "member-types", 'Accessor_dark.svg');
-    protected readonly accessorLightIconFilePath = path.join(this.imageDir, "member-types", 'Accessor_light.svg');
-    protected readonly interfaceDarkIconFilePath = path.join(this.imageDir, "member-types", 'Interface_dark.svg');
-    protected readonly interfaceLightIconFilePath = path.join(this.imageDir, "member-types", 'Interface_light.svg');
-    protected readonly methodDarkIconFilePath = path.join(this.imageDir, "member-types", 'Method_dark.svg');
-    protected readonly methodLightIconFilePath = path.join(this.imageDir, "member-types", 'Method_light.svg');
-    protected readonly namespaceDarkIconFilePath = path.join(this.imageDir, "member-types", 'Namespace_dark.svg');
-    protected readonly namespaceLightIconFilePath = path.join(this.imageDir, "member-types", 'Namespace_light.svg');
-    protected readonly operatorDarkIconFilePath = path.join(this.imageDir, "member-types", 'Operator_dark.svg');
-    protected readonly operatorLightIconFilePath = path.join(this.imageDir, "member-types", 'Operator_light.svg');
-    protected readonly propertyDarkIconFilePath = path.join(this.imageDir, "member-types", 'Property_dark.svg');
-    protected readonly propertyLightIconFilePath = path.join(this.imageDir, "member-types", 'Property_light.svg');
-    protected readonly readonlyDisabledDarkIconFilePath = path.join(this.imageDir, "accessors", 'readonly_enabled_dark.svg');
-    protected readonly readonlyEnabledDarkIconFilePath = path.join(this.imageDir, "accessors", 'readonly_enabled_dark.svg');
-    protected readonly setterDarkIconFilePath = path.join(this.imageDir, "member-types", 'Setter_dark.svg');
-    protected readonly setterLightIconFilePath = path.join(this.imageDir, "member-types", 'Setter_light.svg');
-    protected readonly structureDarkIconFilePath = path.join(this.imageDir, "member-types", 'Structure_dark.svg');
-    protected readonly structureLightIconFilePath = path.join(this.imageDir, "member-types", 'Structure_light.svg');
-
-    protected readonly methodPrivate = path.join(this.imageDir, "members", 'method-private.svg');
-    protected readonly methodProtected = path.join(this.imageDir, "members", 'method-protected.svg');
-    protected readonly methodPublic = path.join(this.imageDir, "members", 'method-public.svg');
-
-    protected readonly methodPrivateStatic = path.join(this.imageDir, "members", 'method-private-static.svg');
-    protected readonly methodProtectedStatic = path.join(this.imageDir, "members", 'method-protected-static.svg');
-    protected readonly methodPublicStatic = path.join(this.imageDir, "members", 'method-public-static.svg');
-
-    protected readonly propertyPrivate = path.join(this.imageDir, "members", 'property-private.svg');
-    protected readonly propertyProtected = path.join(this.imageDir, "members", 'property-protected.svg');
-    protected readonly propertyPublic = path.join(this.imageDir, "members", 'property-public.svg');
-
-    protected readonly propertyPrivateStatic = path.join(this.imageDir, "members", 'property-private-static.svg');
-    protected readonly propertyProtectedStatic = path.join(this.imageDir, "members", 'property-protected-static.svg');
-    protected readonly propertyPublicStatic = path.join(this.imageDir, "members", 'property-public-static.svg');
-
-    protected readonly constructorPublic = path.join(this.imageDir, "members", 'constructor-public.svg');
-    protected readonly constructorPublicStatic = path.join(this.imageDir, "members", 'constructor-public-static.svg');
+    // #region Properties (5)
 
     public children: DeclarationNode[] = [];
     public end: vscode.Position = new vscode.Position(0, 0);
@@ -80,7 +10,7 @@ export abstract class DeclarationNode extends vscode.TreeItem
     public parent: DeclarationNode | null = null;
     public start: vscode.Position = new vscode.Position(0, 0);
 
-    // #endregion Properties (46)
+    // #endregion Properties (5)
 
     // #region Constructors (1)
 
@@ -90,23 +20,4 @@ export abstract class DeclarationNode extends vscode.TreeItem
     }
 
     // #endregion Constructors (1)
-
-    // #region Protected Methods (1)
-
-    protected convertHexToString(input: string)
-    {
-        var inputHex = input.match(/[\s\S]{2}/g) || [];
-        var output = '';
-
-        for (var i = 0, j = inputHex.length; i < j; i++)
-        {
-            output += '%' + ('0' + inputHex[i]).slice(-2);
-        }
-
-        output = decodeURIComponent(output);
-
-        return output;
-    }
-
-    // #endregion Protected Methods (1)
 }

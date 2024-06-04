@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 
 import { DeclarationNode } from "./DeclarationNode";
+import { NodeImages } from "./NodeImages";
 
 export class IndexSignatureDeclarationNode extends DeclarationNode
 {
@@ -22,8 +23,8 @@ export class IndexSignatureDeclarationNode extends DeclarationNode
         this.command = command;
 
         this.iconPath = {
-            light: this.propertyLightIconFilePath,
-            dark: this.propertyDarkIconFilePath
+            light: isStatic ? NodeImages.propertyPrivateStatic : NodeImages.propertyPrivate,
+            dark: isStatic ? NodeImages.propertyPrivateStatic : NodeImages.propertyPrivate
         };
     }
 

@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 
 import { DeclarationNode } from "./DeclarationNode";
+import { NodeImages } from "./NodeImages";
 import { Parameter } from "./Parameter";
 
 export class ConstructorDeclarationNode extends DeclarationNode
@@ -23,8 +24,8 @@ export class ConstructorDeclarationNode extends DeclarationNode
         this.command = command;
 
         this.iconPath = {
-            light: this.constructorPublic,
-            dark: this.constructorPublic
+            light: NodeImages.constructorPublic,
+            dark: NodeImages.constructorPublic
         };
 
     }

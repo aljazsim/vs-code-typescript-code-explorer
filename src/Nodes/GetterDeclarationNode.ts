@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 
 import { DeclarationNode } from "./DeclarationNode";
+import { NodeImages } from "./NodeImages";
 
 export class GetterDeclarationNode extends DeclarationNode
 {
@@ -24,22 +25,22 @@ export class GetterDeclarationNode extends DeclarationNode
         if (accessModifier === "private")
         {
             this.iconPath = {
-                light: isStatic ? this.propertyPrivateStatic : this.propertyPrivate,
-                dark: isStatic ? this.propertyPrivateStatic : this.propertyPrivate
+                light: isStatic ? NodeImages.propertyPrivateStatic : NodeImages.propertyPrivate,
+                dark: isStatic ? NodeImages.propertyPrivateStatic : NodeImages.propertyPrivate
             };
         }
         else if (accessModifier === "protected")
         {
             this.iconPath = {
-                light: isStatic ? this.propertyProtectedStatic : this.propertyProtected,
-                dark: isStatic ? this.propertyProtectedStatic : this.propertyProtected
+                light: isStatic ? NodeImages.propertyProtectedStatic : NodeImages.propertyProtected,
+                dark: isStatic ? NodeImages.propertyProtectedStatic : NodeImages.propertyProtected
             };
         }
         else if (accessModifier === "public")
         {
             this.iconPath = {
-                light: isStatic ? this.propertyPublicStatic : this.propertyPublic,
-                dark: isStatic ? this.propertyPublicStatic : this.propertyPublic
+                light: isStatic ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic,
+                dark: isStatic ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic
             };
         }
     }

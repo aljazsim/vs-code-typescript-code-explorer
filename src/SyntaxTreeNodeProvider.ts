@@ -608,13 +608,16 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
 
     private getTypeAliasDeclarationNode(sourceFile: ts.SourceFile, node: ts.TypeAliasDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
     {
+        const hasKeyword = (node: ts.TypeAliasDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
+
         const identifier = <ts.Identifier>node.name;
         const position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
         const typeAliasName = identifier.escapedText.toString();
         const start = this.editor!.document.positionAt(node.getStart(sourceFile, false));
         const end = this.editor!.document.positionAt(node.getEnd());
+        const isExport = hasKeyword(node, ts.SyntaxKind.ExportKeyword);
 
-        return new TypeAliasDeclarationNode(typeAliasName, parentElement, childElements, this.getGotoCommand(position), start, end);
+        return new TypeAliasDeclarationNode(typeAliasName, isExport, parentElement, childElements, this.getGotoCommand(position), start, end);
     }
 
     private getVariableDeclarationNode(sourceFile: ts.SourceFile, node: ts.VariableStatement, parentElement: DeclarationNode | null, childElements: DeclarationNode[])

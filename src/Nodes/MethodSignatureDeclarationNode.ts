@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 
 import { DeclarationNode } from "./DeclarationNode";
+import { NodeImages } from "./NodeImages";
 import { Parameter } from "./Parameter";
 
 export class MethodSignatureDeclarationNode extends DeclarationNode
@@ -24,8 +25,8 @@ export class MethodSignatureDeclarationNode extends DeclarationNode
         this.command = command;
 
         this.iconPath = {
-            light: this.methodLightIconFilePath,
-            dark: this.methodDarkIconFilePath
+            light: NodeImages.methodPublic,
+            dark: NodeImages.methodPublic
         };
     }
 
