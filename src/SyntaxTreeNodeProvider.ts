@@ -1,8 +1,8 @@
 import * as ts from "typescript";
 import * as vscode from "vscode";
 
-import { compareNodes, orderByNodeType } from "./helpers/node-order-helper";
 import { getAccessorDeclarationNode, getClassDeclarationNode, getConstructorDeclarationNode, getEnumDeclarationNode, getEnumMemberDeclarationNode, getFunctionDeclarationNode, getGetterDeclarationNode, getIndexSignatureDeclarationNode, getInterfaceDeclarationNode, getMethodDeclarationNode, getMethodSignatureDeclarationNode, getPropertyDeclarationNode, getPropertySignatureDeclarationNode, getSetterDeclarationNode, getStaticBlockDeclarationNode, getTypeAliasDeclarationNode, getVariableDeclarationNode } from "./helpers/node-helper";
+import { orderByNodeTypeByName, orderByNone } from "./helpers/node-order-helper";
 
 import { DeclarationNode } from "./Nodes/DeclarationNode";
 import { EmptyDeclarationNode } from "./Nodes/EmptyDeclarationNode";
@@ -12,17 +12,17 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
 {
     // #region Properties (4)
 
-    private _onDidChangeTreeData: vscode.EventEmitter<DeclarationNode | undefined> = new vscode.EventEmitter<DeclarationNode | undefined>();
     private editor: vscode.TextEditor | null = null;
+    private onDidChangeTreeDataEvent: vscode.EventEmitter<DeclarationNode | undefined> = new vscode.EventEmitter<DeclarationNode | undefined>();
     private rootElements: DeclarationNode[] = [new EmptyDeclarationNode()];
 
-    public readonly onDidChangeTreeData: vscode.Event<DeclarationNode | undefined> = this._onDidChangeTreeData.event;
+    public readonly onDidChangeTreeData: vscode.Event<DeclarationNode | undefined> = this.onDidChangeTreeDataEvent.event;
 
     // #endregion Properties (4)
 
     // #region Constructors (1)
 
-    constructor(private workspaceRoot: string)
+    constructor(private readonly workspaceRoot: string)
     {
     }
 
@@ -87,19 +87,19 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
             this.rootElements = [new EmptyDeclarationNode()];
         }
 
-        this._onDidChangeTreeData.fire(undefined);
+        this.onDidChangeTreeDataEvent.fire(undefined);
     }
 
     // #endregion Public Methods (5)
 
-    // #region Private Methods (4)
+    // #region Private Methods (3)
 
     private analyzeSyntaxTree(editor: vscode.TextEditor, sourceCode: string)
     {
         const rootElements: DeclarationNode[] = [];
         const sourceFile = ts.createSourceFile("temp", sourceCode, ts.ScriptTarget.Latest, false, ts.ScriptKind.TS);
         // todo
-        // const program = ts.createProgram(["temp"], { target: ts.ScriptTarget.Latest, sorce });
+        // const program = ts.createProgram(["temp"], { target: ts.ScriptTarget.Latest, source });
 
         // analyze ast
         for (let node of sourceFile.getChildren(sourceFile))
@@ -116,7 +116,8 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
             rootElements.push(new EmptyDeclarationNode());
         }
 
-        return this.order(rootElements, orderByNodeType);
+        // group and order
+        return orderByNodeTypeByName(rootElements);
     }
 
     private findNode(nodes: DeclarationNode[], positionStart: vscode.Position, positionEnd: vscode.Position): DeclarationNode | null
@@ -145,14 +146,6 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         }
 
         return null;
-    }
-
-    private order(nodes: DeclarationNode[], orderBy: (node: DeclarationNode) => number)
-    {
-        nodes = nodes.sort((a, b) => compareNodes(a, b, orderBy));
-        nodes.forEach(n => this.order(n.children, orderBy));
-
-        return nodes;
     }
 
     private visitSyntaxTree(editor: vscode.TextEditor, node: ts.Node, sourceFile: ts.SourceFile, parentElement: DeclarationNode | null): DeclarationNode[]
@@ -237,9 +230,9 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         }
 
         // get child elements
-        for (let childNode of node.getChildren(sourceFile))
+        for (const childNode of node.getChildren(sourceFile))
         {
-            for (let childElement of this.visitSyntaxTree(editor, childNode, sourceFile, nodes.length > 0 ? nodes[0] : parentElement))
+            for (const childElement of this.visitSyntaxTree(editor, childNode, sourceFile, nodes.length > 0 ? nodes[0] : parentElement))
             {
                 childElements.push(childElement);
             }
@@ -250,10 +243,11 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
             nodes = childElements;
         }
 
+        // expand/collapse node
         nodes.forEach(n => n.collapsibleState = n.children.length > 0 ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.None);
 
         return nodes;
     }
 
-    // #endregion Private Methods (4)
+    // #endregion Private Methods (3)
 }

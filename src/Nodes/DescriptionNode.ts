@@ -10,6 +10,7 @@ export class DescriptionNode extends DeclarationNode
     {
         super();
 
+        this.name = description;
         this.label = description;
 
         this.start = new vscode.Position(0, 0);

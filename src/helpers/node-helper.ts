@@ -365,13 +365,13 @@ export function getVariableDeclarationNode(editor: vscode.TextEditor, sourceFile
         const identifier = <ts.Identifier>variableDeclaration.name;
         const position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
         const variableName = identifier.escapedText.toString();
-        const variabconstype = variableDeclaration.type ? variableDeclaration.type.getText(sourceFile) : "any";
+        const variableType = variableDeclaration.type ? variableDeclaration.type.getText(sourceFile) : "any";
         const isExport = hasKeyword(node, ts.SyntaxKind.ExportKeyword);
         const isConst = hasKeyword(node, ts.SyntaxKind.ConstKeyword);
         const start = editor!.document.positionAt(node.getStart(sourceFile, false));
         const end = editor!.document.positionAt(node.getEnd());
 
-        variableDeclarationNodes.push(new VariableDeclarationNode(variableName, variabconstype, isExport, isConst, parentElement, childElements, getGotoCommand(editor, position), start, end));
+        variableDeclarationNodes.push(new VariableDeclarationNode(variableName, variableType, isExport, isConst, parentElement, childElements, getGotoCommand(editor, position), start, end));
     }
 
     return variableDeclarationNodes;

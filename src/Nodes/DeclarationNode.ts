@@ -6,7 +6,7 @@ export abstract class DeclarationNode extends vscode.TreeItem
 
     public children: DeclarationNode[] = [];
     public end: vscode.Position = new vscode.Position(0, 0);
-    public name: string | null = null;
+    public name = "";
     public parent: DeclarationNode | null = null;
     public start: vscode.Position = new vscode.Position(0, 0);
 

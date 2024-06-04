@@ -19,12 +19,108 @@ import { StaticCodeBlockDeclarationNode } from "../Nodes/StaticCodeBlockDeclarat
 import { TypeAliasDeclarationNode } from "../Nodes/TypeAliasDeclarationNode";
 import { VariableDeclarationNode } from "../Nodes/VariableDeclarationNode";
 
-// #region Functions (2)
+// #region Functions (4)
 
-export function compareNodes(a: DeclarationNode, b: DeclarationNode, orderBy: (node: DeclarationNode) => number)
+function getNodeType(declarationNode: DeclarationNode)
 {
-    let valueA = orderBy(a);
-    let valueB = orderBy(b);
+    // module member types
+    if (declarationNode instanceof EnumDeclarationNode)
+    {
+        return "101";
+    }
+    if (declarationNode instanceof InterfaceDeclarationNode)
+    {
+        return "102";
+    }
+    else if (declarationNode instanceof ClassDeclarationNode)
+    {
+        return "103";
+    }
+    else if (declarationNode instanceof TypeAliasDeclarationNode)
+    {
+        return "104";
+    }
+    else if (declarationNode instanceof VariableDeclarationNode)
+    {
+        return "105";
+    }
+    else if (declarationNode instanceof FunctionDeclarationNode)
+    {
+        return "106";
+    }
+
+    // interface / type alias member types
+    if (declarationNode instanceof PropertySignatureDeclarationNode)
+    {
+        return "201";
+    }
+    else if (declarationNode instanceof IndexSignatureDeclarationNode)
+    {
+        return "202";
+    }
+    else if (declarationNode instanceof MethodSignatureDeclarationNode)
+    {
+        return "203";
+    }
+
+    // enum member types
+    if (declarationNode instanceof EnumMemberDeclarationNode)
+    {
+        return "301";
+    }
+
+    // class member types
+    if (declarationNode instanceof ConstDeclarationNode)
+    {
+        return "401";
+    }
+    if (declarationNode instanceof PropertyDeclarationNode)
+    {
+        return "401";
+    }
+    else if (declarationNode instanceof ConstructorDeclarationNode)
+    {
+        return "402";
+    }
+    else if (declarationNode instanceof StaticCodeBlockDeclarationNode)
+    {
+        return "403";
+    }
+    else if (declarationNode instanceof AccessorDeclarationNode)
+    {
+        return "404";
+    }
+    else if (declarationNode instanceof GetterDeclarationNode)
+    {
+        return "405";
+    }
+    else if (declarationNode instanceof SetterDeclarationNode)
+    {
+        return "406";
+    }
+    else if (declarationNode instanceof MethodDeclarationNode)
+    {
+        return "407";
+    }
+
+    // empty
+    if (declarationNode instanceof EmptyDeclarationNode)
+    {
+        return "501";
+    }
+
+    return "601";
+}
+
+function getNodeName(node: DeclarationNode)
+{
+    return node.name.toLowerCase();
+}
+
+function compareNodes(a: DeclarationNode, b: DeclarationNode, orderBy: ((node: DeclarationNode) => string)[])
+{
+    let valueA = orderBy[0](a);
+    let valueB = orderBy[0](b);
 
     if (valueA > valueB)
     {
@@ -34,112 +130,35 @@ export function compareNodes(a: DeclarationNode, b: DeclarationNode, orderBy: (n
     {
         return -1;
     }
+    else if (orderBy.length > 1)
+    {
+        return compareNodes(a, b, orderBy.slice(1));
+    }
     else
     {
-        if (a.label!.toString().toLowerCase() > b.label!.toString().toLowerCase())
-        {
-            return 1;
-        }
-        else if (a.label!.toString().toLowerCase() < b.label!.toString().toLowerCase())
-        {
-            return -1;
-        }
-        else
-        {
-            return 0;
-        }
+        return 0;
     }
 }
 
-export function orderByNodeType(declarationNode: DeclarationNode)
+export function orderByNodeType(nodes: DeclarationNode[])
 {
-    // module member types
-    if (declarationNode instanceof EnumDeclarationNode)
-    {
-        return 101;
-    }
-    if (declarationNode instanceof InterfaceDeclarationNode)
-    {
-        return 102;
-    }
-    else if (declarationNode instanceof ClassDeclarationNode)
-    {
-        return 103;
-    }
-    else if (declarationNode instanceof TypeAliasDeclarationNode)
-    {
-        return 104;
-    }
-    else if (declarationNode instanceof VariableDeclarationNode)
-    {
-        return 105;
-    }
-    else if (declarationNode instanceof FunctionDeclarationNode)
-    {
-        return 106;
-    }
+    nodes = nodes.sort((a, b) => compareNodes(a, b, [getNodeType]));
+    nodes.forEach(n => orderByNodeType(n.children));
 
-    // interface / type alias member types
-    if (declarationNode instanceof PropertySignatureDeclarationNode)
-    {
-        return 201;
-    }
-    else if (declarationNode instanceof IndexSignatureDeclarationNode)
-    {
-        return 202;
-    }
-    else if (declarationNode instanceof MethodSignatureDeclarationNode)
-    {
-        return 203;
-    }
-
-    // enum member types
-    if (declarationNode instanceof EnumMemberDeclarationNode)
-    {
-        return 301;
-    }
-
-    // class member types
-    if (declarationNode instanceof ConstDeclarationNode)
-    {
-        return 401;
-    }
-    if (declarationNode instanceof PropertyDeclarationNode)
-    {
-        return 401;
-    }
-    else if (declarationNode instanceof ConstructorDeclarationNode)
-    {
-        return 402;
-    }
-    else if (declarationNode instanceof StaticCodeBlockDeclarationNode)
-    {
-        return 403;
-    }
-    else if (declarationNode instanceof AccessorDeclarationNode)
-    {
-        return 404;
-    }
-    else if (declarationNode instanceof GetterDeclarationNode)
-    {
-        return 405;
-    }
-    else if (declarationNode instanceof SetterDeclarationNode)
-    {
-        return 406;
-    }
-    else if (declarationNode instanceof MethodDeclarationNode)
-    {
-        return 407;
-    }
-
-    // empty
-    if (declarationNode instanceof EmptyDeclarationNode)
-    {
-        return 501;
-    }
-
-    return 601;
+    return nodes;
 }
 
-// #endregion Functions (2)
+export function orderByNodeTypeByName(nodes: DeclarationNode[])
+{
+    nodes = nodes.sort((a, b) => compareNodes(a, b, [getNodeType, getNodeName]));
+    nodes.forEach(n => orderByNodeTypeByName(n.children));
+
+    return nodes;
+}
+
+export function orderByNone(nodes: DeclarationNode[])
+{
+    return nodes;
+}
+
+// #endregion Functions (4)
