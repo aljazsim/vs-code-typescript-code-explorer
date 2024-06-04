@@ -19,7 +19,60 @@ import { StaticCodeBlockDeclarationNode } from "../Nodes/StaticCodeBlockDeclarat
 import { TypeAliasDeclarationNode } from "../Nodes/TypeAliasDeclarationNode";
 import { VariableDeclarationNode } from "../Nodes/VariableDeclarationNode";
 
-// #region Functions (4)
+// #region Functions (8)
+
+function compareNodes(a: DeclarationNode, b: DeclarationNode, orderBy: ((node: DeclarationNode) => string)[])
+{
+    let valueA = orderBy[0](a);
+    let valueB = orderBy[0](b);
+
+    if (valueA > valueB)
+    {
+        return 1;
+    }
+    else if (valueA < valueB)
+    {
+        return -1;
+    }
+    else if (orderBy.length > 1)
+    {
+        return compareNodes(a, b, orderBy.slice(1));
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+function getNodeAccessor(node: DeclarationNode)
+{
+    if (node instanceof PropertyDeclarationNode ||
+        node instanceof AccessorDeclarationNode ||
+        node instanceof SetterDeclarationNode ||
+        node instanceof GetterDeclarationNode ||
+        node instanceof MethodDeclarationNode)
+    {
+        if (node.accessModifier === "private")
+        {
+            return "1";
+        }
+        else if (node.accessModifier === "protected")
+        {
+            return "2";
+        }
+        if (node.accessModifier === "public")
+        {
+            return "3";
+        }
+    }
+
+    return "";
+}
+
+function getNodeName(node: DeclarationNode)
+{
+    return node.name.toLowerCase();
+}
 
 function getNodeType(declarationNode: DeclarationNode)
 {
@@ -112,38 +165,18 @@ function getNodeType(declarationNode: DeclarationNode)
     return "601";
 }
 
-function getNodeName(node: DeclarationNode)
-{
-    return node.name.toLowerCase();
-}
-
-function compareNodes(a: DeclarationNode, b: DeclarationNode, orderBy: ((node: DeclarationNode) => string)[])
-{
-    let valueA = orderBy[0](a);
-    let valueB = orderBy[0](b);
-
-    if (valueA > valueB)
-    {
-        return 1;
-    }
-    else if (valueA < valueB)
-    {
-        return -1;
-    }
-    else if (orderBy.length > 1)
-    {
-        return compareNodes(a, b, orderBy.slice(1));
-    }
-    else
-    {
-        return 0;
-    }
-}
-
 export function orderByNodeType(nodes: DeclarationNode[])
 {
     nodes = nodes.sort((a, b) => compareNodes(a, b, [getNodeType]));
     nodes.forEach(n => orderByNodeType(n.children));
+
+    return nodes;
+}
+
+export function orderByNodeTypeByAccessorByName(nodes: DeclarationNode[])
+{
+    nodes = nodes.sort((a, b) => compareNodes(a, b, [getNodeType, getNodeAccessor, getNodeName]));
+    nodes.forEach(n => orderByNodeTypeByName(n.children));
 
     return nodes;
 }
@@ -161,4 +194,4 @@ export function orderByNone(nodes: DeclarationNode[])
     return nodes;
 }
 
-// #endregion Functions (4)
+// #endregion Functions (8)

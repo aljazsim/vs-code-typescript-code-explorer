@@ -2,7 +2,7 @@ import * as ts from "typescript";
 import * as vscode from "vscode";
 
 import { getAccessorDeclarationNode, getClassDeclarationNode, getConstructorDeclarationNode, getEnumDeclarationNode, getEnumMemberDeclarationNode, getFunctionDeclarationNode, getGetterDeclarationNode, getIndexSignatureDeclarationNode, getInterfaceDeclarationNode, getMethodDeclarationNode, getMethodSignatureDeclarationNode, getPropertyDeclarationNode, getPropertySignatureDeclarationNode, getSetterDeclarationNode, getStaticBlockDeclarationNode, getTypeAliasDeclarationNode, getVariableDeclarationNode } from "./helpers/node-helper";
-import { orderByNodeTypeByName, orderByNone } from "./helpers/node-order-helper";
+import { orderByNodeTypeByAccessorByName, orderByNodeTypeByName, orderByNone } from "./helpers/node-order-helper";
 
 import { DeclarationNode } from "./Nodes/DeclarationNode";
 import { EmptyDeclarationNode } from "./Nodes/EmptyDeclarationNode";
@@ -117,7 +117,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         }
 
         // group and order
-        return orderByNodeTypeByName(rootElements);
+        return orderByNodeTypeByAccessorByName(rootElements);
     }
 
     private findNode(nodes: DeclarationNode[], positionStart: vscode.Position, positionEnd: vscode.Position): DeclarationNode | null
