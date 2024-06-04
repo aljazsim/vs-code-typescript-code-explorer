@@ -160,7 +160,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         }
         else if (ts.isEnumMember(node))
         {
-            nodes.push(getEnumMemberDeclarationNode(editor, sourceFile, node, parentElement, childElements));
+            nodes.push(getEnumMemberDeclarationNode(editor, sourceFile, node, parentElement, []));
         }
 
         // interface / type alias elements
@@ -174,15 +174,15 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         }
         else if (ts.isPropertySignature(node))
         {
-            nodes.push(getPropertySignatureDeclarationNode(editor, sourceFile, node, parentElement, childElements));
+            nodes.push(getPropertySignatureDeclarationNode(editor, sourceFile, node, parentElement, []));
         }
         else if (ts.isIndexSignatureDeclaration(node))
         {
-            nodes.push(getIndexSignatureDeclarationNode(editor, sourceFile, node, parentElement, childElements));
+            nodes.push(getIndexSignatureDeclarationNode(editor, sourceFile, node, parentElement, []));
         }
         else if (ts.isMethodSignature(node))
         {
-            nodes.push(getMethodSignatureDeclarationNode(editor, sourceFile, node, parentElement, childElements));
+            nodes.push(getMethodSignatureDeclarationNode(editor, sourceFile, node, parentElement, []));
         }
 
         // class elements
@@ -192,41 +192,41 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         }
         else if (ts.isConstructorDeclaration(node))
         {
-            getConstructorDeclarationNode(editor, sourceFile, node, parentElement, childElements).forEach(n => nodes.push(n));
+            getConstructorDeclarationNode(editor, sourceFile, node, parentElement, []).forEach(n => nodes.push(n));
         }
         else if (ts.isClassStaticBlockDeclaration(node))
         {
-            nodes.push(getStaticBlockDeclarationNode(editor, sourceFile, node, parentElement, childElements));
+            nodes.push(getStaticBlockDeclarationNode(editor, sourceFile, node, parentElement, []));
         }
         else if (ts.isAutoAccessorPropertyDeclaration(node))
         {
-            nodes.push(getAccessorDeclarationNode(editor, sourceFile, node, parentElement, childElements));
+            nodes.push(getAccessorDeclarationNode(editor, sourceFile, node, parentElement, []));
         }
         else if (ts.isPropertyDeclaration(node))
         {
-            nodes.push(getPropertyDeclarationNode(editor, sourceFile, node, parentElement, childElements));
+            nodes.push(getPropertyDeclarationNode(editor, sourceFile, node, parentElement, []));
         }
         else if (ts.isGetAccessor(node))
         {
-            nodes.push(getGetterDeclarationNode(editor, sourceFile, node, parentElement, childElements));
+            nodes.push(getGetterDeclarationNode(editor, sourceFile, node, parentElement, []));
         }
         else if (ts.isSetAccessor(node))
         {
-            nodes.push(getSetterDeclarationNode(editor, sourceFile, node, parentElement, childElements));
+            nodes.push(getSetterDeclarationNode(editor, sourceFile, node, parentElement, []));
         }
         else if (ts.isMethodDeclaration(node))
         {
-            nodes.push(getMethodDeclarationNode(editor, sourceFile, node, parentElement, childElements));
+            nodes.push(getMethodDeclarationNode(editor, sourceFile, node, parentElement, []));
         }
 
         // module elements
         if (ts.isFunctionDeclaration(node))
         {
-            nodes.push(getFunctionDeclarationNode(editor, sourceFile, node, parentElement, childElements));
+            nodes.push(getFunctionDeclarationNode(editor, sourceFile, node, parentElement, []));
         }
         else if (ts.isVariableStatement(node))
         {
-            getVariableDeclarationNode(editor, sourceFile, node, parentElement, childElements).forEach(n => nodes.push(n));
+            getVariableDeclarationNode(editor, sourceFile, node, parentElement, []).forEach(n => nodes.push(n));
         }
 
         // get child elements

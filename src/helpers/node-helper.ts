@@ -65,33 +65,27 @@ export function getConstructorDeclarationNode(editor: vscode.TextEditor, sourceF
 
     for (const parameter of node.parameters)
     {
-        if (parameter.modifiers &&
-            parameter.modifiers.length > 0)
-        {
-            const parameterName = (<ts.Identifier>parameter.name).escapedText.toString();
-            const parameterType = parameter.type ? parameter.type.getText(sourceFile) : "any";
-            const parameterPosition = sourceFile.getLineAndCharacterOfPosition(parameter.name.getStart(sourceFile, false));
-            const parameterAccessModifier = parameter.modifiers?.find((x) => x.kind == ts.SyntaxKind.PublicKeyword || x.kind == ts.SyntaxKind.ProtectedKeyword || x.kind == ts.SyntaxKind.PrivateKeyword) as ts.Modifier;
-            const parameterIsReadOnly = parameter.modifiers?.find((x) => x.kind == ts.SyntaxKind.ReadonlyKeyword) != null;
-            const parameterStart = editor!.document.positionAt(parameter.getStart(sourceFile, false));
-            const parameterEnd = editor!.document.positionAt(parameter.getEnd());
+        const parameterName = (<ts.Identifier>parameter.name).escapedText.toString();
+        const parameterType = parameter.type ? parameter.type.getText(sourceFile) : "any";
+        const parameterPosition = sourceFile.getLineAndCharacterOfPosition(parameter.name.getStart(sourceFile, false));
+        const parameterAccessModifier = parameter.modifiers?.find((x) => x.kind == ts.SyntaxKind.PublicKeyword || x.kind == ts.SyntaxKind.ProtectedKeyword || x.kind == ts.SyntaxKind.PrivateKeyword) as ts.Modifier;
+        const parameterIsReadOnly = parameter.modifiers?.find((x) => x.kind == ts.SyntaxKind.ReadonlyKeyword) != null;
+        const parameterStart = editor!.document.positionAt(parameter.getStart(sourceFile, false));
+        const parameterEnd = editor!.document.positionAt(parameter.getEnd());
 
-            if (parameterAccessModifier)
+        if (parameterAccessModifier)
+        {
+            if (parameterIsReadOnly)
             {
-                if (parameterIsReadOnly)
-                {
-                    properties.push(new ConstDeclarationNode(parameterName, parameterType, parameterAccessModifier.getText(sourceFile), false, false, parentElement, [], getGotoCommand(editor, parameterPosition), parameterStart, parameterEnd));
-                }
-                else
-                {
-                    properties.push(new PropertyDeclarationNode(parameterName, parameterType, parameterAccessModifier.getText(sourceFile), false, false, parentElement, [], getGotoCommand(editor, parameterPosition), parameterStart, parameterEnd));
-                }
+                properties.push(new ConstDeclarationNode(parameterName, parameterType, parameterAccessModifier.getText(sourceFile), false, false, parentElement, [], getGotoCommand(editor, parameterPosition), parameterStart, parameterEnd));
             }
             else
             {
-                parameters.push(new Parameter(parameterName, parameterType));
+                properties.push(new PropertyDeclarationNode(parameterName, parameterType, parameterAccessModifier.getText(sourceFile), false, false, parentElement, [], getGotoCommand(editor, parameterPosition), parameterStart, parameterEnd));
             }
         }
+
+        parameters.push(new Parameter(parameterName, parameterType));
     }
 
     const constructorNode = new ConstructorDeclarationNode(parameters, parentElement, childElements, getGotoCommand(editor, position), start, end);
