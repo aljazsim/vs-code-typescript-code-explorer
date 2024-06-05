@@ -7,7 +7,7 @@ export class VariableDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(variableName: string, variableType: string, public isExport: boolean, public readonly isConst: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(variableName: string, variableType: string, public readonly isExport: boolean, public readonly isConst: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 

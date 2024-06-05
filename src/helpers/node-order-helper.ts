@@ -20,7 +20,7 @@ import { StaticCodeBlockDeclarationNode } from "../Nodes/StaticCodeBlockDeclarat
 import { TypeAliasDeclarationNode } from "../Nodes/TypeAliasDeclarationNode";
 import { VariableDeclarationNode } from "../Nodes/VariableDeclarationNode";
 
-// #region Functions (13)
+// #region Functions (16)
 
 function compareNodes(a: DeclarationNode, b: DeclarationNode, orderBy: ((node: DeclarationNode) => string)[])
 {
@@ -61,15 +61,41 @@ function compareStrings(valueA: string, valueB: string)
     }
 }
 
-function getNodeAccessor(node: DeclarationNode)
+function getNodeAccessorOrder(node: DeclarationNode)
 {
-    if (node instanceof PropertyDeclarationNode ||
+    if (node instanceof InterfaceDeclarationNode ||
+        node instanceof TypeAliasDeclarationNode ||
+        node instanceof ClassDeclarationNode ||
+        node instanceof FunctionDeclarationNode ||
+        node instanceof VariableDeclarationNode)
+    {
+        if (node.isExport)
+        {
+            return "102";
+        }
+        else
+        {
+            return "101";
+        }
+    }
+    else if (node instanceof PropertyDeclarationNode ||
         node instanceof AccessorDeclarationNode ||
         node instanceof SetterDeclarationNode ||
         node instanceof GetterDeclarationNode ||
         node instanceof MethodDeclarationNode)
     {
-        return node.accessModifier;
+        if (node.accessModifier === "private")
+        {
+            return "201";
+        }
+        else if (node.accessModifier === "protected")
+        {
+            return "202";
+        }
+        else if (node.accessModifier === "public")
+        {
+            return "203";
+        }
     }
 
     return "";
@@ -111,15 +137,15 @@ function getNodeType(declarationNode: DeclarationNode)
     // interface / type alias member types
     if (declarationNode instanceof PropertySignatureDeclarationNode)
     {
-        return "property signature";
+        return "property";
     }
     else if (declarationNode instanceof IndexSignatureDeclarationNode)
     {
-        return "index signature";
+        return "index";
     }
     else if (declarationNode instanceof MethodSignatureDeclarationNode)
     {
-        return "method signature";
+        return "method";
     }
 
     // enum member types
@@ -138,8 +164,7 @@ function getNodeType(declarationNode: DeclarationNode)
         return "property";
     }
     else if (declarationNode instanceof ConstructorDeclarationNode ||
-        declarationNode instanceof StaticCodeBlockDeclarationNode
-    )
+        declarationNode instanceof StaticCodeBlockDeclarationNode)
     {
         return "constructor";
     }
@@ -197,27 +222,13 @@ function getNodeTypeOrder(nodeType: string)
         return "106";
     }
 
-    // interface / type alias member types
-    if (nodeType === "property signature")
-    {
-        return "201";
-    }
-    else if (nodeType === "index signature")
-    {
-        return "202";
-    }
-    else if (nodeType === "method signature")
-    {
-        return "203";
-    }
-
     // enum member types
     if (nodeType === "enum values")
     {
         return "301";
     }
 
-    // class member types
+    // interface/type/class member types
     if (nodeType === "constant")
     {
         return "401";
@@ -234,21 +245,25 @@ function getNodeTypeOrder(nodeType: string)
     {
         return "403";
     }
-    else if (nodeType === "accessor")
+    else if (nodeType === "index")
     {
         return "404";
     }
-    else if (nodeType === "getter")
+    else if (nodeType === "accessor")
     {
         return "405";
     }
-    else if (nodeType === "setter")
+    else if (nodeType === "getter")
     {
         return "406";
     }
-    else if (nodeType === "method")
+    else if (nodeType === "setter")
     {
         return "407";
+    }
+    else if (nodeType === "method")
+    {
+        return "408";
     }
 
     // empty
@@ -260,39 +275,46 @@ function getNodeTypeOrder(nodeType: string)
     return "601";
 }
 
-export function groupByMemberTypeGroupByAccessorOrderByName(nodes: DeclarationNode[])
+function group(parentNode: DeclarationNode | null, childNodes: DeclarationNode[], groupBy: (nodes: DeclarationNode[]) => Map<string, DeclarationNode[]>, groupsOrderBy: (a: DeclarationNode, b: DeclarationNode) => number, childrenOrderBy: (a: DeclarationNode, b: DeclarationNode) => number)
 {
-    nodes = nodes.sort((a, b) => compareNodes(a, b, [getNodeType, getNodeAccessor, getNodeName]));
-    nodes.forEach(n => orderByNodeTypeByName(n.children));
+    let groupedChildNodes = Array<DeclarationNode>();
 
-    return nodes;
+    for (const [groupName, groupNodes] of [...groupBy(childNodes)])
+    {
+        groupedChildNodes.push(new DescriptionNode(groupName, parentNode, groupNodes.sort(childrenOrderBy)));
+    }
+
+    groupedChildNodes = groupedChildNodes.sort(groupsOrderBy);
+
+    for (const groupNode of groupedChildNodes)
+    {
+        if (groupNode.children.length > 1)
+        {
+            groupNode.label = pluralize(groupNode.label as string ?? "");
+        }
+    }
+
+    return groupedChildNodes;
 }
 
 export function groupByMemberTypeOrderByName(nodes: DeclarationNode[])
 {
-    for (const typeNode of nodes.sort((a, b) => compareNodes(a, b, [getNodeType, getNodeName])))
+    if (nodes.length > 1)
     {
-        if (typeNode instanceof InterfaceDeclarationNode ||
-            typeNode instanceof ClassDeclarationNode ||
-            typeNode instanceof TypeAliasDeclarationNode)
+        nodes = group(null, nodes, groupByType, (a, b) => compareNodes(a, b, [n => getNodeTypeOrder(n.name)]), (a, b) => compareNodes(a, b, [getNodeAccessorOrder, getNodeName]));
+    }
+
+    for (const node of nodes)
+    {
+        if (node instanceof InterfaceDeclarationNode ||
+            node instanceof ClassDeclarationNode ||
+            node instanceof TypeAliasDeclarationNode)
         {
-            typeNode.children = group(typeNode, typeNode.children, groupByType, (a, b) => compareStrings(getNodeTypeOrder(a), getNodeTypeOrder(b)));
+            node.children = group(node, node.children, groupByType, (a, b) => compareNodes(a, b, [n => getNodeTypeOrder(n.name)]), (a, b) => compareNodes(a, b, [getNodeAccessorOrder, getNodeName]));
         }
-
     }
+
     return nodes;
-}
-
-function group(parentNode: DeclarationNode | null, childrenNodes: DeclarationNode[], groupBy: (nodes: DeclarationNode[]) => Map<string, DeclarationNode[]>, orderBy: (a: string, b: string) => number)
-{
-    const nodeGroups = Array<DeclarationNode>();
-
-    for (const [groupName, groupNodes] of [...groupBy(childrenNodes)].sort((a, b) => orderBy(a[0], b[0])))
-    {
-        nodeGroups.push(new DescriptionNode(groupName, parentNode, groupNodes.sort((a, b) => compareNodes(a, b, [(getNodeName)]))));
-    }
-
-    return nodeGroups;
 }
 
 function groupByType(nodes: DeclarationNode[])
@@ -316,27 +338,6 @@ function groupByType(nodes: DeclarationNode[])
     return groups;
 }
 
-function groupByAccessor(nodes: DeclarationNode[])
-{
-    const groups = new Map<string, DeclarationNode[]>();
-
-    for (const node of nodes)
-    {
-        let nodeAccessor = getNodeAccessor(node);
-
-        if (groups.has(nodeAccessor))
-        {
-            groups.get(nodeAccessor)!.push(node);
-        }
-        else
-        {
-            groups.set(nodeAccessor, [node]);
-        }
-    }
-
-    return groups;
-}
-
 export function orderByNodeType(nodes: DeclarationNode[])
 {
     nodes = nodes.sort((a, b) => compareNodes(a, b, [getNodeType]));
@@ -347,7 +348,7 @@ export function orderByNodeType(nodes: DeclarationNode[])
 
 export function orderByNodeTypeByAccessorByName(nodes: DeclarationNode[])
 {
-    nodes = nodes.sort((a, b) => compareNodes(a, b, [getNodeType, getNodeAccessor, getNodeName]));
+    nodes = nodes.sort((a, b) => compareNodes(a, b, [getNodeType, getNodeAccessorOrder, getNodeName]));
     nodes.forEach(n => orderByNodeTypeByName(n.children));
 
     return nodes;
@@ -366,4 +367,16 @@ export function orderByNone(nodes: DeclarationNode[])
     return nodes;
 }
 
-// #endregion Functions (13)
+function pluralize(noun: string)
+{
+    if (noun.endsWith("y"))
+    {
+        return noun.substring(0, noun.length - 1) + "ies";
+    }
+    else
+    {
+        return noun + "s";
+    }
+}
+
+// #endregion Functions (16)

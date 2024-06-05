@@ -7,7 +7,7 @@ export class TypeAliasDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(typeName: string, isExport: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(typeName: string, public readonly isExport: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 

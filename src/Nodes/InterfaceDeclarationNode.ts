@@ -7,7 +7,7 @@ export class InterfaceDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(interfaceName: string, isExport: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(interfaceName: string, public readonly isExport: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 
