@@ -3,6 +3,7 @@ import { ClassDeclarationNode } from "../Nodes/ClassDeclarationNode";
 import { ConstDeclarationNode } from "../Nodes/ConstDeclarationNode";
 import { ConstructorDeclarationNode } from "../Nodes/ConstructorDeclarationNode";
 import { DeclarationNode } from "../Nodes/DeclarationNode";
+import { DescriptionNode } from "../Nodes/DescriptionNode";
 import { EmptyDeclarationNode } from "../Nodes/EmptyDeclarationNode";
 import { EnumDeclarationNode } from "../Nodes/EnumDeclarationNode";
 import { EnumMemberDeclarationNode } from "../Nodes/EnumMemberDeclarationNode";
@@ -19,7 +20,7 @@ import { StaticCodeBlockDeclarationNode } from "../Nodes/StaticCodeBlockDeclarat
 import { TypeAliasDeclarationNode } from "../Nodes/TypeAliasDeclarationNode";
 import { VariableDeclarationNode } from "../Nodes/VariableDeclarationNode";
 
-// #region Functions (8)
+// #region Functions (13)
 
 function compareNodes(a: DeclarationNode, b: DeclarationNode, orderBy: ((node: DeclarationNode) => string)[])
 {
@@ -44,6 +45,22 @@ function compareNodes(a: DeclarationNode, b: DeclarationNode, orderBy: ((node: D
     }
 }
 
+function compareStrings(valueA: string, valueB: string)
+{
+    if (valueA > valueB)
+    {
+        return 1;
+    }
+    else if (valueA < valueB)
+    {
+        return -1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 function getNodeAccessor(node: DeclarationNode)
 {
     if (node instanceof PropertyDeclarationNode ||
@@ -52,18 +69,7 @@ function getNodeAccessor(node: DeclarationNode)
         node instanceof GetterDeclarationNode ||
         node instanceof MethodDeclarationNode)
     {
-        if (node.accessModifier === "private")
-        {
-            return "1";
-        }
-        else if (node.accessModifier === "protected")
-        {
-            return "2";
-        }
-        if (node.accessModifier === "public")
-        {
-            return "3";
-        }
+        return node.accessModifier;
     }
 
     return "";
@@ -79,90 +85,256 @@ function getNodeType(declarationNode: DeclarationNode)
     // module member types
     if (declarationNode instanceof EnumDeclarationNode)
     {
-        return "101";
+        return "enum";
     }
     if (declarationNode instanceof InterfaceDeclarationNode)
     {
-        return "102";
+        return "interface";
     }
     else if (declarationNode instanceof ClassDeclarationNode)
     {
-        return "103";
+        return "class";
     }
     else if (declarationNode instanceof TypeAliasDeclarationNode)
     {
-        return "104";
+        return "type";
     }
     else if (declarationNode instanceof VariableDeclarationNode)
     {
-        return "105";
+        return "variable";
     }
     else if (declarationNode instanceof FunctionDeclarationNode)
     {
-        return "106";
+        return "function";
     }
 
     // interface / type alias member types
     if (declarationNode instanceof PropertySignatureDeclarationNode)
     {
-        return "201";
+        return "property signature";
     }
     else if (declarationNode instanceof IndexSignatureDeclarationNode)
     {
-        return "202";
+        return "index signature";
     }
     else if (declarationNode instanceof MethodSignatureDeclarationNode)
     {
-        return "203";
+        return "method signature";
     }
 
     // enum member types
     if (declarationNode instanceof EnumMemberDeclarationNode)
     {
-        return "301";
+        return "enum value";
     }
 
     // class member types
     if (declarationNode instanceof ConstDeclarationNode)
     {
-        return "401";
+        return "constant";
     }
     if (declarationNode instanceof PropertyDeclarationNode)
     {
-        return "401";
+        return "property";
     }
-    else if (declarationNode instanceof ConstructorDeclarationNode)
+    else if (declarationNode instanceof ConstructorDeclarationNode ||
+        declarationNode instanceof StaticCodeBlockDeclarationNode
+    )
     {
-        return "402";
-    }
-    else if (declarationNode instanceof StaticCodeBlockDeclarationNode)
-    {
-        return "403";
+        return "constructor";
     }
     else if (declarationNode instanceof AccessorDeclarationNode)
     {
-        return "404";
+        return "accessor";
     }
     else if (declarationNode instanceof GetterDeclarationNode)
     {
-        return "405";
+        return "getter";
     }
     else if (declarationNode instanceof SetterDeclarationNode)
     {
-        return "406";
+        return "setter";
     }
     else if (declarationNode instanceof MethodDeclarationNode)
     {
-        return "407";
+        return "method";
     }
 
     // empty
     if (declarationNode instanceof EmptyDeclarationNode)
     {
+        return "";
+    }
+
+    return "-";
+}
+
+function getNodeTypeOrder(nodeType: string)
+{
+    // module member types
+    if (nodeType === "enum")
+    {
+        return "101";
+    }
+    if (nodeType === "interface")
+    {
+        return "102";
+    }
+    else if (nodeType === "class")
+    {
+        return "103";
+    }
+    else if (nodeType === "type")
+    {
+        return "104";
+    }
+    else if (nodeType === "variable")
+    {
+        return "105";
+    }
+    else if (nodeType === "function")
+    {
+        return "106";
+    }
+
+    // interface / type alias member types
+    if (nodeType === "property signature")
+    {
+        return "201";
+    }
+    else if (nodeType === "index signature")
+    {
+        return "202";
+    }
+    else if (nodeType === "method signature")
+    {
+        return "203";
+    }
+
+    // enum member types
+    if (nodeType === "enum values")
+    {
+        return "301";
+    }
+
+    // class member types
+    if (nodeType === "constant")
+    {
+        return "401";
+    }
+    if (nodeType === "property")
+    {
+        return "401";
+    }
+    else if (nodeType === "constructor")
+    {
+        return "402";
+    }
+    else if (nodeType === "static constructor")
+    {
+        return "403";
+    }
+    else if (nodeType === "accessor")
+    {
+        return "404";
+    }
+    else if (nodeType === "getter")
+    {
+        return "405";
+    }
+    else if (nodeType === "setter")
+    {
+        return "406";
+    }
+    else if (nodeType === "method")
+    {
+        return "407";
+    }
+
+    // empty
+    if (nodeType === "")
+    {
         return "501";
     }
 
     return "601";
+}
+
+export function groupByMemberTypeGroupByAccessorOrderByName(nodes: DeclarationNode[])
+{
+    nodes = nodes.sort((a, b) => compareNodes(a, b, [getNodeType, getNodeAccessor, getNodeName]));
+    nodes.forEach(n => orderByNodeTypeByName(n.children));
+
+    return nodes;
+}
+
+export function groupByMemberTypeOrderByName(nodes: DeclarationNode[])
+{
+    for (const typeNode of nodes.sort((a, b) => compareNodes(a, b, [getNodeType, getNodeName])))
+    {
+        if (typeNode instanceof InterfaceDeclarationNode ||
+            typeNode instanceof ClassDeclarationNode ||
+            typeNode instanceof TypeAliasDeclarationNode)
+        {
+            typeNode.children = group(typeNode, typeNode.children, groupByType, (a, b) => compareStrings(getNodeTypeOrder(a), getNodeTypeOrder(b)));
+        }
+
+    }
+    return nodes;
+}
+
+function group(parentNode: DeclarationNode | null, childrenNodes: DeclarationNode[], groupBy: (nodes: DeclarationNode[]) => Map<string, DeclarationNode[]>, orderBy: (a: string, b: string) => number)
+{
+    const nodeGroups = Array<DeclarationNode>();
+
+    for (const [groupName, groupNodes] of [...groupBy(childrenNodes)].sort((a, b) => orderBy(a[0], b[0])))
+    {
+        nodeGroups.push(new DescriptionNode(groupName, parentNode, groupNodes.sort((a, b) => compareNodes(a, b, [(getNodeName)]))));
+    }
+
+    return nodeGroups;
+}
+
+function groupByType(nodes: DeclarationNode[])
+{
+    const groups = new Map<string, DeclarationNode[]>();
+
+    for (const node of nodes)
+    {
+        let nodeType = getNodeType(node);
+
+        if (groups.has(nodeType))
+        {
+            groups.get(nodeType)!.push(node);
+        }
+        else
+        {
+            groups.set(nodeType, [node]);
+        }
+    }
+
+    return groups;
+}
+
+function groupByAccessor(nodes: DeclarationNode[])
+{
+    const groups = new Map<string, DeclarationNode[]>();
+
+    for (const node of nodes)
+    {
+        let nodeAccessor = getNodeAccessor(node);
+
+        if (groups.has(nodeAccessor))
+        {
+            groups.get(nodeAccessor)!.push(node);
+        }
+        else
+        {
+            groups.set(nodeAccessor, [node]);
+        }
+    }
+
+    return groups;
 }
 
 export function orderByNodeType(nodes: DeclarationNode[])
@@ -194,4 +366,4 @@ export function orderByNone(nodes: DeclarationNode[])
     return nodes;
 }
 
-// #endregion Functions (8)
+// #endregion Functions (13)
