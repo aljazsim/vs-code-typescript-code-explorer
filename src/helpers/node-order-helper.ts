@@ -20,7 +20,7 @@ import { StaticCodeBlockDeclarationNode } from "../Nodes/StaticCodeBlockDeclarat
 import { TypeAliasDeclarationNode } from "../Nodes/TypeAliasDeclarationNode";
 import { VariableDeclarationNode } from "../Nodes/VariableDeclarationNode";
 
-// #region Functions (16)
+// #region Functions (14)
 
 function compareNodes(a: DeclarationNode, b: DeclarationNode, orderBy: ((node: DeclarationNode) => string)[])
 {
@@ -61,7 +61,7 @@ function compareStrings(valueA: string, valueB: string)
     }
 }
 
-function getNodeAccessorOrder(node: DeclarationNode)
+function getAccessorOrder(node: DeclarationNode)
 {
     if (node instanceof InterfaceDeclarationNode ||
         node instanceof TypeAliasDeclarationNode ||
@@ -101,12 +101,12 @@ function getNodeAccessorOrder(node: DeclarationNode)
     return "";
 }
 
-function getNodeName(node: DeclarationNode)
+function getName(node: DeclarationNode)
 {
     return node.name.toLowerCase();
 }
 
-function getNodeType(declarationNode: DeclarationNode)
+function getType(declarationNode: DeclarationNode)
 {
     // module member types
     if (declarationNode instanceof EnumDeclarationNode)
@@ -194,7 +194,7 @@ function getNodeType(declarationNode: DeclarationNode)
     return "-";
 }
 
-function getNodeTypeOrder(nodeType: string)
+function getTypeOrder(nodeType: string)
 {
     // module member types
     if (nodeType === "enum")
@@ -297,33 +297,13 @@ function group(parentNode: DeclarationNode | null, childNodes: DeclarationNode[]
     return groupedChildNodes;
 }
 
-export function groupByMemberTypeOrderByName(nodes: DeclarationNode[])
-{
-    if (nodes.length > 1)
-    {
-        nodes = group(null, nodes, groupByType, (a, b) => compareNodes(a, b, [n => getNodeTypeOrder(n.name)]), (a, b) => compareNodes(a, b, [getNodeAccessorOrder, getNodeName]));
-    }
-
-    for (const node of nodes)
-    {
-        if (node instanceof InterfaceDeclarationNode ||
-            node instanceof ClassDeclarationNode ||
-            node instanceof TypeAliasDeclarationNode)
-        {
-            node.children = group(node, node.children, groupByType, (a, b) => compareNodes(a, b, [n => getNodeTypeOrder(n.name)]), (a, b) => compareNodes(a, b, [getNodeAccessorOrder, getNodeName]));
-        }
-    }
-
-    return nodes;
-}
-
 function groupByType(nodes: DeclarationNode[])
 {
     const groups = new Map<string, DeclarationNode[]>();
 
     for (const node of nodes)
     {
-        let nodeType = getNodeType(node);
+        let nodeType = getType(node);
 
         if (groups.has(nodeType))
         {
@@ -338,32 +318,52 @@ function groupByType(nodes: DeclarationNode[])
     return groups;
 }
 
-export function orderByNodeType(nodes: DeclarationNode[])
+export function groupByTypeOrderByName(nodes: DeclarationNode[])
 {
-    nodes = nodes.sort((a, b) => compareNodes(a, b, [getNodeType]));
-    nodes.forEach(n => orderByNodeType(n.children));
+    if (nodes.length > 1)
+    {
+        nodes = group(null, nodes, groupByType, (a, b) => compareNodes(a, b, [n => getTypeOrder(n.name)]), (a, b) => compareNodes(a, b, [getAccessorOrder, getName]));
+    }
 
-    return nodes;
-}
-
-export function orderByNodeTypeByAccessorByName(nodes: DeclarationNode[])
-{
-    nodes = nodes.sort((a, b) => compareNodes(a, b, [getNodeType, getNodeAccessorOrder, getNodeName]));
-    nodes.forEach(n => orderByNodeTypeByName(n.children));
-
-    return nodes;
-}
-
-export function orderByNodeTypeByName(nodes: DeclarationNode[])
-{
-    nodes = nodes.sort((a, b) => compareNodes(a, b, [getNodeType, getNodeName]));
-    nodes.forEach(n => orderByNodeTypeByName(n.children));
+    for (const node of nodes)
+    {
+        if (node instanceof InterfaceDeclarationNode ||
+            node instanceof ClassDeclarationNode ||
+            node instanceof TypeAliasDeclarationNode)
+        {
+            node.children = group(node, node.children, groupByType, (a, b) => compareNodes(a, b, [n => getTypeOrder(n.name)]), (a, b) => compareNodes(a, b, [getAccessorOrder, getName]));
+        }
+    }
 
     return nodes;
 }
 
 export function orderByNone(nodes: DeclarationNode[])
 {
+    return nodes;
+}
+
+export function orderByType(nodes: DeclarationNode[])
+{
+    nodes = nodes.sort((a, b) => compareNodes(a, b, [getType]));
+    nodes.forEach(n => orderByType(n.children));
+
+    return nodes;
+}
+
+export function orderByTypeByAccessorByName(nodes: DeclarationNode[])
+{
+    nodes = nodes.sort((a, b) => compareNodes(a, b, [getType, getAccessorOrder, getName]));
+    nodes.forEach(n => orderByTypeByName(n.children));
+
+    return nodes;
+}
+
+export function orderByTypeByName(nodes: DeclarationNode[])
+{
+    nodes = nodes.sort((a, b) => compareNodes(a, b, [getType, getName]));
+    nodes.forEach(n => orderByTypeByName(n.children));
+
     return nodes;
 }
 
@@ -379,4 +379,4 @@ function pluralize(noun: string)
     }
 }
 
-// #endregion Functions (16)
+// #endregion Functions (14)

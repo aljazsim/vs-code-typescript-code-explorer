@@ -112,10 +112,11 @@ export function getEnumMemberDeclarationNode(editor: vscode.TextEditor, sourceFi
     const identifier = <ts.Identifier>node.name;
     const position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
     const enumMemberName = identifier.escapedText.toString();
+    const enumMemberValue = node.initializer?.getText(sourceFile) ?? null;
     const start = editor!.document.positionAt(node.getStart(sourceFile, false));
     const end = editor!.document.positionAt(node.getEnd());
 
-    return new EnumMemberDeclarationNode(enumMemberName, parentElement, childElements, getGotoCommand(editor, position), start, end);
+    return new EnumMemberDeclarationNode(enumMemberName, enumMemberValue, parentElement, childElements, getGotoCommand(editor, position), start, end);
 }
 
 export function getFunctionDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.FunctionDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
@@ -183,13 +184,14 @@ export function getIndexSignatureDeclarationNode(editor: vscode.TextEditor, sour
     const hasKeyword = (node: ts.IndexSignatureDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
 
     const position = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile, false));
-    const indexType = node.type ? node.type.getText(sourceFile) : "any";
+    const indexParameter = node.parameters.map(p => new Parameter(p.name.getText(sourceFile), p.type?.getText(sourceFile) ?? ""));
+    const indexReturnType = node.type.getText(sourceFile);
     const start = editor!.document.positionAt(node.getStart(sourceFile, false));
     const end = editor!.document.positionAt(node.getEnd());
     const isReadOnly = hasKeyword(node, ts.SyntaxKind.ReadonlyKeyword);
     const isStatic = hasKeyword(node, ts.SyntaxKind.StaticKeyword);
 
-    return new IndexSignatureDeclarationNode(indexType, isStatic, isReadOnly, parentElement, childElements, getGotoCommand(editor, position), start, end);
+    return new IndexSignatureDeclarationNode(indexParameter, indexReturnType, isStatic, isReadOnly, parentElement, childElements, getGotoCommand(editor, position), start, end);
 }
 
 export function getInterfaceDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.InterfaceDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])

@@ -7,12 +7,13 @@ export class EnumMemberDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(enumMemberName: string, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(enumMemberName: string, enumValue: string | null, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 
         this.name = enumMemberName;
         this.label = enumMemberName;
+        this.description = enumValue === null ? "" : `= ${enumValue}`;
 
         this.start = start;
         this.end = end;

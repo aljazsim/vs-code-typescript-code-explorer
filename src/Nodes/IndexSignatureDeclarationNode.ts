@@ -2,18 +2,19 @@ import * as vscode from "vscode";
 
 import { DeclarationNode } from "./DeclarationNode";
 import { NodeImages } from "./NodeImages";
+import { Parameter } from "./Parameter";
 
 export class IndexSignatureDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(indexType: string, public isStatic: boolean, isReadOnly: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(indexParameters: Parameter[], indexReturnType: string, public readonly isStatic: boolean, public readonly isReadOnly: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 
-        this.name = indexType;
+        this.name = "index";
         this.label = "index";
-        this.description = indexType ? `: ${indexType}` : "";
+        this.description = `[${indexParameters.map(ip => `${ip.name}: ${ip.type}`).join(", ")}]: ${indexReturnType}`;
 
         this.start = start;
         this.end = end;

@@ -37,8 +37,7 @@
     ],
     "activationEvents": [
         "onLanguage:typescript",
-        "onView:typescript-code-explorer",
-        "onCommand:tsce.showCodeExplorer"
+        "onView:typescript-code-explorer"
     ],
     "contributes": {
         "commands": [
