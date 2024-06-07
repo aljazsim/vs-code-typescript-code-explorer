@@ -23,143 +23,71 @@ export class MethodDeclarationNode extends DeclarationNode
         this.children = children;
         this.command = command;
 
-        if (isAsync)
-        {
-            if (isStatic)
-            {
-                if (accessModifier === "private")
-                {
-                    this.iconPath = {
-                        light: NodeImages.methodPrivateStaticAsync,
-                        dark: NodeImages.methodPrivateStaticAsync
-                    };
-                }
-                else if (accessModifier === "protected")
-                {
-                    this.iconPath = {
-                        light: NodeImages.methodProtectedStaticAsync,
-                        dark: NodeImages.methodProtectedStaticAsync
-                    };
-                }
-                else if (accessModifier === "public")
-                {
-                    this.iconPath = {
-                        light: NodeImages.methodPublicStaticAsync,
-                        dark: NodeImages.methodPublicStaticAsync
-                    };
-                }
-            }
-            else if (isAbstract)
-            {
-                if (accessModifier === "protected")
-                {
-                    this.iconPath = {
-                        light: NodeImages.methodProtectedAbstractAsync,
-                        dark: NodeImages.methodProtectedAbstractAsync
-                    };
-                }
-                else if (accessModifier === "public")
-                {
-                    this.iconPath = {
-                        light: NodeImages.methodPublicAbstractAsync,
-                        dark: NodeImages.methodPublicAbstractAsync
-                    };
-                }
-            }
-            else
-            {
-                if (accessModifier === "private")
-                {
-                    this.iconPath = {
-                        light: NodeImages.methodPrivateStaticAsync,
-                        dark: NodeImages.methodPrivateStaticAsync
-                    };
-                }
-                else if (accessModifier === "protected")
-                {
-                    this.iconPath = {
-                        light: NodeImages.methodProtectedAsync,
-                        dark: NodeImages.methodProtectedAsync
-                    };
-                }
-                else if (accessModifier === "public")
-                {
-                    this.iconPath = {
-                        light: NodeImages.methodPublicAsync,
-                        dark: NodeImages.methodPublicAsync
-                    };
-                }
-            }
 
+        if (isStatic)
+        {
+            if (accessModifier === "private")
+            {
+                this.iconPath = {
+                    light: NodeImages.methodPrivateStatic,
+                    dark: NodeImages.methodPrivateStatic
+                };
+            }
+            else if (accessModifier === "protected")
+            {
+                this.iconPath = {
+                    light: NodeImages.methodProtectedStatic,
+                    dark: NodeImages.methodProtectedStatic
+                };
+            }
+            else if (accessModifier === "public")
+            {
+                this.iconPath = {
+                    light: NodeImages.methodPublicStatic,
+                    dark: NodeImages.methodPublicStatic
+                };
+            }
         }
-        else 
+        else if (isAbstract)
         {
-            if (isStatic)
+            if (accessModifier === "protected")
             {
-                if (accessModifier === "private")
-                {
-                    this.iconPath = {
-                        light: NodeImages.methodPrivateStatic,
-                        dark: NodeImages.methodPrivateStatic
-                    };
-                }
-                else if (accessModifier === "protected")
-                {
-                    this.iconPath = {
-                        light: NodeImages.methodProtectedStatic,
-                        dark: NodeImages.methodProtectedStatic
-                    };
-                }
-                else if (accessModifier === "public")
-                {
-                    this.iconPath = {
-                        light: NodeImages.methodPublicStatic,
-                        dark: NodeImages.methodPublicStatic
-                    };
-                }
+                this.iconPath = {
+                    light: NodeImages.methodProtectedAbstract,
+                    dark: NodeImages.methodProtectedAbstract
+                };
             }
-            else if (isAbstract)
+            else if (accessModifier === "public")
             {
-                if (accessModifier === "protected")
-                {
-                    this.iconPath = {
-                        light: NodeImages.methodProtectedAbstract,
-                        dark: NodeImages.methodProtectedAbstract
-                    };
-                }
-                else if (accessModifier === "public")
-                {
-                    this.iconPath = {
-                        light: NodeImages.methodPublicAbstract,
-                        dark: NodeImages.methodPublicAbstract
-                    };
-                }
+                this.iconPath = {
+                    light: NodeImages.methodPublicAbstract,
+                    dark: NodeImages.methodPublicAbstract
+                };
             }
-            else
+        }
+        else
+        {
+            if (accessModifier === "private")
             {
-                if (accessModifier === "private")
-                {
-                    this.iconPath = {
-                        light: NodeImages.methodPrivateStatic,
-                        dark: NodeImages.methodPrivateStatic
-                    };
-                }
-                else if (accessModifier === "protected")
-                {
-                    this.iconPath = {
-                        light: NodeImages.methodProtected,
-                        dark: NodeImages.methodProtected
-                    };
-                }
-                else if (accessModifier === "public")
-                {
-                    this.iconPath = {
-                        light: NodeImages.methodPublic,
-                        dark: NodeImages.methodPublic
-                    };
-                }
+                this.iconPath = {
+                    light: NodeImages.methodPrivateStatic,
+                    dark: NodeImages.methodPrivateStatic
+                };
             }
-
+            else if (accessModifier === "protected")
+            {
+                this.iconPath = {
+                    light: NodeImages.methodProtected,
+                    dark: NodeImages.methodProtected
+                };
+            }
+            else if (accessModifier === "public")
+            {
+                this.iconPath = {
+                    light: NodeImages.methodPublic,
+                    dark: NodeImages.methodPublic
+                };
+            }
         }
     }
 

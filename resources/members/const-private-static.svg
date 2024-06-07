@@ -23,8 +23,8 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="10.414062"
-     inkscape:cx="64"
-     inkscape:cy="64"
+     inkscape:cx="64.000003"
+     inkscape:cy="64.000003"
      inkscape:window-width="3840"
      inkscape:window-height="1529"
      inkscape:window-x="-8"
@@ -35,18 +35,26 @@
      fill="#666666"
      fill-rule="evenodd"
      clip-rule="evenodd"
-     id="g2">
+     id="g2"
+     style="fill:#888888;fill-opacity:1">
     <path
        d="M4 6h8v1H4zm8 3H4v1h8z"
-       id="path1" />
+       id="path1"
+       style="fill:#888888;fill-opacity:1" />
     <path
        d="m1 4l1-1h12l1 1v8l-1 1H2l-1-1zm1 0v8h12V4z"
-       id="path2" />
+       id="path2"
+       style="fill:#888888;fill-opacity:1" />
   </g>
-  <circle
-     style="fill:#ea580c;fill-opacity:1;stroke-width:0.160032"
-     id="path2-6"
-     cx="13.594992"
-     cy="13.582989"
-     r="2.4126031" />
+  <text
+     xml:space="preserve"
+     style="font-size:8.08559px;fill:#ea580c;fill-opacity:1;stroke-width:0.673797"
+     x="10.961074"
+     y="15.87978"
+     id="text1"><tspan
+       sodipodi:role="line"
+       id="tspan1"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Arial Rounded MT Bold';-inkscape-font-specification:'Arial Rounded MT Bold, ';fill:#ea580c;fill-opacity:1;stroke-width:0.673797"
+       x="10.961074"
+       y="15.87978">S</tspan></text>
 </svg>

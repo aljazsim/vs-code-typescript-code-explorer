@@ -24,8 +24,8 @@ export class IndexSignatureDeclarationNode extends DeclarationNode
         this.command = command;
 
         this.iconPath = {
-            light: isStatic ? NodeImages.propertyPrivateStatic : NodeImages.propertyPrivate,
-            dark: isStatic ? NodeImages.propertyPrivateStatic : NodeImages.propertyPrivate
+            light: isStatic ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic,
+            dark: isStatic ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic
         };
     }
 

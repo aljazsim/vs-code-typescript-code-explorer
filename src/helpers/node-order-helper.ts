@@ -290,7 +290,7 @@ function group(parentNode: DeclarationNode | null, childNodes: DeclarationNode[]
     {
         if (groupNode.children.length > 1)
         {
-            groupNode.label = pluralize(groupNode.label as string ?? "");
+            groupNode.description = pluralize(groupNode.description as string ?? "");
         }
     }
 
@@ -372,6 +372,10 @@ function pluralize(noun: string)
     if (noun.endsWith("y"))
     {
         return noun.substring(0, noun.length - 1) + "ies";
+    }
+    else if (noun.endsWith("x"))
+    {
+        return noun + "es";
     }
     else
     {
