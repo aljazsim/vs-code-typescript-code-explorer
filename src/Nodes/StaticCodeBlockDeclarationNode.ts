@@ -11,7 +11,7 @@ export class StaticCodeBlockDeclarationNode extends DeclarationNode
     {
         super();
 
-        this.name = "static constructor";
+        this.name = "constructor";
         this.label = this.name;
 
         this.start = start;
