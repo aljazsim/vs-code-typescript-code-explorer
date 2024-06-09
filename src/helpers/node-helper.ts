@@ -306,7 +306,7 @@ export function getPropertySignatureDeclarationNode(editor: vscode.TextEditor, s
     const propertyName = identifier.escapedText.toString();
     const propertyType = node.type ? node.type.getText(sourceFile) : "any";
     const isReadOnly = hasKeyword(node, ts.SyntaxKind.ReadonlyKeyword);
-    const isArrowFunction = node.type?.kind === ts.SyntaxKind.FunctionType; // TODO
+    const isArrowFunction = node.type?.kind === ts.SyntaxKind.FunctionType; // TODO\
     const start = editor!.document.positionAt(node.getStart(sourceFile, false));
     const end = editor!.document.positionAt(node.getEnd());
     const command = getGotoCommand(editor, position);
@@ -316,7 +316,26 @@ export function getPropertySignatureDeclarationNode(editor: vscode.TextEditor, s
         if ((configuration.showArrowFunctionPropertiesAsMethods) ||
             (configuration.showReadonlyArrowFunctionPropertiesAsMethods && isReadOnly))
         {
-            return new MethodSignatureDeclarationNode(propertyName, [], "any", parentNode, command, start, end);
+            const arrowFunction = <ts.FunctionTypeNode>node.type;
+            const arrowFunctionParameters: Parameter[] = [];
+            const arrowFunctionReturnType: string | null = arrowFunction.type?.getText(sourceFile) ?? null;
+
+            // arrow function parameters
+            for (const parameter of arrowFunction.parameters)
+            {
+                const parameterName = (<ts.Identifier>parameter.name).escapedText.toString();
+
+                if (parameter.type)
+                {
+                    arrowFunctionParameters.push(new Parameter(parameterName, parameter.type.getText(sourceFile)));
+                }
+                else
+                {
+                    arrowFunctionParameters.push(new Parameter(parameterName, "any"));
+                }
+            }
+
+            return new MethodSignatureDeclarationNode(propertyName, arrowFunctionParameters, arrowFunctionReturnType, parentNode, command, start, end);
         }
     }
 
