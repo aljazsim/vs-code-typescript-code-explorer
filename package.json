@@ -40,6 +40,116 @@
         "onView:typescript-code-explorer"
     ],
     "contributes": {
+        "configuration": [
+            {
+                "title": "TypesScript Code Explorer",
+                "properties": {
+                    "tsce.groupingAndOrder": {
+                        "type": "string",
+                        "description": "Specifies how code elements should be organized.",
+                        "default": "group by: type, order by: accessor/name",
+                        "enum": [
+                            "none",
+                            "order by: type",
+                            "order by: type/name",
+                            "order by: type/accessor",
+                            "order by: type/accessor/name",
+                            "group by: type",
+                            "group by: type, order by: name",
+                            "group by: type, order by: accessor",
+                            "group by: type, order by: accessor/name",
+                            "group by: type/accessor, order by: type/accessor/name"
+                        ],
+                        "enumDescriptions": [
+                            "Elements ordered in the same sequence as in code",
+                            "Elements ordered by structure type and by member type",
+                            "Elements ordered by structure type, by member type and by member accessor",
+                            "Elements ordered by structure type, by member type, by member accessor and by name",
+                            "Elements grouped by structure type and then grouped by member type",
+                            "Elements grouped by structure type, ordered by structure name, then grouped by member type and ordered by member name",
+                            "Elements grouped by structure type, ordered by structure accessor, then grouped by member type and ordered by member accessor",
+                            "Elements grouped by structure type, ordered by structure accessor, by structure name, then grouped by member type and ordered by member accessor, by member name",
+                            "Elements grouped by structure type, then by structure accessor, ordered by structure accessor, by name, then grouped by member type, then by member accessor, ordered by member name"
+                        ]
+                    },
+                    "tsce.showPropertyTypes": {
+                        "type": "boolean",
+                        "description": "Specifies if property types should be displayed.",
+                        "default": true
+                    },
+                    "tsce.showParameters": {
+                        "type": "boolean",
+                        "description": "Specifies if parameters should be displayed.",
+                        "default": true
+                    },
+                    "tsce.showParameterTypes": {
+                        "type": "boolean",
+                        "description": "Specifies if parameter types should be displayed.",
+                        "default": true
+                    },
+                    "tsce.showReturnTypes": {
+                        "type": "boolean",
+                        "description": "Specifies if return types should be displayed.",
+                        "default": true
+                    },
+                    "tsce.showAnyIfTypeNotSpecified": {
+                        "type": "boolean",
+                        "description": "Specifies if any should be displayed when no type is explicitly specified.",
+                        "default": true
+                    },
+                    "tsce.showAccessorColorCoding": {
+                        "type": "boolean",
+                        "description": "Specifies if elements should be displayed with different color icons for different accessor types.",
+                        "default": true
+                    },
+                    "tsce.showStaticMemberIndicator": {
+                        "type": "boolean",
+                        "description": "Specifies if element icons should display letter 'S' for static members.",
+                        "default": true
+                    },
+                    "tsce.showAbstractMemberIndicator": {
+                        "type": "boolean",
+                        "description": "Specifies if element icons should display letter 'A' for abstract members.",
+                        "default": true
+                    },
+                    "tsce.showMemberCount": {
+                        "type": "boolean",
+                        "description": "Specifies if member count should be displayed when grouping member.",
+                        "default": true
+                    },
+                    "tsce.showReadonlyPropertiesAsConst": {
+                        "type": "boolean",
+                        "description": "Specifies if readonly properties should be treated as constants.",
+                        "default": true
+                    },
+                    "tsce.showConstVariablesAsConst": {
+                        "type": "boolean",
+                        "description": "Specifies if readonly variables should be treated as constants.",
+                        "default": true
+                    },
+                    "tsce.showArrowFunctionPropertiesAsMethods": {
+                        "type": "boolean",
+                        "description": "Specifies if arrow function properties should be treated as methods.",
+                        "default": false
+                    },
+                    "tsce.showArrowFunctionReadOnlyPropertiesAsMethods": {
+                        "type": "boolean",
+                        "description": "Specifies if readonly arrow function properties should be treated as methods.",
+                        "default": true
+                    },
+                    "tsce.showArrowFunctionVariablesAsMethods": {
+                        "type": "boolean",
+                        "description": "Specifies if arrow function variables should be treated as functions.",
+                        "default": false
+                    },
+                    "tsce.showArrowFunctionConstVariablesAsMethods": {
+                        "type": "boolean",
+                        "description": "Specifies if const arrow function variables should be treated as functions.",
+                        "default": true
+                    }
+                }
+            }
+        ],
         "commands": [
             {
                 "command": "tsce.showCodeExplorer",

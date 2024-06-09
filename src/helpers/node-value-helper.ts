@@ -73,7 +73,8 @@ export function getAccessorOrder(node: DeclarationNode)
             return "101";
         }
     }
-    else if (node instanceof PropertyDeclarationNode ||
+    else if (node instanceof ConstDeclarationNode ||
+        node instanceof PropertyDeclarationNode ||
         node instanceof AccessorDeclarationNode ||
         node instanceof SetterDeclarationNode ||
         node instanceof GetterDeclarationNode ||
@@ -149,7 +150,7 @@ export function getType(node: DeclarationNode)
     }
     else if (node instanceof FunctionDeclarationNode)
     {
-        return "export function";
+        return "function";
     }
 
     // interface / type alias member types
@@ -235,7 +236,7 @@ export function getTypeOrder(node?: DeclarationNode)
     {
         return "105";
     }
-    else if (node instanceof FunctionDeclarationNode || (node instanceof DescriptionNode && node.name === "export function"))
+    else if (node instanceof FunctionDeclarationNode || (node instanceof DescriptionNode && node.name === "exported function"))
     {
         return "106";
     }

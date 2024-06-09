@@ -7,7 +7,7 @@ export class ConstDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(propertyName: string, propertyType: string, public accessModifier: string, public isStatic: boolean, public isAbstract: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(propertyName: string, propertyType: string, public readonly accessModifier: string, public readonly isStatic: boolean, public readonly isAbstract: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 

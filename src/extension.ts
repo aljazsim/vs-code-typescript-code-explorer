@@ -1,46 +1,41 @@
 import * as vscode from "vscode";
 
 import { Configuration } from "./configuration/configuration";
-import { DeclarationNode } from "./Nodes/DeclarationNode";
-import { NodeOrderType } from "./helpers/node-order-type";
 import { SyntaxTreeNodeProvider } from "./SyntaxTreeNodeProvider";
-
-'use strict';
 
 export function activate(context: vscode.ExtensionContext)
 {
-    let view: vscode.TreeView<DeclarationNode>;
-    let nodeDependenciesProvider: SyntaxTreeNodeProvider;
     let selecting: boolean = false;
-    const configuration = new Configuration(true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, NodeOrderType.groupByTypeByAccessorOrderByTypeByAccessorByName);
-
-    nodeDependenciesProvider = new SyntaxTreeNodeProvider(vscode.workspace.rootPath!);
 
     // register the tree provider with the view
-    view = vscode.window.createTreeView('tsce.codeExplorer', { treeDataProvider: nodeDependenciesProvider });
+    const nodeTreeProvider = new SyntaxTreeNodeProvider(vscode.workspace.workspaceFolders ?? []);
+    const view = vscode.window.createTreeView('tsce.codeExplorer', { treeDataProvider: nodeTreeProvider });
+
+    // detect when configuration changes
+    vscode.workspace.onDidChangeConfiguration(e => configuration = Configuration.getConfiguration());
 
     vscode.workspace.onDidChangeTextDocument(_ =>
     {
         // editor contents changed -> refresh view with the current window
-        nodeDependenciesProvider.refresh(vscode.window.activeTextEditor!, configuration);
+        nodeTreeProvider.refresh(vscode.window.activeTextEditor!, configuration);
     });
 
     vscode.workspace.onDidOpenTextDocument(_ =>
     {
         // editor opened -> refresh view with the current window
-        nodeDependenciesProvider.refresh(vscode.window.activeTextEditor!, configuration);
+        nodeTreeProvider.refresh(vscode.window.activeTextEditor!, configuration);
     });
 
     vscode.workspace.onDidCloseTextDocument(_ =>
     {
         // editor closed -> refresh view with the current window
-        nodeDependenciesProvider.refresh(vscode.window.activeTextEditor!, configuration);
+        nodeTreeProvider.refresh(vscode.window.activeTextEditor!, configuration);
     });
 
     vscode.window.onDidChangeActiveTextEditor(editor =>
     {
         // switched editors -> refresh view with the current window
-        nodeDependenciesProvider.refresh(editor!, configuration);
+        nodeTreeProvider.refresh(editor!, configuration);
     });
 
     vscode.window.onDidChangeTextEditorSelection(e =>
@@ -52,7 +47,7 @@ export function activate(context: vscode.ExtensionContext)
                 e.selections &&
                 e.selections.length > 0)
             {
-                let currentNode = nodeDependenciesProvider.getNode(e.selections[0].start, e.selections[e.selections.length - 1].end);
+                let currentNode = nodeTreeProvider.getNode(e.selections[0].start, e.selections[e.selections.length - 1].end);
 
                 if (currentNode)
                 {
@@ -72,7 +67,8 @@ export function activate(context: vscode.ExtensionContext)
         // node clicked -> move cursor to the element
         editor.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.AtTop);
         editor.selection = new vscode.Selection(position, position);
-        editor.show();
+
+        vscode.window.showTextDocument(editor.document);
 
         selecting = false;
     });
@@ -87,12 +83,14 @@ export function activate(context: vscode.ExtensionContext)
         }
         else
         {
-            view.reveal(nodeDependenciesProvider.rootElement, { select: true, focus: true });
+            view.reveal(nodeTreeProvider.rootElement, { select: true, focus: true });
         }
     }));
 
     if (vscode.window.activeTextEditor)
     {
-        nodeDependenciesProvider.refresh(vscode.window.activeTextEditor, configuration);
+        nodeTreeProvider.refresh(vscode.window.activeTextEditor, configuration);
     }
 }
+
+let configuration = Configuration.getConfiguration();

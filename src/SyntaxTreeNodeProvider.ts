@@ -23,7 +23,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
 
     // #region Constructors (1)
 
-    constructor(private readonly workspaceRoot: string)
+    constructor(private readonly workspaceFolders: readonly vscode.WorkspaceFolder[])
     {
     }
 
@@ -44,7 +44,8 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
     {
         let children: DeclarationNode[] = [];
 
-        if (this.workspaceRoot &&
+        if (this.workspaceFolders &&
+            this.workspaceFolders.length > 0 &&
             this.editor)
         {
             children = element ? element.children : this.rootElements;
@@ -118,7 +119,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         }
 
         // group and order
-        return groupAndOrder(rootElements, configuration.order);
+        return groupAndOrder(rootElements, configuration.groupingAndOrder, configuration.showMemberCount);
     }
 
     private findNode(nodes: DeclarationNode[], positionStart: vscode.Position, positionEnd: vscode.Position): DeclarationNode | null

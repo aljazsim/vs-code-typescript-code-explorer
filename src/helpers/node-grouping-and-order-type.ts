@@ -1,4 +1,4 @@
-export enum NodeOrderType
+export enum NodeGroupingAndOrderType
 {
     none = "none",
     orderByType = "orderByType",

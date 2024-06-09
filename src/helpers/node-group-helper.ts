@@ -1,4 +1,5 @@
-import { compareByAccessor, compareByName, compareByType, compareByTypeByAccessor, compareByTypeByAccessorByName, compareByTypeByName } from "./node-compare-helper";
+import { addMemberCount, pluralize } from "./node-description-helper";
+import { compareByAccessor, compareByAccessorByName, compareByName, compareByType, compareByTypeByAccessor, compareByTypeByAccessorByName, compareByTypeByName } from "./node-compare-helper";
 import { getAccessor, getType } from "./node-value-helper";
 import { order, orderByType, orderByTypeByAccessor, orderByTypeByAccessorByName, orderByTypeByName } from "./node-order-helper";
 
@@ -6,11 +7,10 @@ import { ClassDeclarationNode } from "../Nodes/ClassDeclarationNode";
 import { DeclarationNode } from "../Nodes/DeclarationNode";
 import { DescriptionNode } from "../Nodes/DescriptionNode";
 import { InterfaceDeclarationNode } from "../Nodes/InterfaceDeclarationNode";
-import { NodeOrderType } from "./node-order-type";
+import { NodeGroupingAndOrderType } from "./node-grouping-and-order-type";
 import { TypeAliasDeclarationNode } from "../Nodes/TypeAliasDeclarationNode";
-import { pluralize } from "./node-description-helper";
 
-// #region Functions (9)
+// #region Functions (10)
 
 function group(nodes: DeclarationNode[], groupBy: (nodes: DeclarationNode[]) => Map<string, DeclarationNode[]>)
 {
@@ -31,43 +31,43 @@ function group(nodes: DeclarationNode[], groupBy: (nodes: DeclarationNode[]) => 
     return groupedNodes;
 }
 
-export function groupAndOrder(nodes: DeclarationNode[], nodeOrderType: NodeOrderType)
+export function groupAndOrder(nodes: DeclarationNode[], nodeOrderType: NodeGroupingAndOrderType, showMemberCount: boolean)
 {
-    if (nodeOrderType === NodeOrderType.orderByType)
+    if (nodeOrderType === NodeGroupingAndOrderType.orderByType)
     {
         return orderByType(nodes);
     }
-    else if (nodeOrderType === NodeOrderType.orderByTypeByName)
+    else if (nodeOrderType === NodeGroupingAndOrderType.orderByTypeByName)
     {
         return orderByTypeByName(nodes);
     }
-    else if (nodeOrderType === NodeOrderType.orderByTypeByAccessor)
+    else if (nodeOrderType === NodeGroupingAndOrderType.orderByTypeByAccessor)
     {
         return orderByTypeByAccessor(nodes);
     }
-    else if (nodeOrderType === NodeOrderType.orderByTypeByAccessorByName)
+    else if (nodeOrderType === NodeGroupingAndOrderType.orderByTypeByAccessorByName)
     {
         return orderByTypeByAccessorByName(nodes);
     }
-    else if (nodeOrderType === NodeOrderType.groupByType)
+    else if (nodeOrderType === NodeGroupingAndOrderType.groupByType)
     {
-        return groupByType(nodes);
+        return groupByType(nodes, showMemberCount);
     }
-    else if (nodeOrderType === NodeOrderType.groupByTypeOrderByName)
+    else if (nodeOrderType === NodeGroupingAndOrderType.groupByTypeOrderByName)
     {
-        return groupByTypeOrderByTypeByName(nodes);
+        return groupByTypeOrderByName(nodes, showMemberCount);
     }
-    else if (nodeOrderType === NodeOrderType.groupByTypeOrderByAccessor)
+    else if (nodeOrderType === NodeGroupingAndOrderType.groupByTypeOrderByAccessor)
     {
-        return groupByTypeOrderByTypeByAccessor(nodes);
+        return groupByTypeOrderByAccessor(nodes, showMemberCount);
     }
-    else if (nodeOrderType === NodeOrderType.groupByTypeOrderByAccessorByName)
+    else if (nodeOrderType === NodeGroupingAndOrderType.groupByTypeOrderByAccessorByName)
     {
-        return groupByTypeOrderByTypeByAccessorByName(nodes);
+        return groupByTypeOrderByAccessorByName(nodes, showMemberCount);
     }
-    else if (nodeOrderType === NodeOrderType.groupByTypeByAccessorOrderByTypeByAccessorByName)
+    else if (nodeOrderType === NodeGroupingAndOrderType.groupByTypeByAccessorOrderByTypeByAccessorByName)
     {
-        return groupByTypeByAccessorOrderByTypeByAccessorByName(nodes);
+        return groupByTypeByAccessorOrderByTypeByAccessorByName(nodes, showMemberCount);
     }
     else
     {
@@ -75,14 +75,8 @@ export function groupAndOrder(nodes: DeclarationNode[], nodeOrderType: NodeOrder
     }
 }
 
-function groupByType(nodes: DeclarationNode[])
+function groupByType(nodes: DeclarationNode[], showMemberCount: boolean)
 {
-    if (nodes.length > 1)
-    {
-        nodes = group(nodes, mergeByType);
-        nodes.forEach(n => pluralize(n.children));
-    }
-
     for (const node of nodes)
     {
         if (node instanceof InterfaceDeclarationNode ||
@@ -90,81 +84,23 @@ function groupByType(nodes: DeclarationNode[])
             node instanceof TypeAliasDeclarationNode)
         {
             node.children = group(node.children, mergeByType);
-            node.children.forEach(n => pluralize(n.children));
+            node.children.forEach(n => pluralize(n));
+            node.children.forEach(n => showMemberCount && addMemberCount(n));
         }
+    }
+
+    if (nodes.length > 1)
+    {
+        nodes = group(nodes, mergeByType);
+        nodes.forEach(n => pluralize(n));
+        nodes.forEach(n => showMemberCount && addMemberCount(n));
     }
 
     return nodes;
 }
 
-function groupByTypeOrderByTypeByAccessor(nodes: DeclarationNode[])
+function groupByTypeByAccessorOrderByTypeByAccessorByName(nodes: DeclarationNode[], showMemberCount: boolean)
 {
-    if (nodes.length > 1)
-    {
-        nodes = group(nodes, mergeByType);
-        nodes = order(nodes, compareByTypeByAccessor);
-        nodes.forEach(n => pluralize(n.children));
-    }
-
-    for (const node of nodes)
-    {
-        if (node instanceof InterfaceDeclarationNode ||
-            node instanceof ClassDeclarationNode ||
-            node instanceof TypeAliasDeclarationNode)
-        {
-            node.children = group(node.children, mergeByType);
-            node.children = order(node.children, compareByTypeByAccessor);
-            node.children.forEach(n => pluralize(n.children));
-        }
-    }
-
-    return nodes;
-}
-
-function groupByTypeOrderByTypeByAccessorByName(nodes: DeclarationNode[])
-{
-    if (nodes.length > 1)
-    {
-        nodes = group(nodes, mergeByType);
-        nodes = order(nodes, compareByTypeByAccessorByName);
-        nodes.forEach(n => pluralize(n.children));
-    }
-
-    for (const node of nodes)
-    {
-        if (node instanceof InterfaceDeclarationNode ||
-            node instanceof ClassDeclarationNode ||
-            node instanceof TypeAliasDeclarationNode)
-        {
-            node.children = group(node.children, mergeByType);
-            node.children = order(node.children, compareByTypeByAccessorByName);
-            node.children.forEach(n => pluralize(n.children));
-        }
-    }
-
-    return nodes;
-}
-
-function groupByTypeByAccessorOrderByTypeByAccessorByName(nodes: DeclarationNode[])
-{
-    if (nodes.length > 1)
-    {
-        nodes = group(nodes, mergeByType);
-        nodes = order(nodes, compareByTypeByName);
-        nodes.forEach(n => pluralize(n.children));
-
-        for (const typeGroup of nodes)
-        {
-            typeGroup.children = group(typeGroup.children, mergeByAccessor);
-            typeGroup.children = order(typeGroup.children, compareByAccessor);
-
-            for (const accessorGroup of typeGroup.children)
-            {
-                accessorGroup.children = order(accessorGroup.children, compareByName);
-            }
-        }
-    }
-
     for (const node of nodes)
     {
         if (node instanceof InterfaceDeclarationNode ||
@@ -173,33 +109,96 @@ function groupByTypeByAccessorOrderByTypeByAccessorByName(nodes: DeclarationNode
         {
             node.children = group(node.children, mergeByType);
             node.children = order(node.children, compareByType);
-            node.children.forEach(n => pluralize(n.children));
+            node.children.forEach(n => pluralize(n));
+            node.children.forEach(n => showMemberCount && addMemberCount(n));
 
             for (const typeGroup of node.children)
             {
                 typeGroup.children = group(typeGroup.children, mergeByAccessor);
                 typeGroup.children = order(typeGroup.children, compareByAccessor);
-
-                for (const accessorGroup of typeGroup.children)
-                {
-                    accessorGroup.children = order(accessorGroup.children, compareByName);
-                }
+                typeGroup.children.forEach(n => n.children = order(n.children, compareByName));
+                typeGroup.children.forEach(n => showMemberCount && addMemberCount(n));
             }
+        }
+    }
+
+    if (nodes.length > 1)
+    {
+        nodes = group(nodes, mergeByType);
+        nodes = order(nodes, compareByTypeByName);
+        nodes.forEach(n => pluralize(n));
+        nodes.forEach(n => showMemberCount && addMemberCount(n));
+
+        for (const typeGroup of nodes)
+        {
+            typeGroup.children = group(typeGroup.children, mergeByAccessor);
+            typeGroup.children = order(typeGroup.children, compareByAccessor);
+            typeGroup.children.forEach(n => n.children = order(n.children, compareByName));
+            typeGroup.children.forEach(n => showMemberCount && addMemberCount(n));
         }
     }
 
     return nodes;
 }
 
-function groupByTypeOrderByTypeByName(nodes: DeclarationNode[])
+function groupByTypeOrderByAccessor(nodes: DeclarationNode[], showMemberCount: boolean)
 {
+    for (const node of nodes)
+    {
+        if (node instanceof InterfaceDeclarationNode ||
+            node instanceof ClassDeclarationNode ||
+            node instanceof TypeAliasDeclarationNode)
+        {
+            node.children = group(node.children, mergeByType);
+            node.children = order(node.children, compareByType);
+            node.children.forEach(n => n.children = order(n.children, compareByAccessor));
+            node.children.forEach(n => pluralize(n));
+            node.children.forEach(n => showMemberCount && addMemberCount(n));
+        }
+    }
+
     if (nodes.length > 1)
     {
         nodes = group(nodes, mergeByType);
-        nodes = order(nodes, compareByTypeByName);
-        nodes.forEach(n => pluralize(n.children));
+        nodes = order(nodes, compareByType);
+        nodes.forEach(n => n.children = order(n.children, compareByAccessor));
+        nodes.forEach(n => pluralize(n));
+        nodes.forEach(n => showMemberCount && addMemberCount(n));
     }
 
+    return nodes;
+}
+
+function groupByTypeOrderByAccessorByName(nodes: DeclarationNode[], showMemberCount: boolean)
+{
+    for (const node of nodes)
+    {
+        if (node instanceof InterfaceDeclarationNode ||
+            node instanceof ClassDeclarationNode ||
+            node instanceof TypeAliasDeclarationNode)
+        {
+            node.children = group(node.children, mergeByType);
+            node.children = order(node.children, compareByType);
+            node.children.forEach(n => n.children = order(n.children, compareByAccessorByName));
+            node.children.forEach(n => pluralize(n));
+            node.children.forEach(n => showMemberCount && addMemberCount(n));
+        }
+    }
+
+    if (nodes.length > 1)
+    {
+        nodes = group(nodes, mergeByType);
+        nodes = order(nodes, compareByType);
+        nodes.forEach(n => n.children = order(n.children, compareByAccessorByName));
+        nodes.forEach(n => pluralize(n));
+        nodes.forEach(n => showMemberCount && addMemberCount(n));
+    }
+
+    return nodes;
+}
+
+function groupByTypeOrderByName(nodes: DeclarationNode[], showMemberCount: boolean)
+{
     for (const node of nodes)
     {
         if (node instanceof InterfaceDeclarationNode ||
@@ -208,8 +207,17 @@ function groupByTypeOrderByTypeByName(nodes: DeclarationNode[])
         {
             node.children = group(node.children, mergeByType);
             node.children = order(node.children, compareByTypeByName);
-            node.children.forEach(n => pluralize(n.children));
+            node.children.forEach(n => pluralize(n));
+            node.children.forEach(n => showMemberCount && addMemberCount(n));
         }
+    }
+
+    if (nodes.length > 1)
+    {
+        nodes = group(nodes, mergeByType);
+        nodes = order(nodes, compareByTypeByName);
+        nodes.forEach(n => pluralize(n));
+        nodes.forEach(n => showMemberCount && addMemberCount(n));
     }
 
     return nodes;
@@ -246,4 +254,4 @@ function mergeByType(nodes: DeclarationNode[])
     return merge(nodes, getType);
 }
 
-// #endregion Functions (9)
+// #endregion Functions (10)

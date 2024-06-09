@@ -6,10 +6,7 @@ import { DeclarationNode } from "../Nodes/DeclarationNode";
 
 export function order(nodes: DeclarationNode[], orderBy: (a: DeclarationNode, b: DeclarationNode) => number)
 {
-    nodes = nodes.sort(orderBy);
-    nodes.forEach(n => order(n.children, orderBy));
-
-    return nodes;
+    return nodes.sort(orderBy);
 }
 
 export function orderByType(nodes: DeclarationNode[])

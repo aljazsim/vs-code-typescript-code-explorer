@@ -1,18 +1,22 @@
 import { DeclarationNode } from "../Nodes/DeclarationNode";
+import { DescriptionNode } from "../Nodes/DescriptionNode";
 
-// #region Functions (2)
+// #region Functions (3)
 
-export function pluralize(nodes: DeclarationNode[])
+export function addMemberCount(node: DeclarationNode)
 {
-    for (const node of nodes)
+    if (node instanceof DescriptionNode && node.children.length > 0)
     {
-        if (node.children.length > 1)
-        {
-            node.description = pluralizeString(node.description as string ?? "");
-        }
+        node.description = `${node.description} (${node.children.length})`;
     }
+}
 
-    return nodes;
+export function pluralize(node: DeclarationNode)
+{
+    if (node instanceof DescriptionNode && node.children.length > 1)
+    {
+        node.description = pluralizeString(node.description as string ?? "");
+    }
 }
 
 function pluralizeString(noun: string)
@@ -31,4 +35,4 @@ function pluralizeString(noun: string)
     }
 }
 
-// #endregion Functions (2)
+// #endregion Functions (3)
