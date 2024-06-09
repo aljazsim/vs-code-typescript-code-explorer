@@ -18,7 +18,14 @@ function group(nodes: DeclarationNode[], groupBy: (nodes: DeclarationNode[]) => 
 
     for (const [groupName, groupNodes] of [...groupBy(nodes)])
     {
-        groupedNodes.push(new DescriptionNode(groupName, groupNodes[0].parent, groupNodes));
+        if (groupName === "")
+        {
+            groupNodes.forEach(n => groupedNodes.push(n));
+        }
+        else 
+        {
+            groupedNodes.push(new DescriptionNode(groupName, groupNodes[0].parent, groupNodes));
+        }
     }
 
     return groupedNodes;

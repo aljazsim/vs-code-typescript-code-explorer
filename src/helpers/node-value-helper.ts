@@ -39,13 +39,18 @@ export function getAccessor(node: DeclarationNode)
             return "not exported";
         }
     }
-    else if (node instanceof PropertyDeclarationNode ||
+    else if (node instanceof ConstDeclarationNode ||
+        node instanceof PropertyDeclarationNode ||
         node instanceof AccessorDeclarationNode ||
         node instanceof SetterDeclarationNode ||
         node instanceof GetterDeclarationNode ||
         node instanceof MethodDeclarationNode)
     {
         return node.accessModifier;
+    }
+    else if (node instanceof DescriptionNode)
+    {
+        return node.name;
     }
 
     return "";
@@ -83,6 +88,29 @@ export function getAccessorOrder(node: DeclarationNode)
             return "202";
         }
         else if (node.accessModifier === "public")
+        {
+            return "203";
+        }
+    }
+    else if (node instanceof DescriptionNode)
+    {
+        if (node.name === "exported")
+        {
+            return "102";
+        }
+        else if (node.name === "not exported")
+        {
+            return "101";
+        }
+        else if (node.name === "private")
+        {
+            return "201";
+        }
+        else if (node.name === "protected")
+        {
+            return "202";
+        }
+        else if (node.name === "public")
         {
             return "203";
         }
