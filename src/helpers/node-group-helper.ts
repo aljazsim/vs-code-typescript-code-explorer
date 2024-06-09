@@ -1,5 +1,5 @@
 import { addMemberCount, pluralize } from "./node-description-helper";
-import { compareByAccessor, compareByAccessorByName, compareByName, compareByType, compareByTypeByAccessor, compareByTypeByAccessorByName, compareByTypeByName } from "./node-compare-helper";
+import { compareByAccessor, compareByAccessorByName, compareByName, compareByType, compareByTypeByName } from "./node-compare-helper";
 import { getAccessor, getType } from "./node-value-helper";
 import { order, orderByType, orderByTypeByAccessor, orderByTypeByAccessorByName, orderByTypeByName } from "./node-order-helper";
 
