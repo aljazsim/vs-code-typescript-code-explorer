@@ -22,7 +22,7 @@ export class Configuration
         public readonly showArrowFunctionPropertiesAsMethods: boolean,
         public readonly showReadonlyArrowFunctionPropertiesAsMethods: boolean,
         public readonly showArrowFunctionVariablesAsMethods: boolean,
-        public readonly showArrowFunctionConstAsMethods: boolean,
+        public readonly showArrowFunctionConstAsMethods: boolean
     )
     {
     }
@@ -49,7 +49,7 @@ export class Configuration
             configuration.get<boolean>("showReadonlyPropertiesAsConst") === true,
             configuration.get<boolean>("showConstVariablesAsConst") === true,
             configuration.get<boolean>("showArrowFunctionPropertiesAsMethods") === true,
-            configuration.get<boolean>("showReadonlyArrowFunctionPropertiesAsMethods") === true,
+            configuration.get<boolean>("showArrowFunctionReadOnlyPropertiesAsMethods") === true,
             configuration.get<boolean>("showArrowFunctionVariablesAsMethods") === true,
             configuration.get<boolean>("showArrowFunctionConstAsMethods") === true
         );

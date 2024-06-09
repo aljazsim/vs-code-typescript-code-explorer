@@ -20,10 +20,11 @@ import { MethodSignatureDeclarationNode } from "../Nodes/MethodSignatureDeclarat
 import { GetterDeclarationNode } from "../Nodes/GetterDeclarationNode";
 import { DeclarationNode } from "../Nodes/DeclarationNode";
 import { ConstDeclarationNode } from "../Nodes/ConstDeclarationNode";
+import { Configuration } from "../configuration/configuration";
 
 // #region Functions (18)
 
-export function getAccessorDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.AutoAccessorPropertyDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
+export function getAccessorDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.AutoAccessorPropertyDeclaration, parentNode: DeclarationNode | null, childElements: DeclarationNode[])
 {
     const hasKeyword = (node: ts.AutoAccessorPropertyDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
 
@@ -37,10 +38,10 @@ export function getAccessorDeclarationNode(editor: vscode.TextEditor, sourceFile
     const isStatic = hasKeyword(node, ts.SyntaxKind.StaticKeyword);
     const isAbstract = hasKeyword(node, ts.SyntaxKind.AbstractKeyword);
 
-    return new AccessorDeclarationNode(accessorName, accessorType, accessModifier, isStatic, isAbstract, parentElement, childElements, getGotoCommand(editor, position), start, end);
+    return new AccessorDeclarationNode(accessorName, accessorType, accessModifier, isStatic, isAbstract, parentNode, childElements, getGotoCommand(editor, position), start, end);
 }
 
-export function getClassDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.ClassDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
+export function getClassDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.ClassDeclaration, parentNode: DeclarationNode | null, childElements: DeclarationNode[])
 {
     const hasKeyword = (node: ts.ClassDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
 
@@ -52,10 +53,10 @@ export function getClassDeclarationNode(editor: vscode.TextEditor, sourceFile: t
     const start = editor!.document.positionAt(node.getStart(sourceFile, false));
     const end = editor!.document.positionAt(node.getEnd());
 
-    return new ClassDeclarationNode(className, isExport, isAbstract, parentElement, childElements, getGotoCommand(editor, position), start, end);
+    return new ClassDeclarationNode(className, isExport, isAbstract, parentNode, childElements, getGotoCommand(editor, position), start, end);
 }
 
-export function getConstructorDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.ConstructorDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
+export function getConstructorDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.ConstructorDeclaration, parentNode: DeclarationNode | null, childElements: DeclarationNode[])
 {
     const position = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile, false));
     const parameters: Parameter[] = [];
@@ -77,23 +78,23 @@ export function getConstructorDeclarationNode(editor: vscode.TextEditor, sourceF
         {
             if (parameterIsReadOnly)
             {
-                properties.push(new ConstDeclarationNode(parameterName, parameterType, parameterAccessModifier.getText(sourceFile), false, false, parentElement, [], getGotoCommand(editor, parameterPosition), parameterStart, parameterEnd));
+                properties.push(new ConstDeclarationNode(parameterName, parameterType, parameterAccessModifier.getText(sourceFile), false, false, parentNode, [], getGotoCommand(editor, parameterPosition), parameterStart, parameterEnd));
             }
             else
             {
-                properties.push(new PropertyDeclarationNode(parameterName, parameterType, parameterAccessModifier.getText(sourceFile), false, false, parentElement, [], getGotoCommand(editor, parameterPosition), parameterStart, parameterEnd));
+                properties.push(new PropertyDeclarationNode(parameterName, parameterType, parameterAccessModifier.getText(sourceFile), false, false, parentNode, [], getGotoCommand(editor, parameterPosition), parameterStart, parameterEnd));
             }
         }
 
         parameters.push(new Parameter(parameterName, parameterType));
     }
 
-    const constructorNode = new ConstructorDeclarationNode(parameters, parentElement, childElements, getGotoCommand(editor, position), start, end);
+    const constructorNode = new ConstructorDeclarationNode(parameters, parentNode, childElements, getGotoCommand(editor, position), start, end);
 
     return [constructorNode].concat(properties);
 }
 
-export function getEnumDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.EnumDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
+export function getEnumDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.EnumDeclaration, parentNode: DeclarationNode | null, childElements: DeclarationNode[])
 {
     const hasKeyword = (node: ts.EnumDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
 
@@ -104,10 +105,10 @@ export function getEnumDeclarationNode(editor: vscode.TextEditor, sourceFile: ts
     const start = editor!.document.positionAt(node.getStart(sourceFile, false));
     const end = editor!.document.positionAt(node.getEnd());
 
-    return new EnumDeclarationNode(enumName, isExport, parentElement, childElements, getGotoCommand(editor, position), start, end);
+    return new EnumDeclarationNode(enumName, isExport, parentNode, childElements, getGotoCommand(editor, position), start, end);
 }
 
-export function getEnumMemberDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.EnumMember, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
+export function getEnumMemberDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.EnumMember, parentNode: DeclarationNode | null, childElements: DeclarationNode[])
 {
     const identifier = <ts.Identifier>node.name;
     const position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
@@ -116,10 +117,10 @@ export function getEnumMemberDeclarationNode(editor: vscode.TextEditor, sourceFi
     const start = editor!.document.positionAt(node.getStart(sourceFile, false));
     const end = editor!.document.positionAt(node.getEnd());
 
-    return new EnumMemberDeclarationNode(enumMemberName, enumMemberValue, parentElement, childElements, getGotoCommand(editor, position), start, end);
+    return new EnumMemberDeclarationNode(enumMemberName, enumMemberValue, parentNode, childElements, getGotoCommand(editor, position), start, end);
 }
 
-export function getFunctionDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.FunctionDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
+export function getFunctionDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.FunctionDeclaration, parentNode: DeclarationNode | null, childElements: DeclarationNode[])
 {
     const hasKeyword = (node: ts.FunctionDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
 
@@ -147,10 +148,10 @@ export function getFunctionDeclarationNode(editor: vscode.TextEditor, sourceFile
         }
     }
 
-    return new FunctionDeclarationNode(functionName, isExport, parameters, returnType, parentElement, childElements, getGotoCommand(editor, position), start, end);
+    return new FunctionDeclarationNode(functionName, isExport, parameters, returnType, parentNode, childElements, getGotoCommand(editor, position), start, end);
 }
 
-export function getGetterDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.GetAccessorDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
+export function getGetterDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.GetAccessorDeclaration, parentNode: DeclarationNode | null, childElements: DeclarationNode[])
 {
     const hasKeyword = (node: ts.AccessorDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
 
@@ -164,7 +165,7 @@ export function getGetterDeclarationNode(editor: vscode.TextEditor, sourceFile: 
     const isStatic = hasKeyword(node, ts.SyntaxKind.StaticKeyword);
     const isAbstract = hasKeyword(node, ts.SyntaxKind.AbstractKeyword);
 
-    return new GetterDeclarationNode(getterName, getterType, accessModifier, isStatic, isAbstract, parentElement, childElements, getGotoCommand(editor, position), start, end);
+    return new GetterDeclarationNode(getterName, getterType, accessModifier, isStatic, isAbstract, parentNode, childElements, getGotoCommand(editor, position), start, end);
 }
 
 function getGotoCommand(editor: vscode.TextEditor, position: ts.LineAndCharacter)
@@ -179,7 +180,7 @@ function getGotoCommand(editor: vscode.TextEditor, position: ts.LineAndCharacter
     return command;
 }
 
-export function getIndexSignatureDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.IndexSignatureDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
+export function getIndexSignatureDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.IndexSignatureDeclaration, parentNode: DeclarationNode | null, childElements: DeclarationNode[])
 {
     const hasKeyword = (node: ts.IndexSignatureDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
 
@@ -191,10 +192,10 @@ export function getIndexSignatureDeclarationNode(editor: vscode.TextEditor, sour
     const isReadOnly = hasKeyword(node, ts.SyntaxKind.ReadonlyKeyword);
     const isStatic = hasKeyword(node, ts.SyntaxKind.StaticKeyword);
 
-    return new IndexSignatureDeclarationNode(indexParameter, indexReturnType, isStatic, isReadOnly, parentElement, childElements, getGotoCommand(editor, position), start, end);
+    return new IndexSignatureDeclarationNode(indexParameter, indexReturnType, isStatic, isReadOnly, parentNode, childElements, getGotoCommand(editor, position), start, end);
 }
 
-export function getInterfaceDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.InterfaceDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
+export function getInterfaceDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.InterfaceDeclaration, parentNode: DeclarationNode | null, childElements: DeclarationNode[])
 {
     const hasKeyword = (node: ts.InterfaceDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
 
@@ -205,10 +206,10 @@ export function getInterfaceDeclarationNode(editor: vscode.TextEditor, sourceFil
     const end = editor!.document.positionAt(node.getEnd());
     const isExport = hasKeyword(node, ts.SyntaxKind.ExportKeyword);
 
-    return new InterfaceDeclarationNode(interfaceName, isExport, parentElement, childElements, getGotoCommand(editor, position), start, end);
+    return new InterfaceDeclarationNode(interfaceName, isExport, parentNode, childElements, getGotoCommand(editor, position), start, end);
 }
 
-export function getMethodDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.MethodDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
+export function getMethodDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.MethodDeclaration, parentNode: DeclarationNode | null, childElements: DeclarationNode[])
 {
     const hasKeyword = (node: ts.MethodDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
 
@@ -239,10 +240,10 @@ export function getMethodDeclarationNode(editor: vscode.TextEditor, sourceFile: 
         }
     }
 
-    return new MethodDeclarationNode(methodName, accessModifier, isStatic, isAbstract, isAsync, parameters, returnType, parentElement, childElements, getGotoCommand(editor, position), start, end);
+    return new MethodDeclarationNode(methodName, accessModifier, isStatic, isAbstract, isAsync, parameters, returnType, parentNode, childElements, getGotoCommand(editor, position), start, end);
 }
 
-export function getMethodSignatureDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.MethodSignature, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
+export function getMethodSignatureDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.MethodSignature, parentNode: DeclarationNode | null, childElements: DeclarationNode[])
 {
     const identifier = <ts.Identifier>node.name;
     const position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
@@ -267,10 +268,10 @@ export function getMethodSignatureDeclarationNode(editor: vscode.TextEditor, sou
         }
     }
 
-    return new MethodSignatureDeclarationNode(methodName, parameters, returnType, parentElement, childElements, getGotoCommand(editor, position), start, end);
+    return new MethodSignatureDeclarationNode(methodName, parameters, returnType, parentNode, getGotoCommand(editor, position), start, end);
 }
 
-export function getPropertyDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.PropertyDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
+export function getPropertyDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.PropertyDeclaration, parentNode: DeclarationNode | null, childElements: DeclarationNode[])
 {
     const hasKeyword = (node: ts.PropertyDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
 
@@ -288,15 +289,15 @@ export function getPropertyDeclarationNode(editor: vscode.TextEditor, sourceFile
 
     if (isReadOnly)
     {
-        return new ConstDeclarationNode(propertyName, propertyType, accessModifier, isStatic, isAbstract, parentElement, childElements, getGotoCommand(editor, position), start, end);
+        return new ConstDeclarationNode(propertyName, propertyType, accessModifier, isStatic, isAbstract, parentNode, childElements, getGotoCommand(editor, position), start, end);
     }
     else
     {
-        return new PropertyDeclarationNode(propertyName, propertyType, accessModifier, isStatic, isAbstract, parentElement, childElements, getGotoCommand(editor, position), start, end);
+        return new PropertyDeclarationNode(propertyName, propertyType, accessModifier, isStatic, isAbstract, parentNode, childElements, getGotoCommand(editor, position), start, end);
     }
 }
 
-export function getPropertySignatureDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.PropertySignature, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
+export function getPropertySignatureDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.PropertySignature, parentNode: DeclarationNode, configuration: Configuration)
 {
     const hasKeyword = (node: ts.PropertySignature, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
 
@@ -305,13 +306,24 @@ export function getPropertySignatureDeclarationNode(editor: vscode.TextEditor, s
     const propertyName = identifier.escapedText.toString();
     const propertyType = node.type ? node.type.getText(sourceFile) : "any";
     const isReadOnly = hasKeyword(node, ts.SyntaxKind.ReadonlyKeyword);
+    const isArrowFunction = node.type?.kind === ts.SyntaxKind.FunctionType; // TODO
     const start = editor!.document.positionAt(node.getStart(sourceFile, false));
     const end = editor!.document.positionAt(node.getEnd());
+    const command = getGotoCommand(editor, position);
 
-    return new PropertySignatureDeclarationNode(propertyName, propertyType, isReadOnly, parentElement, childElements, getGotoCommand(editor, position), start, end);
+    if (isArrowFunction)
+    {
+        if ((configuration.showArrowFunctionPropertiesAsMethods) ||
+            (configuration.showReadonlyArrowFunctionPropertiesAsMethods && isReadOnly))
+        {
+            return new MethodSignatureDeclarationNode(propertyName, [], "any", parentNode, command, start, end);
+        }
+    }
+
+    return new PropertySignatureDeclarationNode(propertyName, propertyType, isReadOnly, parentNode, command, start, end);
 }
 
-export function getSetterDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.SetAccessorDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
+export function getSetterDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.SetAccessorDeclaration, parentNode: DeclarationNode | null, childElements: DeclarationNode[])
 {
     const hasKeyword = (node: ts.SetAccessorDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
 
@@ -325,19 +337,19 @@ export function getSetterDeclarationNode(editor: vscode.TextEditor, sourceFile: 
     const isStatic = hasKeyword(node, ts.SyntaxKind.StaticKeyword);
     const isAbstract = hasKeyword(node, ts.SyntaxKind.AbstractKeyword);
 
-    return new SetterDeclarationNode(setterName, setterType, accessModifier, isStatic, isAbstract, parentElement, childElements, getGotoCommand(editor, position), start, end);
+    return new SetterDeclarationNode(setterName, setterType, accessModifier, isStatic, isAbstract, parentNode, childElements, getGotoCommand(editor, position), start, end);
 }
 
-export function getStaticBlockDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.ClassStaticBlockDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
+export function getStaticBlockDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.ClassStaticBlockDeclaration, parentNode: DeclarationNode | null, childElements: DeclarationNode[])
 {
     const position = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile, false));
     const start = editor!.document.positionAt(node.getStart(sourceFile, false));
     const end = editor!.document.positionAt(node.getEnd());
 
-    return new StaticCodeBlockDeclarationNode(parentElement, childElements, getGotoCommand(editor, position), start, end);
+    return new StaticCodeBlockDeclarationNode(parentNode, childElements, getGotoCommand(editor, position), start, end);
 }
 
-export function getTypeAliasDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.TypeAliasDeclaration, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
+export function getTypeAliasDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.TypeAliasDeclaration, parentNode: DeclarationNode | null, childElements: DeclarationNode[])
 {
     const hasKeyword = (node: ts.TypeAliasDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
 
@@ -348,10 +360,10 @@ export function getTypeAliasDeclarationNode(editor: vscode.TextEditor, sourceFil
     const end = editor!.document.positionAt(node.getEnd());
     const isExport = hasKeyword(node, ts.SyntaxKind.ExportKeyword);
 
-    return new TypeAliasDeclarationNode(typeAliasName, isExport, parentElement, childElements, getGotoCommand(editor, position), start, end);
+    return new TypeAliasDeclarationNode(typeAliasName, isExport, parentNode, childElements, getGotoCommand(editor, position), start, end);
 }
 
-export function getVariableDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.VariableStatement, parentElement: DeclarationNode | null, childElements: DeclarationNode[])
+export function getVariableDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.VariableStatement, parentNode: DeclarationNode | null, childElements: DeclarationNode[])
 {
     const hasKeyword = (node: ts.VariableStatement, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
     const variableDeclarationNodes = [];
@@ -367,7 +379,7 @@ export function getVariableDeclarationNode(editor: vscode.TextEditor, sourceFile
         const start = editor!.document.positionAt(node.getStart(sourceFile, false));
         const end = editor!.document.positionAt(node.getEnd());
 
-        variableDeclarationNodes.push(new VariableDeclarationNode(variableName, variableType, isExport, isConst, parentElement, childElements, getGotoCommand(editor, position), start, end));
+        variableDeclarationNodes.push(new VariableDeclarationNode(variableName, variableType, isExport, isConst, parentNode, childElements, getGotoCommand(editor, position), start, end));
     }
 
     return variableDeclarationNodes;

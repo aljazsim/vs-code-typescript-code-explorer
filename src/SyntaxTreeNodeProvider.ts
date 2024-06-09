@@ -106,7 +106,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         // analyze ast
         for (let node of sourceFile.getChildren(sourceFile))
         {
-            for (let rootElement of this.visitSyntaxTree(editor, node, sourceFile, null))
+            for (let rootElement of this.visitSyntaxTree(editor, node, sourceFile, null, configuration))
             {
                 rootElements.push(rootElement);
             }
@@ -150,7 +150,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         return null;
     }
 
-    private visitSyntaxTree(editor: vscode.TextEditor, node: ts.Node, sourceFile: ts.SourceFile, parentElement: DeclarationNode | null): DeclarationNode[]
+    private visitSyntaxTree(editor: vscode.TextEditor, node: ts.Node, sourceFile: ts.SourceFile, parentElement: DeclarationNode | null, configuration: Configuration): DeclarationNode[]
     {
         let nodes: DeclarationNode[] = [];
         let childElements: DeclarationNode[] = [];
@@ -176,7 +176,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         }
         else if (ts.isPropertySignature(node))
         {
-            nodes.push(getPropertySignatureDeclarationNode(editor, sourceFile, node, parentElement, []));
+            nodes.push(getPropertySignatureDeclarationNode(editor, sourceFile, node, parentElement!, configuration));
         }
         else if (ts.isIndexSignatureDeclaration(node))
         {
@@ -234,7 +234,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         // get child elements
         for (const childNode of node.getChildren(sourceFile))
         {
-            for (const childElement of this.visitSyntaxTree(editor, childNode, sourceFile, nodes.length > 0 ? nodes[0] : parentElement))
+            for (const childElement of this.visitSyntaxTree(editor, childNode, sourceFile, nodes.length > 0 ? nodes[0] : parentElement, configuration))
             {
                 childElements.push(childElement);
             }

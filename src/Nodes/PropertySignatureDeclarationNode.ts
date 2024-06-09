@@ -7,7 +7,7 @@ export class PropertySignatureDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(propertyName: string, propertyType: string, isReadOnly: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(propertyName: string, propertyType: string, isReadOnly: boolean, parent: DeclarationNode | null, command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 
@@ -19,7 +19,7 @@ export class PropertySignatureDeclarationNode extends DeclarationNode
         this.end = end;
 
         this.parent = parent;
-        this.children = children;
+        this.children = [];
         this.command = command;
 
         this.iconPath = {
