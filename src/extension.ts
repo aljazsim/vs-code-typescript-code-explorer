@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 
+import { Configuration } from "./configuration/configuration";
 import { DeclarationNode } from "./Nodes/DeclarationNode";
+import { NodeOrderType } from "./helpers/node-order-type";
 import { SyntaxTreeNodeProvider } from "./SyntaxTreeNodeProvider";
 
 'use strict';
@@ -10,6 +12,7 @@ export function activate(context: vscode.ExtensionContext)
     let view: vscode.TreeView<DeclarationNode>;
     let nodeDependenciesProvider: SyntaxTreeNodeProvider;
     let selecting: boolean = false;
+    const configuration = new Configuration(true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, NodeOrderType.groupByTypeByAccessorOrderByTypeByAccessorByName);
 
     nodeDependenciesProvider = new SyntaxTreeNodeProvider(vscode.workspace.rootPath!);
 
@@ -19,25 +22,25 @@ export function activate(context: vscode.ExtensionContext)
     vscode.workspace.onDidChangeTextDocument(_ =>
     {
         // editor contents changed -> refresh view with the current window
-        nodeDependenciesProvider.refresh(vscode.window.activeTextEditor!);
+        nodeDependenciesProvider.refresh(vscode.window.activeTextEditor!, configuration);
     });
 
     vscode.workspace.onDidOpenTextDocument(_ =>
     {
         // editor opened -> refresh view with the current window
-        nodeDependenciesProvider.refresh(vscode.window.activeTextEditor!);
+        nodeDependenciesProvider.refresh(vscode.window.activeTextEditor!, configuration);
     });
 
     vscode.workspace.onDidCloseTextDocument(_ =>
     {
         // editor closed -> refresh view with the current window
-        nodeDependenciesProvider.refresh(vscode.window.activeTextEditor!);
+        nodeDependenciesProvider.refresh(vscode.window.activeTextEditor!, configuration);
     });
 
     vscode.window.onDidChangeActiveTextEditor(editor =>
     {
         // switched editors -> refresh view with the current window
-        nodeDependenciesProvider.refresh(editor!);
+        nodeDependenciesProvider.refresh(editor!, configuration);
     });
 
     vscode.window.onDidChangeTextEditorSelection(e =>
@@ -74,13 +77,6 @@ export function activate(context: vscode.ExtensionContext)
         selecting = false;
     });
 
-    vscode.commands.registerCommand('tsce.readonly', (editor: vscode.TextEditor, position: vscode.Position) =>
-    {
-        console.log("----------------------------------------------------");
-        console.log("readonly");
-        console.log("----------------------------------------------------");
-    });
-
     context.subscriptions.push(vscode.commands.registerCommand('tsce.showCodeExplorer', () =>
     {
         // show code explorer requested -> show view
@@ -97,6 +93,6 @@ export function activate(context: vscode.ExtensionContext)
 
     if (vscode.window.activeTextEditor)
     {
-        nodeDependenciesProvider.refresh(vscode.window.activeTextEditor);
+        nodeDependenciesProvider.refresh(vscode.window.activeTextEditor, configuration);
     }
 }

@@ -1,16 +1,24 @@
+import { NodeOrderType } from "../helpers/node-order-type";
+
 export class Configuration
 {
     constructor(
-        showReadonlyPropertiesAsConst: boolean,
-        showConstVariablesAsConst: boolean,
-        showArrowFunctionPropertiesAsMethods: boolean,
-        showReadonlyArrowFunctionPropertiesAsMethods: boolean,
-        showArrowFunctionVariablesAsMethods: boolean,
-        showConstArrowFunctionVariablesAsMethods: boolean,
-        showStaticMemberIndicator: boolean,
-        showAbstractMemberIndicator: boolean,
-        showAsyncMemberIndicator: boolean,
-        orderBy: "none" | "order by member type" | "order by member type, order by member accessor" | "group by member type, order by member name" | "group by member type, group by member accessor, order by member name"
+        public readonly showNumberOfMembers: boolean,
+        public readonly showReadonlyPropertiesAsConst: boolean,
+        public readonly showConstVariablesAsConst: boolean,
+        public readonly showArrowFunctionPropertiesAsMethods: boolean,
+        public readonly showReadonlyArrowFunctionPropertiesAsMethods: boolean,
+        public readonly showArrowFunctionVariablesAsMethods: boolean,
+        public readonly showArrowFunctionConstAsMethods: boolean,
+        public readonly showStaticMemberIndicator: boolean,
+        public readonly showAbstractMemberIndicator: boolean,
+        public readonly showParameters: boolean,
+        public readonly showParameterTypes: boolean,
+        public readonly showReturnTypes: boolean,
+        public readonly showPropertyTypes: boolean,
+        public readonly showAnyIfTypeNotSpecified: boolean,
+        public readonly showAccessorColorCoding: boolean,
+        public readonly order: NodeOrderType
     )
     {
     }

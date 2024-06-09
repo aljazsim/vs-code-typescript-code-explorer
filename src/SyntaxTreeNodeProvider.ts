@@ -3,10 +3,11 @@ import * as vscode from "vscode";
 
 import { getAccessorDeclarationNode, getClassDeclarationNode, getConstructorDeclarationNode, getEnumDeclarationNode, getEnumMemberDeclarationNode, getFunctionDeclarationNode, getGetterDeclarationNode, getIndexSignatureDeclarationNode, getInterfaceDeclarationNode, getMethodDeclarationNode, getMethodSignatureDeclarationNode, getPropertyDeclarationNode, getPropertySignatureDeclarationNode, getSetterDeclarationNode, getStaticBlockDeclarationNode, getTypeAliasDeclarationNode, getVariableDeclarationNode } from "./helpers/node-helper";
 
+import { Configuration } from "./configuration/configuration";
 import { DeclarationNode } from "./Nodes/DeclarationNode";
 import { EmptyDeclarationNode } from "./Nodes/EmptyDeclarationNode";
 import { ProviderResult } from "vscode";
-import { groupByTypeOrderByName } from "./helpers/node-order-helper";
+import { groupAndOrder } from "./helpers/node-group-helper";
 
 export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<DeclarationNode>
 {
@@ -74,13 +75,13 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         return element;
     }
 
-    public refresh(editor: vscode.TextEditor): void
+    public refresh(editor: vscode.TextEditor, configuration: Configuration): void
     {
         this.editor = editor;
 
         if (this.editor)
         {
-            this.rootElements = this.analyzeSyntaxTree(this.editor, this.editor!.document.getText());
+            this.rootElements = this.analyzeSyntaxTree(this.editor, this.editor!.document.getText(), configuration);
         }
         else
         {
@@ -94,7 +95,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
 
     // #region Private Methods (3)
 
-    private analyzeSyntaxTree(editor: vscode.TextEditor, sourceCode: string)
+    private analyzeSyntaxTree(editor: vscode.TextEditor, sourceCode: string, configuration: Configuration)
     {
         const rootElements: DeclarationNode[] = [];
         const sourceFile = ts.createSourceFile("temp", sourceCode, ts.ScriptTarget.Latest, false, ts.ScriptKind.TS);
@@ -117,7 +118,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         }
 
         // group and order
-        return groupByTypeOrderByName(rootElements);
+        return groupAndOrder(rootElements, configuration.order);
     }
 
     private findNode(nodes: DeclarationNode[], positionStart: vscode.Position, positionEnd: vscode.Position): DeclarationNode | null
