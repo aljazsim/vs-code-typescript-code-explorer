@@ -9,7 +9,6 @@ export class Configuration
     constructor(
         public readonly groupingAndOrder: NodeGroupingAndOrderType,
         public readonly showMemberTypes: boolean,
-        public readonly showAnyIfTypeNotSpecified: boolean,
         public readonly showAccessorColorCoding: boolean,
         public readonly showStaticMemberIndicator: boolean,
         public readonly showAbstractMemberIndicator: boolean,
@@ -35,7 +34,6 @@ export class Configuration
         return new Configuration(
             this.toGroupingAndOrder(configuration.get<string>("groupingAndOrder") ?? ""),
             configuration.get<boolean>("showMemberTypes") === true,
-            configuration.get<boolean>("showAnyIfTypeNotSpecified") === true,
             configuration.get<boolean>("showAccessorColorCoding") === true,
             configuration.get<boolean>("showStaticMemberIndicator") === true,
             configuration.get<boolean>("showAbstractMemberIndicator") === true,

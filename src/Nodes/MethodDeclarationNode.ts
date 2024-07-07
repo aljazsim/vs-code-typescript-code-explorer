@@ -69,8 +69,8 @@ export class MethodDeclarationNode extends DeclarationNode
             if (accessModifier === "private")
             {
                 this.iconPath = {
-                    light: NodeImages.methodPrivateStatic,
-                    dark: NodeImages.methodPrivateStatic
+                    light: NodeImages.methodPrivate,
+                    dark: NodeImages.methodPrivate
                 };
             }
             else if (accessModifier === "protected")

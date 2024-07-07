@@ -278,35 +278,35 @@ export function getTypeOrder(node?: DeclarationNode)
     }
     else if (node instanceof PropertyDeclarationNode || node instanceof PropertySignatureDeclarationNode || (node instanceof DescriptionNode && node.name === "property"))
     {
-        return "401";
+        return "402";
     }
     else if (node instanceof ConstructorDeclarationNode || (node instanceof DescriptionNode && node.name === "constructor"))
     {
-        return "402";
+        return "403";
     }
     else if (node instanceof StaticCodeBlockDeclarationNode || (node instanceof DescriptionNode && node.name === "static constructor"))
     {
-        return "403";
+        return "404";
     }
     else if (node instanceof IndexSignatureDeclarationNode || node instanceof IndexSignatureDeclarationNode || (node instanceof DescriptionNode && node.name === "index"))
     {
-        return "404";
+        return "405";
     }
     else if (node instanceof AccessorDeclarationNode || (node instanceof DescriptionNode && node.name === "accessor"))
     {
-        return "405";
+        return "406";
     }
     else if (node instanceof GetterDeclarationNode || (node instanceof DescriptionNode && node.name === "getter"))
     {
-        return "406";
+        return "407";
     }
     else if (node instanceof SetterDeclarationNode || (node instanceof DescriptionNode && node.name === "setter"))
     {
-        return "407";
+        return "408";
     }
     else if (node instanceof MethodDeclarationNode || node instanceof MethodSignatureDeclarationNode || (node instanceof DescriptionNode && node.name === "method"))
     {
-        return "408";
+        return "409";
     }
 
     return "601";

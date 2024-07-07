@@ -82,9 +82,11 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
 
         if (this.editor)
         {
-            try {
+            try
+            {
                 this.rootElements = this.analyzeSyntaxTree(this.editor, this.editor!.document.getText(), configuration);
-            } catch (error) {
+            } catch (error)
+            {
                 this.rootElements = [];
 
                 console.log(error);
@@ -205,7 +207,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         }
         else if (ts.isClassStaticBlockDeclaration(node))
         {
-            nodes.push(getStaticBlockDeclarationNode(editor, sourceFile, node, parentElement!));
+            nodes.push(getStaticBlockDeclarationNode(editor, sourceFile, node, parentElement!, configuration));
         }
         else if (ts.isAutoAccessorPropertyDeclaration(node))
         {

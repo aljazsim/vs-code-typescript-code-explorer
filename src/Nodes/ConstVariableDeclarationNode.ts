@@ -32,15 +32,15 @@ export class ConstVariableDeclarationNode extends DeclarationNode
         if (isExport)
         {
             this.iconPath = {
-                light: NodeImages.variableExported,
-                dark: NodeImages.variableExported
+                light: NodeImages.constVariableExported,
+                dark: NodeImages.constVariableExported
             };
         }
         else
         {
             this.iconPath = {
-                light: NodeImages.variable,
-                dark: NodeImages.variable
+                light: NodeImages.constVariable,
+                dark: NodeImages.constVariable
             };
         }
     }

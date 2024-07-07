@@ -25,22 +25,22 @@ export class ReadonlyPropertyDeclarationNode extends DeclarationNode
         if (accessModifier === "private")
         {
             this.iconPath = {
-                light: isStatic ? NodeImages.constPrivateStatic : NodeImages.constPrivate,
-                dark: isStatic ? NodeImages.constPrivateStatic : NodeImages.constPrivate
+                light: isStatic ? NodeImages.readonlyPropertyPrivateStatic : NodeImages.readonlyPropertyPrivate,
+                dark: isStatic ? NodeImages.readonlyPropertyPrivateStatic : NodeImages.readonlyPropertyPrivate
             };
         }
         else if (accessModifier === "protected")
         {
             this.iconPath = {
-                light: isStatic ? NodeImages.constProtectedStatic : NodeImages.constProtected,
-                dark: isStatic ? NodeImages.constProtectedStatic : NodeImages.constProtected
+                light: isStatic ? NodeImages.readonlyPropertyProtectedStatic : NodeImages.readonlyPropertyProtected,
+                dark: isStatic ? NodeImages.readonlyPropertyProtectedStatic : NodeImages.readonlyPropertyProtected
             };
         }
         else if (accessModifier === "public")
         {
             this.iconPath = {
-                light: isStatic ? NodeImages.constPublicStatic : NodeImages.constPublic,
-                dark: isStatic ? NodeImages.constPublicStatic : NodeImages.constPublic
+                light: isStatic ? NodeImages.readonlyPropertyPublicStatic : NodeImages.readonlyPropertyPublic,
+                dark: isStatic ? NodeImages.readonlyPropertyPublicStatic : NodeImages.readonlyPropertyPublic
             };
         }
     }

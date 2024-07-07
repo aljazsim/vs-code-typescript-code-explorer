@@ -77,11 +77,6 @@
                         "description": "Specifies if members types should be displayed.",
                         "default": true
                     },
-                    "tsce.showAnyIfTypeNotSpecified": {
-                        "type": "boolean",
-                        "description": "Specifies if any should be displayed when no type is explicitly specified.",
-                        "default": true
-                    },
                     "tsce.showAccessorColorCoding": {
                         "type": "boolean",
                         "description": "Specifies if elements should be displayed with different color icons for different accessor types.",

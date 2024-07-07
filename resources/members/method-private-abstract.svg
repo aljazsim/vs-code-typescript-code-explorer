@@ -27,10 +27,11 @@
      inkscape:cy="71.681924"
      inkscape:window-width="3840"
      inkscape:window-height="1529"
-     inkscape:window-x="-8"
+     inkscape:window-x="2552"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg1" />
+     inkscape:current-layer="svg1"
+     showgrid="false" />
   <path
      fill="#666666"
      d="m13.51 4l-5-3h-1l-5 3l-.49.86v6l.49.85l5 3h1l5-3l.49-.85v-6zm-6 9.56l-4.5-2.7V5.7l4.5 2.45zM3.27 4.7l4.74-2.84l4.74 2.84l-4.74 2.59zm9.74 6.16l-4.5 2.7V8.15l4.5-2.45z"
@@ -39,12 +40,12 @@
   <text
      xml:space="preserve"
      style="font-size:9.44766px;fill:#ea580c;fill-opacity:1;stroke-width:0.787303"
-     x="10.103138"
-     y="15.883125"
+     x="9.4552994"
+     y="15.86118"
      id="text1"><tspan
        sodipodi:role="line"
        id="tspan1"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Arial Rounded MT Bold';-inkscape-font-specification:'Arial Rounded MT Bold, ';fill:#ea580c;fill-opacity:1;stroke-width:0.787303"
-       x="10.103138"
-       y="15.883125">S</tspan></text>
+       x="9.4552994"
+       y="15.86118">A</tspan></text>
 </svg>
