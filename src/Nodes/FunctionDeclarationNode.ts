@@ -8,19 +8,19 @@ export class FunctionDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(functionName: string, public readonly isExport: boolean, parameters: Parameter[], returnType: string | null, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(functionName: string, public readonly isExport: boolean, public readonly isAsync: boolean, parameters: Parameter[], returnType: string | null, parent: DeclarationNode | null, command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 
         this.name = functionName;
         this.label = functionName;
-        this.description = `(${parameters.map(x => `${x.name}: ${x.type}`).join(", ")})${(returnType ? `: ${returnType}` : "")}`;
+        this.description = `(${parameters.map(x => `${x.name}: ${x.type}`).join(", ")})${(returnType ? `: ${returnType}` : ": void")}`;
 
         this.start = start;
         this.end = end;
 
         this.parent = parent;
-        this.children = children;
+        this.children = [];
         this.command = command;
 
         if (isExport)

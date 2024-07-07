@@ -7,7 +7,7 @@ export class PropertyDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(propertyName: string, propertyType: string, public readonly accessModifier: string, public readonly isStatic: boolean, public readonly isAbstract: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(propertyName: string, propertyType: string, public readonly accessModifier: string, public readonly isStatic: boolean, public readonly isAbstract: boolean, parent: DeclarationNode | null, command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 
@@ -19,7 +19,7 @@ export class PropertyDeclarationNode extends DeclarationNode
         this.end = end;
 
         this.parent = parent;
-        this.children = children;
+        this.children = [];
         this.command = command;
 
         if (accessModifier === "private")

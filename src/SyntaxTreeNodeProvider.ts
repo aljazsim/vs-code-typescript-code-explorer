@@ -82,7 +82,14 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
 
         if (this.editor)
         {
-            this.rootElements = this.analyzeSyntaxTree(this.editor, this.editor!.document.getText(), configuration);
+            try {
+                this.rootElements = this.analyzeSyntaxTree(this.editor, this.editor!.document.getText(), configuration);
+            } catch (error) {
+                this.rootElements = [];
+
+                console.log(error);
+                console.trace();
+            }
         }
         else
         {
@@ -206,7 +213,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         }
         else if (ts.isPropertyDeclaration(node))
         {
-            nodes.push(getPropertyDeclarationNode(editor, sourceFile, node, parentElement, []));
+            nodes.push(getPropertyDeclarationNode(editor, sourceFile, node, parentElement, configuration));
         }
         else if (ts.isGetAccessor(node))
         {
@@ -228,7 +235,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         }
         else if (ts.isVariableStatement(node))
         {
-            getVariableDeclarationNode(editor, sourceFile, node, parentElement, []).forEach(n => nodes.push(n));
+            getVariableDeclarationNode(editor, sourceFile, node, parentElement, configuration).forEach(n => nodes.push(n));
         }
 
         // get child elements

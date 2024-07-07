@@ -21,6 +21,7 @@ import { GetterDeclarationNode } from "../Nodes/GetterDeclarationNode";
 import { DeclarationNode } from "../Nodes/DeclarationNode";
 import { ConstDeclarationNode } from "../Nodes/ConstDeclarationNode";
 import { Configuration } from "../configuration/configuration";
+import { isAsyncFunction } from "util/types";
 
 // #region Functions (18)
 
@@ -78,11 +79,11 @@ export function getConstructorDeclarationNode(editor: vscode.TextEditor, sourceF
         {
             if (parameterIsReadOnly)
             {
-                properties.push(new ConstDeclarationNode(parameterName, parameterType, parameterAccessModifier.getText(sourceFile), false, false, parentNode, [], getGotoCommand(editor, parameterPosition), parameterStart, parameterEnd));
+                properties.push(new ConstDeclarationNode(parameterName, parameterType, parameterAccessModifier.getText(sourceFile), false, false, parentNode, getGotoCommand(editor, parameterPosition), parameterStart, parameterEnd));
             }
             else
             {
-                properties.push(new PropertyDeclarationNode(parameterName, parameterType, parameterAccessModifier.getText(sourceFile), false, false, parentNode, [], getGotoCommand(editor, parameterPosition), parameterStart, parameterEnd));
+                properties.push(new PropertyDeclarationNode(parameterName, parameterType, parameterAccessModifier.getText(sourceFile), false, false, parentNode, getGotoCommand(editor, parameterPosition), parameterStart, parameterEnd));
             }
         }
 
@@ -129,6 +130,7 @@ export function getFunctionDeclarationNode(editor: vscode.TextEditor, sourceFile
     const functionName = identifier.escapedText.toString();
     const parameters: Parameter[] = [];
     const isExport = hasKeyword(node, ts.SyntaxKind.ExportKeyword);
+    const isAsync = hasKeyword(node, ts.SyntaxKind.AsyncKeyword);
     const returnType = node.type?.getText(sourceFile) ?? null;
     const start = editor!.document.positionAt(node.getStart(sourceFile, false));
     const end = editor!.document.positionAt(node.getEnd());
@@ -148,7 +150,7 @@ export function getFunctionDeclarationNode(editor: vscode.TextEditor, sourceFile
         }
     }
 
-    return new FunctionDeclarationNode(functionName, isExport, parameters, returnType, parentNode, childElements, getGotoCommand(editor, position), start, end);
+    return new FunctionDeclarationNode(functionName, isExport, isAsync, parameters, returnType, parentNode, getGotoCommand(editor, position), start, end);
 }
 
 export function getGetterDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.GetAccessorDeclaration, parentNode: DeclarationNode | null, childElements: DeclarationNode[])
@@ -240,7 +242,7 @@ export function getMethodDeclarationNode(editor: vscode.TextEditor, sourceFile: 
         }
     }
 
-    return new MethodDeclarationNode(methodName, accessModifier, isStatic, isAbstract, isAsync, parameters, returnType, parentNode, childElements, getGotoCommand(editor, position), start, end);
+    return new MethodDeclarationNode(methodName, accessModifier, isStatic, isAbstract, isAsync, parameters, returnType, parentNode, getGotoCommand(editor, position), start, end);
 }
 
 export function getMethodSignatureDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.MethodSignature, parentNode: DeclarationNode | null, childElements: DeclarationNode[])
@@ -271,7 +273,7 @@ export function getMethodSignatureDeclarationNode(editor: vscode.TextEditor, sou
     return new MethodSignatureDeclarationNode(methodName, parameters, returnType, parentNode, getGotoCommand(editor, position), start, end);
 }
 
-export function getPropertyDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.PropertyDeclaration, parentNode: DeclarationNode | null, childElements: DeclarationNode[])
+export function getPropertyDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.PropertyDeclaration, parentNode: DeclarationNode | null, configuration: Configuration)
 {
     const hasKeyword = (node: ts.PropertyDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
 
@@ -282,18 +284,75 @@ export function getPropertyDeclarationNode(editor: vscode.TextEditor, sourceFile
     const accessModifier = propertyName.startsWith("#") || hasKeyword(node, ts.SyntaxKind.PrivateKeyword) ? "private" : (hasKeyword(node, ts.SyntaxKind.ProtectedKeyword) ? "protected" : "public");
     const start = editor!.document.positionAt(node.getStart(sourceFile, false));
     const end = editor!.document.positionAt(node.getEnd());
+    const isArrowFunction = node.type?.kind === ts.SyntaxKind.FunctionType;
+    const isFunction = !node.type && (node.initializer?.kind === ts.SyntaxKind.FunctionExpression || node.initializer?.kind === ts.SyntaxKind.ArrowFunction);
     const isStatic = hasKeyword(node, ts.SyntaxKind.StaticKeyword);
     const isReadOnly = hasKeyword(node, ts.SyntaxKind.ReadonlyKeyword);
     const isAbstract = hasKeyword(node, ts.SyntaxKind.AbstractKeyword);
-    // const isArrowFunction = typeof node.initializer !== "undefined" && node.initializer.kind === ts.SyntaxKind.ArrowFunction;
+    const command = getGotoCommand(editor, position);
 
-    if (isReadOnly)
+    if ((configuration.showArrowFunctionPropertiesAsMethods) ||
+        (configuration.showReadonlyArrowFunctionPropertiesAsMethods && isReadOnly))
     {
-        return new ConstDeclarationNode(propertyName, propertyType, accessModifier, isStatic, isAbstract, parentNode, childElements, getGotoCommand(editor, position), start, end);
+        if (isArrowFunction)
+        {
+            const arrowFunctionHasModifier = (node: ts.ArrowFunction, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
+            const arrowFunctionNode = <ts.FunctionTypeNode>node.type;
+            const arrowFunctionParameters: Parameter[] = [];
+            const arrowFunctionReturnType: string | null = arrowFunctionNode.type?.getText(sourceFile) ?? null;
+            const arrowFunctionIsAsync = node.initializer ? arrowFunctionHasModifier(node.initializer as ts.ArrowFunction, ts.SyntaxKind.AsyncKeyword) : false;
+
+            // arrow function parameters
+            for (const parameter of arrowFunctionNode.parameters)
+            {
+                const parameterName = (<ts.Identifier>parameter.name).escapedText.toString();
+
+                if (parameter.type)
+                {
+                    arrowFunctionParameters.push(new Parameter(parameterName, parameter.type.getText(sourceFile)));
+                }
+                else
+                {
+                    arrowFunctionParameters.push(new Parameter(parameterName, "any"));
+                }
+            }
+
+            return new MethodDeclarationNode(propertyName, accessModifier, isStatic, false, arrowFunctionIsAsync, arrowFunctionParameters, arrowFunctionReturnType, parentNode, command, start, end);
+        }
+        else if (isFunction)
+        {
+            const functionHasModifier = (node: ts.FunctionLikeDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
+            const functionNode = <ts.FunctionLikeDeclaration>node.initializer;
+            const functionParameters: Parameter[] = [];
+            const functionReturnType: string | null = functionNode.type?.getText(sourceFile) ?? null;
+            const functionIsAsync = node.initializer ? functionHasModifier(node.initializer as ts.ArrowFunction, ts.SyntaxKind.AsyncKeyword) : false;
+
+            // function parameters
+            for (const parameter of functionNode.parameters)
+            {
+                const parameterName = (<ts.Identifier>parameter.name).escapedText.toString();
+
+                if (parameter.type)
+                {
+                    functionParameters.push(new Parameter(parameterName, parameter.type.getText(sourceFile)));
+                }
+                else
+                {
+                    functionParameters.push(new Parameter(parameterName, "any"));
+                }
+            }
+
+            return new MethodDeclarationNode(propertyName, accessModifier, isStatic, false, functionIsAsync, functionParameters, functionReturnType, parentNode, command, start, end);
+        }
+    }
+
+    if (configuration.showReadonlyPropertiesAsConst && isReadOnly)
+    {
+        return new ConstDeclarationNode(propertyName, propertyType, accessModifier, isStatic, isAbstract, parentNode, command, start, end);
     }
     else
     {
-        return new PropertyDeclarationNode(propertyName, propertyType, accessModifier, isStatic, isAbstract, parentNode, childElements, getGotoCommand(editor, position), start, end);
+        return new PropertyDeclarationNode(propertyName, propertyType, accessModifier, isStatic, isAbstract, parentNode, command, start, end);
     }
 }
 
@@ -382,7 +441,7 @@ export function getTypeAliasDeclarationNode(editor: vscode.TextEditor, sourceFil
     return new TypeAliasDeclarationNode(typeAliasName, isExport, parentNode, childElements, getGotoCommand(editor, position), start, end);
 }
 
-export function getVariableDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.VariableStatement, parentNode: DeclarationNode | null, childElements: DeclarationNode[])
+export function getVariableDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.VariableStatement, parentNode: DeclarationNode | null, configuration: Configuration)
 {
     const hasKeyword = (node: ts.VariableStatement, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
     const variableDeclarationNodes = [];
@@ -394,11 +453,71 @@ export function getVariableDeclarationNode(editor: vscode.TextEditor, sourceFile
         const variableName = identifier.escapedText.toString();
         const variableType = variableDeclaration.type ? variableDeclaration.type.getText(sourceFile) : "any";
         const isExport = hasKeyword(node, ts.SyntaxKind.ExportKeyword);
-        const isConst = hasKeyword(node, ts.SyntaxKind.ConstKeyword);
+        const isConst = hasKeyword(node, ts.SyntaxKind.ConstKeyword) || variableDeclaration.flags === ts.NodeFlags.Const;
+        const isArrowFunction = variableDeclaration.type?.kind === ts.SyntaxKind.FunctionType;
+        const isFunction = !variableDeclaration.type && (variableDeclaration.initializer?.kind === ts.SyntaxKind.FunctionExpression || variableDeclaration.initializer?.kind === ts.SyntaxKind.ArrowFunction);
         const start = editor!.document.positionAt(node.getStart(sourceFile, false));
         const end = editor!.document.positionAt(node.getEnd());
+        const command = getGotoCommand(editor, position);
 
-        variableDeclarationNodes.push(new VariableDeclarationNode(variableName, variableType, isExport, isConst, parentNode, childElements, getGotoCommand(editor, position), start, end));
+        if (((configuration.showArrowFunctionVariablesAsMethods && !isConst) ||
+            (configuration.showArrowFunctionConstAsMethods && isConst)) && 
+            isArrowFunction)
+        {
+            const arrowFunctionHasModifier = (node: ts.ArrowFunction, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
+            const arrowFunctionNode = <ts.FunctionTypeNode>variableDeclaration.type;
+            const arrowFunctionParameters: Parameter[] = [];
+            const arrowFunctionReturnType: string | null = arrowFunctionNode.type?.getText(sourceFile) ?? null;
+            const arrowFunctionIsAsync = variableDeclaration.initializer ? arrowFunctionHasModifier(variableDeclaration.initializer as ts.ArrowFunction, ts.SyntaxKind.AsyncKeyword) : false;
+
+            // arrow function parameters
+            for (const parameter of arrowFunctionNode.parameters)
+            {
+                const parameterName = (<ts.Identifier>parameter.name).escapedText.toString();
+
+                if (parameter.type)
+                {
+                    arrowFunctionParameters.push(new Parameter(parameterName, parameter.type.getText(sourceFile)));
+                }
+                else
+                {
+                    arrowFunctionParameters.push(new Parameter(parameterName, "any"));
+                }
+            }
+
+            variableDeclarationNodes.push(new FunctionDeclarationNode(variableName, isExport, arrowFunctionIsAsync, arrowFunctionParameters, arrowFunctionReturnType, parentNode, command, start, end));
+        }
+        else if (((configuration.showArrowFunctionVariablesAsMethods && !isConst) ||
+            (configuration.showArrowFunctionConstAsMethods && isConst)) && 
+            isFunction)
+        {
+            const functionHasModifier = (node: ts.FunctionLikeDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
+            const functionNode = <ts.FunctionLikeDeclaration>variableDeclaration.initializer;
+            const functionParameters: Parameter[] = [];
+            const functionReturnType: string | null = functionNode.type?.getText(sourceFile) ?? null;
+            const functionIsAsync = variableDeclaration.initializer ? functionHasModifier(variableDeclaration.initializer as ts.ArrowFunction, ts.SyntaxKind.AsyncKeyword) : false;
+
+            // function parameters
+            for (const parameter of functionNode.parameters)
+            {
+                const parameterName = (<ts.Identifier>parameter.name).escapedText.toString();
+
+                if (parameter.type)
+                {
+                    functionParameters.push(new Parameter(parameterName, parameter.type.getText(sourceFile)));
+                }
+                else
+                {
+                    functionParameters.push(new Parameter(parameterName, "any"));
+                }
+            }
+
+            variableDeclarationNodes.push(new FunctionDeclarationNode(variableName, isExport, functionIsAsync, functionParameters, functionReturnType, parentNode, command, start, end));
+        }
+        else
+        {
+            variableDeclarationNodes.push(new VariableDeclarationNode(variableName, variableType, isExport, isConst, parentNode, command, start, end));
+        }
     }
 
     return variableDeclarationNodes;
