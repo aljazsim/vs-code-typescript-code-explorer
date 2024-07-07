@@ -72,24 +72,9 @@
                             "Elements grouped by structure type, then by structure accessor, ordered by structure accessor, by name, then grouped by member type, then by member accessor, ordered by member name"
                         ]
                     },
-                    "tsce.showPropertyTypes": {
+                    "tsce.showMemberTypes": {
                         "type": "boolean",
-                        "description": "Specifies if property types should be displayed.",
-                        "default": true
-                    },
-                    "tsce.showParameters": {
-                        "type": "boolean",
-                        "description": "Specifies if parameters should be displayed.",
-                        "default": true
-                    },
-                    "tsce.showParameterTypes": {
-                        "type": "boolean",
-                        "description": "Specifies if parameter types should be displayed.",
-                        "default": true
-                    },
-                    "tsce.showReturnTypes": {
-                        "type": "boolean",
-                        "description": "Specifies if return types should be displayed.",
+                        "description": "Specifies if members types should be displayed.",
                         "default": true
                     },
                     "tsce.showAnyIfTypeNotSpecified": {

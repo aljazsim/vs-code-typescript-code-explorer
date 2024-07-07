@@ -8,14 +8,13 @@ export class MethodSignatureDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(methodName: string, parameters: Parameter[], returnType: string | null, parent: DeclarationNode | null, command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(methodName: string, parameters: Parameter[] | null, returnType: string | null, parent: DeclarationNode, command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 
         this.name = methodName;
         this.label = methodName;
-        this.description = `(${parameters.map(x => `${x.name}: ${x.type}`).join(", ")})${(returnType ? `: ${returnType}` : "")}`;
-
+        this.description = parameters && returnType ? this.getDescription(parameters, returnType) : "";
 
         this.start = start;
         this.end = end;
@@ -31,4 +30,21 @@ export class MethodSignatureDeclarationNode extends DeclarationNode
     }
 
     // #endregion Constructors (1)
+
+    // #region Private Methods (1)
+
+    private getDescription(parameters: Parameter[], returnType: string | null): string | boolean
+    {
+        let description = "";
+
+        description += "(";
+        description += parameters.map(x => x.name + (x.type ? `: ${x.type}` : "")).join(", ");
+        description += ")";
+        description += ": ";
+        description += returnType ? returnType : "void";
+
+        return description;
+    }
+
+    // #endregion Private Methods (1)
 }

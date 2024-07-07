@@ -8,19 +8,19 @@ export class IndexSignatureDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(indexParameters: Parameter[], indexReturnType: string, public readonly isStatic: boolean, public readonly isReadOnly: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(indexParameters: Parameter[] | null, indexReturnType: string | null, public readonly isStatic: boolean, public readonly isReadOnly: boolean, parent: DeclarationNode, command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 
         this.name = "index";
         this.label = "index";
-        this.description = `[${indexParameters.map(ip => `${ip.name}: ${ip.type}`).join(", ")}]: ${indexReturnType}`;
+        this.description = indexParameters && indexReturnType ? this.getDescription(indexParameters, indexReturnType) : "";
 
         this.start = start;
         this.end = end;
 
         this.parent = parent;
-        this.children = children;
+        this.children = [];
         this.command = command;
 
         this.iconPath = {
@@ -30,4 +30,21 @@ export class IndexSignatureDeclarationNode extends DeclarationNode
     }
 
     // #endregion Constructors (1)
+
+    // #region Private Methods (1)
+
+    private getDescription(parameters: Parameter[], returnType: string | null): string | boolean
+    {
+        let description = "";
+
+        description += "[";
+        description += parameters.map(x => x.name + (x.type ? `: ${x.type}` : "")).join(", ");
+        description += "]";
+        description += ": ";
+        description += returnType ? returnType : "void";
+
+        return description;
+    }
+
+    // #endregion Private Methods (1)
 }

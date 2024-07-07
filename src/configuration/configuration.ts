@@ -8,10 +8,7 @@ export class Configuration
 
     constructor(
         public readonly groupingAndOrder: NodeGroupingAndOrderType,
-        public readonly showPropertyTypes: boolean,
-        public readonly showParameters: boolean,
-        public readonly showParameterTypes: boolean,
-        public readonly showReturnTypes: boolean,
+        public readonly showMemberTypes: boolean,
         public readonly showAnyIfTypeNotSpecified: boolean,
         public readonly showAccessorColorCoding: boolean,
         public readonly showStaticMemberIndicator: boolean,
@@ -22,7 +19,7 @@ export class Configuration
         public readonly showArrowFunctionPropertiesAsMethods: boolean,
         public readonly showReadonlyArrowFunctionPropertiesAsMethods: boolean,
         public readonly showArrowFunctionVariablesAsMethods: boolean,
-        public readonly showArrowFunctionConstAsMethods: boolean
+        public readonly showArrowFunctionConstVariablesAsMethods: boolean
     )
     {
     }
@@ -37,10 +34,7 @@ export class Configuration
 
         return new Configuration(
             this.toGroupingAndOrder(configuration.get<string>("groupingAndOrder") ?? ""),
-            configuration.get<boolean>("showPropertyTypes") === true,
-            configuration.get<boolean>("showParameters") === true,
-            configuration.get<boolean>("showParameterTypes") === true,
-            configuration.get<boolean>("showReturnTypes") === true,
+            configuration.get<boolean>("showMemberTypes") === true,
             configuration.get<boolean>("showAnyIfTypeNotSpecified") === true,
             configuration.get<boolean>("showAccessorColorCoding") === true,
             configuration.get<boolean>("showStaticMemberIndicator") === true,
@@ -51,7 +45,7 @@ export class Configuration
             configuration.get<boolean>("showArrowFunctionPropertiesAsMethods") === true,
             configuration.get<boolean>("showArrowFunctionReadOnlyPropertiesAsMethods") === true,
             configuration.get<boolean>("showArrowFunctionVariablesAsMethods") === true,
-            configuration.get<boolean>("showArrowFunctionConstAsMethods") === true
+            configuration.get<boolean>("showArrowFunctionConstVariablesAsMethods") === true
         );
     }
 

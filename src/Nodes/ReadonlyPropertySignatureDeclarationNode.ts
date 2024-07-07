@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 import { DeclarationNode } from "./DeclarationNode";
 import { NodeImages } from "./NodeImages";
 
-export class PropertySignatureDeclarationNode extends DeclarationNode
+export class ReadonlyPropertySignatureDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 

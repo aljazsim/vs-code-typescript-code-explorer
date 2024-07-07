@@ -7,19 +7,19 @@ export class GetterDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(getterName: string, getterType: string, public readonly accessModifier: string, public readonly isStatic: boolean, public readonly isAbstract: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(getterName: string, getterType: string | null, public readonly accessModifier: string, public readonly isStatic: boolean, public readonly isAbstract: boolean, parent: DeclarationNode, command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 
         this.name = getterName;
         this.label = getterName;
-        this.description = getterType ? `: ${getterType}` : ": any";
+        this.description = getterType ? `: ${getterType}` : "";
 
         this.start = start;
         this.end = end;
 
         this.parent = parent;
-        this.children = children;
+        this.children = [];
         this.command = command;
 
         if (accessModifier === "private")

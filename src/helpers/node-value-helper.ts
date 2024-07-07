@@ -1,6 +1,6 @@
 import { AccessorDeclarationNode } from "../Nodes/AccessorDeclarationNode";
 import { ClassDeclarationNode } from "../Nodes/ClassDeclarationNode";
-import { ConstDeclarationNode } from "../Nodes/ConstDeclarationNode";
+import { ReadonlyPropertyDeclarationNode } from "../Nodes/ReadonlyPropertyDeclarationNode";
 import { ConstructorDeclarationNode } from "../Nodes/ConstructorDeclarationNode";
 import { DeclarationNode } from "../Nodes/DeclarationNode";
 import { DescriptionNode } from "../Nodes/DescriptionNode";
@@ -19,6 +19,8 @@ import { SetterDeclarationNode } from "../Nodes/SetterDeclarationNode";
 import { StaticCodeBlockDeclarationNode } from "../Nodes/StaticCodeBlockDeclarationNode";
 import { TypeAliasDeclarationNode } from "../Nodes/TypeAliasDeclarationNode";
 import { VariableDeclarationNode } from "../Nodes/VariableDeclarationNode";
+import { ConstVariableDeclarationNode } from "../Nodes/ConstVariableDeclarationNode";
+import { ReadonlyPropertySignatureDeclarationNode } from "../Nodes/ReadonlyPropertySignatureDeclarationNode";
 
 // #region Functions (5)
 
@@ -28,7 +30,8 @@ export function getAccessor(node: DeclarationNode)
         node instanceof TypeAliasDeclarationNode ||
         node instanceof ClassDeclarationNode ||
         node instanceof FunctionDeclarationNode ||
-        node instanceof VariableDeclarationNode)
+        node instanceof VariableDeclarationNode ||
+        node instanceof ConstVariableDeclarationNode)
     {
         if (node.isExport)
         {
@@ -39,7 +42,7 @@ export function getAccessor(node: DeclarationNode)
             return "not exported";
         }
     }
-    else if (node instanceof ConstDeclarationNode ||
+    else if (node instanceof ReadonlyPropertyDeclarationNode ||
         node instanceof PropertyDeclarationNode ||
         node instanceof AccessorDeclarationNode ||
         node instanceof SetterDeclarationNode ||
@@ -62,7 +65,8 @@ export function getAccessorOrder(node: DeclarationNode)
         node instanceof TypeAliasDeclarationNode ||
         node instanceof ClassDeclarationNode ||
         node instanceof FunctionDeclarationNode ||
-        node instanceof VariableDeclarationNode)
+        node instanceof VariableDeclarationNode ||
+        node instanceof ConstVariableDeclarationNode)
     {
         if (node.isExport)
         {
@@ -73,7 +77,7 @@ export function getAccessorOrder(node: DeclarationNode)
             return "101";
         }
     }
-    else if (node instanceof ConstDeclarationNode ||
+    else if (node instanceof ReadonlyPropertyDeclarationNode ||
         node instanceof PropertyDeclarationNode ||
         node instanceof AccessorDeclarationNode ||
         node instanceof SetterDeclarationNode ||
@@ -148,13 +152,25 @@ export function getType(node: DeclarationNode)
     {
         return "variable";
     }
+    else if (node instanceof ConstVariableDeclarationNode)
+    {
+        return "const variable";
+    }
+    else if (node instanceof ConstVariableDeclarationNode)
+    {
+        return "const variable";
+    }
     else if (node instanceof FunctionDeclarationNode)
     {
         return "function";
     }
 
     // interface / type alias member types
-    if (node instanceof PropertySignatureDeclarationNode)
+    if (node instanceof ReadonlyPropertySignatureDeclarationNode)
+    {
+        return "readonly property";
+    }
+    else if (node instanceof PropertySignatureDeclarationNode)
     {
         return "property";
     }
@@ -174,13 +190,17 @@ export function getType(node: DeclarationNode)
     }
 
     // class member types
-    if (node instanceof ConstDeclarationNode)
+    if (node instanceof ReadonlyPropertyDeclarationNode)
     {
-        return "constant";
+        return "readonly property";
     }
-    if (node instanceof PropertyDeclarationNode)
+    else if (node instanceof PropertyDeclarationNode)
     {
         return "property";
+    }
+    else if (node instanceof ReadonlyPropertyDeclarationNode)
+    {
+        return "readonly property";
     }
     else if (node instanceof ConstructorDeclarationNode ||
         node instanceof StaticCodeBlockDeclarationNode)
@@ -232,13 +252,17 @@ export function getTypeOrder(node?: DeclarationNode)
     {
         return "104";
     }
-    else if (node instanceof VariableDeclarationNode || (node instanceof DescriptionNode && node.name === "variable"))
+    else if (node instanceof ConstVariableDeclarationNode || (node instanceof DescriptionNode && node.name === "const variable"))
     {
         return "105";
     }
-    else if (node instanceof FunctionDeclarationNode || (node instanceof DescriptionNode && node.name === "exported function"))
+    else if (node instanceof VariableDeclarationNode || (node instanceof DescriptionNode && node.name === "variable"))
     {
         return "106";
+    }
+    else if (node instanceof FunctionDeclarationNode || (node instanceof DescriptionNode && node.name === "function"))
+    {
+        return "107";
     }
 
     // enum member types
@@ -247,12 +271,12 @@ export function getTypeOrder(node?: DeclarationNode)
         return "301";
     }
 
-    // interface/type/class member types
-    if (node instanceof ConstDeclarationNode || (node instanceof DescriptionNode && node.name === "constant"))
+    // class member types
+    if (node instanceof ReadonlyPropertyDeclarationNode || node instanceof ReadonlyPropertySignatureDeclarationNode || (node instanceof DescriptionNode && node.name === "readonly property"))
     {
         return "401";
     }
-    if (node instanceof PropertyDeclarationNode || (node instanceof DescriptionNode && node.name === "property"))
+    else if (node instanceof PropertyDeclarationNode || node instanceof PropertySignatureDeclarationNode || (node instanceof DescriptionNode && node.name === "property"))
     {
         return "401";
     }
@@ -264,7 +288,7 @@ export function getTypeOrder(node?: DeclarationNode)
     {
         return "403";
     }
-    else if (node instanceof IndexSignatureDeclarationNode || (node instanceof DescriptionNode && node.name === "index"))
+    else if (node instanceof IndexSignatureDeclarationNode || node instanceof IndexSignatureDeclarationNode || (node instanceof DescriptionNode && node.name === "index"))
     {
         return "404";
     }
@@ -280,7 +304,7 @@ export function getTypeOrder(node?: DeclarationNode)
     {
         return "407";
     }
-    else if (node instanceof MethodDeclarationNode || (node instanceof DescriptionNode && node.name === "method"))
+    else if (node instanceof MethodDeclarationNode || node instanceof MethodSignatureDeclarationNode || (node instanceof DescriptionNode && node.name === "method"))
     {
         return "408";
     }

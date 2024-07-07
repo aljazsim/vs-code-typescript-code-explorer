@@ -7,19 +7,19 @@ export class SetterDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(setterName: string, setterType: string, public readonly accessModifier: string, public readonly isStatic: boolean, public readonly isAbstract: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(setterName: string, setterType: string | null, public readonly accessModifier: string, public readonly isStatic: boolean, public readonly isAbstract: boolean, parent: DeclarationNode, command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 
         this.name = setterName;
         this.label = setterName;
-        this.description = setterType ? `(value: ${setterType})` : "(value: any)";
+        this.description = setterType ? `(value: ${setterType})` : "";
 
         this.start = start;
         this.end = end;
 
         this.parent = parent;
-        this.children = children;
+        this.children = [];
         this.command = command;
 
         if (accessModifier === "private")

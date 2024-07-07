@@ -7,19 +7,19 @@ export class AccessorDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(accessorName: string, accessorType: string, public accessModifier: string, public isStatic: boolean, public isAbstract: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(accessorName: string, accessorType: string | null, public accessModifier: string, public isStatic: boolean, public isAbstract: boolean, parent: DeclarationNode, command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 
         this.name = accessorName;
         this.label = accessorName;
-        this.description = accessorType ? `: ${accessorType}` : ": any";
+        this.description = accessorType ? `: ${accessorType}` : "";
 
         this.start = start;
         this.end = end;
 
         this.parent = parent;
-        this.children = children;
+        this.children = [];
         this.command = command;
 
         if (accessModifier === "private")

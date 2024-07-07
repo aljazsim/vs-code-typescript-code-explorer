@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 import { DeclarationNode } from "./DeclarationNode";
 import { NodeImages } from "./NodeImages";
 
-export class VariableDeclarationNode extends DeclarationNode
+export class ConstVariableDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 

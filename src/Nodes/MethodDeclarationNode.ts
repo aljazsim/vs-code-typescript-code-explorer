@@ -8,13 +8,13 @@ export class MethodDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(methodName: string, public readonly accessModifier: string, public readonly isStatic: boolean, public readonly isAbstract: boolean, public readonly isAsync: boolean, parameters: Parameter[], returnType: string | null, parent: DeclarationNode | null, command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(methodName: string, public readonly accessModifier: string, public readonly isStatic: boolean, public readonly isAbstract: boolean, public readonly isAsync: boolean, parameters: Parameter[] | null, returnType: string | null, parent: DeclarationNode, command: vscode.Command, start: vscode.Position, end: vscode.Position)
     {
         super();
 
         this.name = methodName;
         this.label = methodName;
-        this.description = `(${parameters.map(x => `${x.name}: ${x.type}`).join(", ")})${(returnType ? `: ${returnType}` : ": void")}`;
+        this.description = parameters && returnType ? this.getDescription(parameters, returnType) : "";
 
         this.start = start;
         this.end = end;
@@ -22,7 +22,6 @@ export class MethodDeclarationNode extends DeclarationNode
         this.parent = parent;
         this.children = [];
         this.command = command;
-
 
         if (isStatic)
         {
@@ -92,4 +91,21 @@ export class MethodDeclarationNode extends DeclarationNode
     }
 
     // #endregion Constructors (1)
+
+    // #region Private Methods (1)
+
+    private getDescription(parameters: Parameter[], returnType: string | null): string | boolean
+    {
+        let description = "";
+
+        description += "(";
+        description += parameters.map(x => x.name + (x.type ? `: ${x.type}` : "")).join(", ");
+        description += ")";
+        description += ": ";
+        description += returnType ? returnType : "void";
+
+        return description;
+    }
+
+    // #endregion Private Methods (1)
 }

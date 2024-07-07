@@ -169,7 +169,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         }
         else if (ts.isEnumMember(node))
         {
-            nodes.push(getEnumMemberDeclarationNode(editor, sourceFile, node, parentElement, []));
+            nodes.push(getEnumMemberDeclarationNode(editor, sourceFile, node, parentElement!, configuration));
         }
 
         // interface / type alias elements
@@ -187,11 +187,11 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         }
         else if (ts.isIndexSignatureDeclaration(node))
         {
-            nodes.push(getIndexSignatureDeclarationNode(editor, sourceFile, node, parentElement, []));
+            nodes.push(getIndexSignatureDeclarationNode(editor, sourceFile, node, parentElement!, configuration));
         }
         else if (ts.isMethodSignature(node))
         {
-            nodes.push(getMethodSignatureDeclarationNode(editor, sourceFile, node, parentElement, []));
+            nodes.push(getMethodSignatureDeclarationNode(editor, sourceFile, node, parentElement!, configuration));
         }
 
         // class elements
@@ -201,41 +201,41 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         }
         else if (ts.isConstructorDeclaration(node))
         {
-            getConstructorDeclarationNode(editor, sourceFile, node, parentElement, []).forEach(n => nodes.push(n));
+            getConstructorDeclarationNode(editor, sourceFile, node, parentElement!, configuration).forEach(n => nodes.push(n), configuration);
         }
         else if (ts.isClassStaticBlockDeclaration(node))
         {
-            nodes.push(getStaticBlockDeclarationNode(editor, sourceFile, node, parentElement, []));
+            nodes.push(getStaticBlockDeclarationNode(editor, sourceFile, node, parentElement!));
         }
         else if (ts.isAutoAccessorPropertyDeclaration(node))
         {
-            nodes.push(getAccessorDeclarationNode(editor, sourceFile, node, parentElement, []));
+            nodes.push(getAccessorDeclarationNode(editor, sourceFile, node, parentElement!, configuration));
         }
         else if (ts.isPropertyDeclaration(node))
         {
-            nodes.push(getPropertyDeclarationNode(editor, sourceFile, node, parentElement, configuration));
+            nodes.push(getPropertyDeclarationNode(editor, sourceFile, node, parentElement!, configuration));
         }
         else if (ts.isGetAccessor(node))
         {
-            nodes.push(getGetterDeclarationNode(editor, sourceFile, node, parentElement, []));
+            nodes.push(getGetterDeclarationNode(editor, sourceFile, node, parentElement!, configuration));
         }
         else if (ts.isSetAccessor(node))
         {
-            nodes.push(getSetterDeclarationNode(editor, sourceFile, node, parentElement, []));
+            nodes.push(getSetterDeclarationNode(editor, sourceFile, node, parentElement!, configuration));
         }
         else if (ts.isMethodDeclaration(node))
         {
-            nodes.push(getMethodDeclarationNode(editor, sourceFile, node, parentElement, []));
+            nodes.push(getMethodDeclarationNode(editor, sourceFile, node, parentElement!, configuration));
         }
 
         // module elements
         if (ts.isFunctionDeclaration(node))
         {
-            nodes.push(getFunctionDeclarationNode(editor, sourceFile, node, parentElement, []));
+            nodes.push(getFunctionDeclarationNode(editor, sourceFile, node, parentElement!, configuration));
         }
         else if (ts.isVariableStatement(node))
         {
-            getVariableDeclarationNode(editor, sourceFile, node, parentElement, configuration).forEach(n => nodes.push(n));
+            getVariableDeclarationNode(editor, sourceFile, node, parentElement!, configuration).forEach(n => nodes.push(n));
         }
 
         // get child elements
