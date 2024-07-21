@@ -2,7 +2,7 @@
     "name": "tsce",
     "displayName": "TypeScript Code Explorer",
     "description": "Making navigating TypeScript code easier",
-    "version": "1.0.8",
+    "version": "2.0.0",
     "publisher": "aljazsim",
     "author": {
         "name": "aljazsim",
@@ -33,7 +33,8 @@
         "outline",
         "navigate",
         "class view",
-        "explorer"
+        "explorer",
+        "members"
     ],
     "activationEvents": [
         "onLanguage:typescript",
@@ -93,6 +94,11 @@
                         "description": "Specifies if element icons should display letter 'A' for abstract members.",
                         "default": true
                     },
+                    "tsce.showAsyncMethodIndicator": {
+                        "type": "boolean",
+                        "description": "Specifies if methods and functions should display a circle indicator for async methods and functions.",
+                        "default": true
+                    },
                     "tsce.showMemberCount": {
                         "type": "boolean",
                         "description": "Specifies if member count should be displayed when grouping member.",
@@ -126,11 +132,6 @@
                     "tsce.showArrowFunctionConstVariablesAsMethods": {
                         "type": "boolean",
                         "description": "Specifies if const arrow function variables should be treated as functions.",
-                        "default": true
-                    },
-                    "tsce.showAsyncMethodIndicator": {
-                        "type": "boolean",
-                        "description": "Specifies if methods and functions should display a circle indicator for async methods and functions.",
                         "default": true
                     }
                 }

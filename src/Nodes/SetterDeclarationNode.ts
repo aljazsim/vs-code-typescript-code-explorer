@@ -19,26 +19,70 @@ export class SetterDeclarationNode extends DeclarationNode
 
         this.command = command;
 
-        if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.private)
+        if (configuration.showStaticMemberIndicator && isStatic)
         {
-            this.iconPath = {
-                light: configuration.showStaticMemberIndicator && isStatic ? NodeImages.propertyPrivateStatic : NodeImages.propertyPrivate,
-                dark: configuration.showStaticMemberIndicator && isStatic ? NodeImages.propertyPrivateStatic : NodeImages.propertyPrivate
-            };
+            if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.private)
+            {
+                this.iconPath = {
+                    light: NodeImages.propertyPrivateStatic,
+                    dark: NodeImages.propertyPrivateStatic
+                };
+            }
+            else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
+            {
+                this.iconPath = {
+                    light: NodeImages.propertyProtectedStatic,
+                    dark: NodeImages.propertyProtectedStatic
+                };
+            }
+            else if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.public)
+            {
+                this.iconPath = {
+                    light: NodeImages.propertyPublicStatic,
+                    dark: NodeImages.propertyPublicStatic
+                };
+            }
         }
-        else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
+        else if (isAbstract && configuration.showAbstractMemberIndicator)
         {
-            this.iconPath = {
-                light: configuration.showStaticMemberIndicator && isStatic ? NodeImages.propertyProtectedStatic : NodeImages.propertyProtected,
-                dark: configuration.showStaticMemberIndicator && isStatic ? NodeImages.propertyProtectedStatic : NodeImages.propertyProtected
-            };
+            if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
+            {
+                this.iconPath = {
+                    light: NodeImages.propertyProtectedAbstract,
+                    dark: NodeImages.propertyProtectedAbstract
+                };
+            }
+            else if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.public)
+            {
+                this.iconPath = {
+                    light: NodeImages.propertyPublicAbstract,
+                    dark: NodeImages.propertyPublicAbstract
+                };
+            }
         }
-        else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.public)
+        else
         {
-            this.iconPath = {
-                light: configuration.showStaticMemberIndicator && isStatic ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic,
-                dark: configuration.showStaticMemberIndicator && isStatic ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic
-            };
+            if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.private)
+            {
+                this.iconPath = {
+                    light: NodeImages.propertyPrivate,
+                    dark: NodeImages.propertyPrivate
+                };
+            }
+            else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
+            {
+                this.iconPath = {
+                    light: NodeImages.propertyProtected,
+                    dark: NodeImages.propertyProtected
+                };
+            }
+            else if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.public)
+            {
+                this.iconPath = {
+                    light: NodeImages.propertyPublic,
+                    dark: NodeImages.propertyPublic
+                };
+            }
         }
     }
 

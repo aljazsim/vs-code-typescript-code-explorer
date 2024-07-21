@@ -2,7 +2,7 @@ import * as path from "path";
 
 export abstract class NodeImages
 {
-    // #region Properties (48)
+    // #region Properties (50)
 
     private static readonly imageDir = path.join(__filename, "..", "..", "..", "resources");
 
@@ -40,8 +40,10 @@ export abstract class NodeImages
     public static readonly propertyPrivate = path.join(this.imageDir, "members", "property-private.svg");
     public static readonly propertyPrivateStatic = path.join(this.imageDir, "members", "property-private-static.svg");
     public static readonly propertyProtected = path.join(this.imageDir, "members", "property-protected.svg");
+    public static readonly propertyProtectedAbstract = path.join(this.imageDir, "members", "property-protected-abstract.svg");
     public static readonly propertyProtectedStatic = path.join(this.imageDir, "members", "property-protected-static.svg");
     public static readonly propertyPublic = path.join(this.imageDir, "members", "property-public.svg");
+    public static readonly propertyPublicAbstract = path.join(this.imageDir, "members", "property-public-abstract.svg");
     public static readonly propertyPublicStatic = path.join(this.imageDir, "members", "property-public-static.svg");
     public static readonly readonlyPropertyPrivate = path.join(this.imageDir, "members", "readonly-property-private.svg");
     public static readonly readonlyPropertyPrivateStatic = path.join(this.imageDir, "members", "readonly-property-private-static.svg");
@@ -54,5 +56,5 @@ export abstract class NodeImages
     public static readonly variable = path.join(this.imageDir, "members", "variable.svg");
     public static readonly variableExported = path.join(this.imageDir, "members", "variable-exported.svg");
 
-    // #endregion Properties (48)
+    // #endregion Properties (50)
 }
