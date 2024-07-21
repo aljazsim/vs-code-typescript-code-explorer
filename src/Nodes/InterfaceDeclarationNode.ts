@@ -1,31 +1,37 @@
-import * as path from "path";
 import * as vscode from "vscode";
+
 import { DeclarationNode } from "./DeclarationNode";
+import { NodeImages } from "./NodeImages";
+import { Configuration } from "../configuration/configuration";
+import { Node } from "./Node";
 
 export class InterfaceDeclarationNode extends DeclarationNode
 {
-	constructor(interfaceName: string, isExport: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
-	{
-		super();
+    // #region Constructors (1)
 
-		this.name = interfaceName;
-		this.label = interfaceName;
+    constructor(name: string, public readonly isExport: boolean, parent: Node | null, children: Node[], command: vscode.Command, start: vscode.Position, end: vscode.Position, configuration: Configuration)
+    {
+        super(name, parent, children, command, start, end);
 
-		this.start = start;
-		this.end = end;
+        this.label = name;
 
-		this.parent = parent;
-		this.children = children;
-		this.command = command;
+        this.command = command;
 
-		this.iconPath = {
-			light: path.join(this.imageDir, 'Interface_light.svg'),
-			dark: path.join(this.imageDir, 'Interface_dark.svg')
-		};
+        if (!configuration.showAccessorColorCoding || isExport)
+        {
+            this.iconPath = {
+                light: NodeImages.interfaceExported,
+                dark: NodeImages.interfaceExported
+            };
+        }
+        else if (configuration.showAccessorColorCoding && isExport)
+        {
+            this.iconPath = {
+                light: NodeImages.interface,
+                dark: NodeImages.interface
+            };
+        }
+    }
 
-		if (!isExport)
-		{
-			this.label += " " + this.privateImage;
-		}
-	}
+    // #endregion Constructors (1)
 }

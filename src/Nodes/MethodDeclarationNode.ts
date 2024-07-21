@@ -1,46 +1,108 @@
-import * as path from "path";
 import * as vscode from "vscode";
+
 import { DeclarationNode } from "./DeclarationNode";
+import { NodeImages } from "./NodeImages";
 import { Parameter } from "./Parameter";
+import { Configuration } from "../configuration/configuration";
+import { NodeAccessModifier } from "../enums/node-access-modifier";
+import { Node } from "./Node";
 
 export class MethodDeclarationNode extends DeclarationNode
 {
-	// #region Constructors (1)
+    // #region Constructors (1)
 
-	constructor(methodName: string, accessModifier: string, isStatic: boolean, isAbstract: boolean, parameters: Parameter[], returnType: string | null, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
-	{
-		super();
+    constructor(name: string, parameters: Parameter[], returnType: string, public readonly accessModifier: NodeAccessModifier, public readonly isStatic: boolean, public readonly isAbstract: boolean, public readonly isAsync: boolean, parent: Node, command: vscode.Command, start: vscode.Position, end: vscode.Position, configuration: Configuration)
+    {
+        super(name, parent, [], command, start, end);
 
-		this.name = methodName;
-		this.label = `${methodName} (${parameters.map(x => `${x.name}: ${x.type}`).join(", ")})`;
+        this.label = name;
+        this.description = configuration.showMemberTypes ? this.getDescription(parameters, returnType, configuration) : "";
 
-		if (returnType)
-		{
-			this.label = `${this.label}: ${returnType}`;
-		}
+        this.command = command;
 
-		this.start = start;
-		this.end = end;
+        if (configuration.showStaticMemberIndicator && isStatic)
+        {
+            if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.private)
+            {
+                this.iconPath = {
+                    light: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPrivateStaticAsync : NodeImages.methodPrivateStatic,
+                    dark: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPrivateStaticAsync : NodeImages.methodPrivateStatic
+                };
+            }
+            else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
+            {
+                this.iconPath = {
+                    light: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodProtectedStaticAsync : NodeImages.methodProtectedStatic,
+                    dark: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodProtectedStaticAsync : NodeImages.methodProtectedStatic
+                };
+            }
+            else if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.public)
+            {
+                this.iconPath = {
+                    light: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPublicStaticAsync : NodeImages.methodPublicStatic,
+                    dark: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPublicStaticAsync : NodeImages.methodPublicStatic
+                };
+            }
+        }
+        else if (isAbstract && configuration.showAbstractMemberIndicator)
+        {
+            if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
+            {
+                this.iconPath = {
+                    light: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodProtectedAbstractAsync : NodeImages.methodProtectedAbstract,
+                    dark: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodProtectedAbstractAsync : NodeImages.methodProtectedAbstract
+                };
+            }
+            else if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.public)
+            {
+                this.iconPath = {
+                    light: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPublicAbstractAsync : NodeImages.methodPublicAbstract,
+                    dark: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPublicAbstractAsync : NodeImages.methodPublicAbstract
+                };
+            }
+        }
+        else
+        {
+            if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.private)
+            {
+                this.iconPath = {
+                    light: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPrivateAsync : NodeImages.methodPrivate,
+                    dark: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPrivateAsync : NodeImages.methodPrivate
+                };
+            }
+            else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
+            {
+                this.iconPath = {
+                    light: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodProtectedAsync : NodeImages.methodProtected,
+                    dark: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodProtectedAsync : NodeImages.methodProtected
+                };
+            }
+            else if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.public)
+            {
+                this.iconPath = {
+                    light: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPublicAsync : NodeImages.methodPublic,
+                    dark: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPublicAsync : NodeImages.methodPublic
+                };
+            }
+        }
+    }
 
-		this.parent = parent;
-		this.children = children;
-		this.command = command;
+    // #endregion Constructors (1)
 
-		this.iconPath = {
-			light: path.join(this.imageDir, 'Method_light.svg'),
-			dark: path.join(this.imageDir, 'Method_dark.svg')
-		};
+    // #region Private Methods (1)
 
-		if (accessModifier == "protected")
-		{
-			this.label += " " + this.protectedImage;
-		}
+    private getDescription(parameters: Parameter[], returnType: string | null, configuration: Configuration): string | boolean
+    {
+        let description = "";
 
-		if (accessModifier == "private")
-		{
-			this.label += " " + this.privateImage;
-		}
-	}
+        description += "(";
+        description += parameters.map(x => x.name + (configuration.showMemberTypes ? `: ${x.type}` : "")).join(", ");
+        description += ")";
+        description += ": ";
+        description += configuration.showMemberTypes ? returnType : "";
 
-	// #endregion
+        return description;
+    }
+
+    // #endregion Private Methods (1)
 }

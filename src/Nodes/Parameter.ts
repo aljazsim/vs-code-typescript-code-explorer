@@ -1,10 +1,10 @@
 export class Parameter
 {
-	// #region Constructors (1)
+    // #region Constructors (1)
 
-	constructor(public name: string, public type: string)
-	{
-	}
+    constructor(public name: string, public type: string | null)
+    {
+    }
 
-	// #endregion
+    // #endregion Constructors (1)
 }

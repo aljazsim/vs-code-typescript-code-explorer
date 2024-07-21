@@ -1,30 +1,28 @@
-import * as path from "path";
 import * as vscode from "vscode";
+
 import { DeclarationNode } from "./DeclarationNode";
+import { NodeImages } from "./NodeImages";
+import { Configuration } from "../configuration/configuration";
+import { Node } from "./Node";
 
 export class EnumMemberDeclarationNode extends DeclarationNode
 {
-	// #region Constructors (1)
+    // #region Constructors (1)
 
-	constructor(enumMemberName: string, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
-	{
-		super();
+    constructor(name: string, value: string | null, parent: Node, command: vscode.Command, start: vscode.Position, end: vscode.Position, configuration: Configuration)
+    {
+        super(name, parent, [], command, start, end);
 
-		this.name = enumMemberName;
-		this.label = enumMemberName;
+        this.label = name;
+        this.description = configuration.showMemberTypes ? (value === null ? "" : `= ${value}`) : "";
 
-		this.start = start;
-		this.end = end;
+        this.command = command;
 
-		this.parent = parent;
-		this.children = children;
-		this.command = command;
+        this.iconPath = {
+            light: NodeImages.enumMember,
+            dark: NodeImages.enumMember
+        };
+    }
 
-		this.iconPath = {
-			light: path.join(this.imageDir, 'EnumItem_light.svg'),
-			dark: path.join(this.imageDir, 'EnumItem_dark.svg')
-		};
-	}
-
-	// #endregion
+    // #endregion Constructors (1)
 }

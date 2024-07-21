@@ -1,30 +1,48 @@
-import * as path from "path";
 import * as vscode from "vscode";
+
 import { DeclarationNode } from "./DeclarationNode";
+import { NodeImages } from "./NodeImages";
+import { Parameter } from "./Parameter";
+import { NodeCaption } from "../enums/node-caption";
+import { Configuration } from "../configuration/configuration";
+import { Node } from "./Node";
 
 export class IndexSignatureDeclarationNode extends DeclarationNode
 {
-	// #region Constructors (1)
+    // #region Constructors (1)
 
-	constructor(indexType: string, public isStatic: boolean, isReadOnly: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
-	{
-		super();
+    constructor(parameters: Parameter[] , type: string , public readonly isStatic: boolean, public readonly isReadOnly: boolean, parent: Node, command: vscode.Command, start: vscode.Position, end: vscode.Position, configuration: Configuration)
+    {
+        super(NodeCaption.index, parent, [], command, start, end);
 
-		this.name = indexType;
-		this.label = `index: ${indexType}`;
 
-		this.start = start;
-		this.end = end;
+        this.label = NodeCaption.index;
+        this.description = configuration.showMemberTypes ? this.getDescription(parameters, type, configuration): "";
 
-		this.parent = parent;
-		this.children = children;
-		this.command = command;
+        this.command = command;
 
-		this.iconPath = {
-			light: path.join(this.imageDir, 'Property_light.svg'),
-			dark: path.join(this.imageDir, 'Property_dark.svg')
-		};
-	}
+        this.iconPath = {
+            light: configuration.showStaticMemberIndicator && isStatic ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic,
+            dark: configuration.showStaticMemberIndicator &&isStatic ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic
+        };
+    }
 
-	// #endregion
+    // #endregion Constructors (1)
+
+    // #region Private Methods (1)
+
+    private getDescription(parameters: Parameter[], returnType: string , configuration: Configuration): string | boolean
+    {
+        let description = "";
+
+        description += "[";
+        description += parameters.map(x => x.name + (configuration.showMemberTypes ? `: ${x.type}` : "")).join(", ");
+        description += "]";
+        description += ": ";
+        description += configuration.showMemberTypes ? returnType : "";
+
+        return description;
+    }
+
+    // #endregion Private Methods (1)
 }

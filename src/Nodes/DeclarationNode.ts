@@ -1,56 +1,31 @@
-import * as path from "path";
 import * as vscode from "vscode";
+import { Node } from "./Node";
 
-export abstract class DeclarationNode extends vscode.TreeItem
+export abstract class DeclarationNode extends Node
 {
-	// #region Properties (8)
+    // #region Properties (3)
 
-	protected readonly imageDir = path.join(__filename, "..", "..", "..", "..", "resources");
-	protected readonly privateImage = this.convertHexToString("f09f9492");
-	protected readonly protectedImage = this.convertHexToString("f09f9493");
+    public readonly end: vscode.Position = new vscode.Position(0, 0);
+    public readonly name: string = "";
+    public readonly start: vscode.Position = new vscode.Position(0, 0);
 
-	public children: DeclarationNode[] = [];
-	public end: vscode.Position = new vscode.Position(0, 0);
-	public name: string | null = null;
-	public parent: DeclarationNode | null = null;
-	public start: vscode.Position = new vscode.Position(0, 0);
+    // #endregion Properties (3)
 
-	// #endregion
+    // #region Constructors (1)
 
-	// #region Constructors (1)
+    constructor(name: string, parent: Node | null, children: Node[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    {
+        super("", vscode.TreeItemCollapsibleState.Expanded);
 
-	constructor()
-	{
-		super("", vscode.TreeItemCollapsibleState.Expanded);
-	}
+        this.name = name;
 
-	// #endregion
+        this.start = start;
+        this.end = end;
 
-	// #region Public Accessors (1)
+        this.parent = parent;
+        this.children = children;
+        this.command = command;
+    }
 
-	public get tooltip(): string
-	{
-		return this.label!;
-	}
-
-	// #endregion
-
-	// #region Protected Methods (1)
-
-	protected convertHexToString(input: string)
-	{
-		var inputHex = input.match(/[\s\S]{2}/g) || [];
-		var output = '';
-
-		for (var i = 0, j = inputHex.length; i < j; i++)
-		{
-			output += '%' + ('0' + inputHex[i]).slice(-2);
-		}
-
-		output = decodeURIComponent(output);
-
-		return output;
-	}
-
-	// #endregion
+    // #endregion Constructors (1)
 }

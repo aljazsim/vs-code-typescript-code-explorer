@@ -1,35 +1,36 @@
-import * as path from "path";
 import * as vscode from "vscode";
+
 import { DeclarationNode } from "./DeclarationNode";
+import { NodeImages } from "./NodeImages";
+import { Configuration } from "../configuration/configuration";
+import { Node } from "./Node";
 
 export class ClassDeclarationNode extends DeclarationNode
 {
-	// #region Constructors (1)
+    // #region Constructors (1)
 
-	constructor(className: string, isExport: boolean, isAbstract: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
-	{
-		super();
+    constructor(name: string, public readonly isExport: boolean, public readonly isAbstract: boolean, parent: Node | null, children: Node[], command: vscode.Command, start: vscode.Position, end: vscode.Position, configuration: Configuration)
+    {
+        super(name, parent, children, command, start, end);
 
-		this.name = className;
-		this.label = className;
+        this.label = name;
+        this.description = isAbstract ? "abstract" : "";
 
-		this.start = start;
-		this.end = end;
+        if (!configuration.showAccessorColorCoding || isExport)
+        {
+            this.iconPath = {
+                light: NodeImages.classExported,
+                dark: NodeImages.classExported
+            };
+        }
+        else if (!isExport)
+        {
+            this.iconPath = {
+                light: NodeImages.class,
+                dark: NodeImages.class
+            };
+        }
+    }
 
-		this.parent = parent;
-		this.children = children;
-		this.command = command;
-
-		this.iconPath = {
-			light: path.join(this.imageDir, 'Class_light.svg'),
-			dark: path.join(this.imageDir, 'Class_dark.svg')
-		};
-
-		if (!isExport)
-		{
-			this.label += " " + this.privateImage;
-		}
-	}
-
-	// #endregion
+    // #endregion Constructors (1)
 }

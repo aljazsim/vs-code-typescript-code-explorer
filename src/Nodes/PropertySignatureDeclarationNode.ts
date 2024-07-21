@@ -1,30 +1,37 @@
-import * as path from "path";
 import * as vscode from "vscode";
+
 import { DeclarationNode } from "./DeclarationNode";
+import { NodeImages } from "./NodeImages";
+import { Configuration } from "../configuration/configuration";
+import { Node } from "./Node";
 
 export class PropertySignatureDeclarationNode extends DeclarationNode
 {
-	// #region Constructors (1)
+    // #region Constructors (1)
 
-	constructor(propertyName: string, propertyType: string, isConst: boolean, isReadOnly: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
-	{
-		super();
+    constructor(name: string, type: string, parent: Node, command: vscode.Command, start: vscode.Position, end: vscode.Position, configuration: Configuration)
+    {
+        super(name, parent, [], command, start, end);
 
-		this.name = propertyName;
-		this.label = `${propertyName}: ${propertyType}`;
+        this.label = name;
+        this.description = configuration.showMemberTypes ? `: ${type}` : "";
 
-		this.start = start;
-		this.end = end;
+        this.command = command;
 
-		this.parent = parent;
-		this.children = children;
-		this.command = command;
+        if (configuration.showAccessorColorCoding)
+        {
+            this.iconPath = {
+                light: NodeImages.propertyPublic,
+                dark: NodeImages.propertyPublic
+            };
+        }
+        else {
+            this.iconPath = {
+                light: NodeImages.propertyPrivate,
+                dark: NodeImages.propertyPrivate
+            };
+        }
+    }
 
-		this.iconPath = {
-			light: path.join(this.imageDir, 'Property_light.svg'),
-			dark: path.join(this.imageDir, 'Property_dark.svg')
-		};
-	}
-
-	// #endregion
+    // #endregion Constructors (1)
 }
