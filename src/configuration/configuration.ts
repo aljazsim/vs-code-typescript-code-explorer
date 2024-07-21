@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import { NodeGroupingAndOrderType } from "../helpers/node-grouping-and-order-type";
+import { NodeGroupingAndOrderType } from "../enums/node-grouping-and-order-type";
 
 export class Configuration
 {
@@ -66,21 +66,21 @@ export class Configuration
         {
             return NodeGroupingAndOrderType.orderByTypeByAccessorByName;
         }
-        else if (value === "group by: type")
+        else if (value === "group by: type, order by type")
         {
-            return NodeGroupingAndOrderType.groupByType;
+            return NodeGroupingAndOrderType.groupByTypeOrderByType;
         }
-        else if (value === "group by: type, order by: name")
+        else if (value === "group by: type, order by: type/name")
         {
-            return NodeGroupingAndOrderType.groupByTypeOrderByName;
+            return NodeGroupingAndOrderType.groupByTypeOrderByTypeByName;
         }
-        else if (value === "group by: type, order by: accessor")
+        else if (value === "group by: type, order by: type/accessor")
         {
-            return NodeGroupingAndOrderType.groupByTypeOrderByAccessor;
+            return NodeGroupingAndOrderType.groupByTypeOrderByTypeByAccessor;
         }
-        else if (value === "group by: type, order by: accessor/name")
+        else if (value === "group by: type, order by: type/accessor/name")
         {
-            return NodeGroupingAndOrderType.groupByTypeOrderByAccessorByName;
+            return NodeGroupingAndOrderType.groupByTypeOrderByTypeByAccessorByName;
         }
         else if (value === "group by: type/accessor, order by: type/accessor/name")
         {

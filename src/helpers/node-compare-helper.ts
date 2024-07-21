@@ -1,10 +1,9 @@
 import { getAccessorOrder, getName, getTypeOrder } from "./node-value-helper";
-
-import { DeclarationNode } from "../Nodes/DeclarationNode";
+import { Node } from "../Nodes/Node";
 
 // #region Functions (8)
 
-function compare(a: DeclarationNode, b: DeclarationNode, orderBy: ((node: DeclarationNode) => string)[])
+function compare(a: Node, b: Node, orderBy: ((node: Node) => string)[])
 {
     let valueA = orderBy[0](a);
     let valueB = orderBy[0](b);
@@ -27,37 +26,37 @@ function compare(a: DeclarationNode, b: DeclarationNode, orderBy: ((node: Declar
     }
 }
 
-export function compareByAccessor(a: DeclarationNode, b: DeclarationNode)
+export function compareByAccessor(a: Node, b: Node)
 {
     return compare(a, b, [getAccessorOrder]);
 }
 
-export function compareByAccessorByName(a: DeclarationNode, b: DeclarationNode)
+export function compareByAccessorByName(a: Node, b: Node)
 {
     return compare(a, b, [getAccessorOrder, getName]);
 }
 
-export function compareByName(a: DeclarationNode, b: DeclarationNode)
+export function compareByName(a: Node, b: Node)
 {
     return compare(a, b, [getName]);
 }
 
-export function compareByType(a: DeclarationNode, b: DeclarationNode)
+export function compareByType(a: Node, b: Node)
 {
     return compare(a, b, [getTypeOrder]);
 }
 
-export function compareByTypeByAccessor(a: DeclarationNode, b: DeclarationNode)
+export function compareByTypeByAccessor(a: Node, b: Node)
 {
     return compare(a, b, [getTypeOrder, getAccessorOrder]);
 }
 
-export function compareByTypeByAccessorByName(a: DeclarationNode, b: DeclarationNode)
+export function compareByTypeByAccessorByName(a: Node, b: Node)
 {
     return compare(a, b, [getTypeOrder, getAccessorOrder, getName]);
 }
 
-export function compareByTypeByName(a: DeclarationNode, b: DeclarationNode)
+export function compareByTypeByName(a: Node, b: Node)
 {
     return compare(a, b, [getTypeOrder, getName]);
 }

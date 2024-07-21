@@ -1,9 +1,9 @@
-import { DeclarationNode } from "../Nodes/DeclarationNode";
 import { DescriptionNode } from "../Nodes/DescriptionNode";
+import { Node } from "../Nodes/Node";
 
 // #region Functions (3)
 
-export function addMemberCount(node: DeclarationNode)
+export function addMemberCount(node: Node)
 {
     if (node instanceof DescriptionNode && node.children.length > 0)
     {
@@ -11,7 +11,7 @@ export function addMemberCount(node: DeclarationNode)
     }
 }
 
-export function pluralize(node: DeclarationNode)
+export function pluralize(node: Node)
 {
     if (node instanceof DescriptionNode && node.children.length > 1)
     {
@@ -29,9 +29,12 @@ function pluralizeString(noun: string)
     {
         return noun + "es";
     }
-    else
+    else if(noun != "")
     {
         return noun + "s";
+    }
+    else {
+        return noun;
     }
 }
 

@@ -1,30 +1,42 @@
 import { compareByType, compareByTypeByAccessor, compareByTypeByAccessorByName, compareByTypeByName } from "./node-compare-helper";
-
-import { DeclarationNode } from "../Nodes/DeclarationNode";
+import { Node } from "../Nodes/Node";
 
 // #region Functions (5)
 
-export function order(nodes: DeclarationNode[], orderBy: (a: DeclarationNode, b: DeclarationNode) => number)
+export function order(nodes: Node[], orderBy: ((a: Node, b: Node) => number))
 {
-    return nodes.sort(orderBy);
+    if (orderBy.length > 0)
+    {
+        nodes = nodes.sort(orderBy);
+    }
+
+    if (orderBy.length > 1)
+    {
+        for (const node of nodes)
+        {
+            node.children = order(node.children, orderBy);
+        }
+    }
+
+    return nodes;
 }
 
-export function orderByType(nodes: DeclarationNode[])
+export function orderByType(nodes: Node[])
 {
     return order(nodes, compareByType);
 }
 
-export function orderByTypeByAccessor(nodes: DeclarationNode[])
+export function orderByTypeByAccessor(nodes: Node[])
 {
     return order(nodes, compareByTypeByAccessor);
 }
 
-export function orderByTypeByAccessorByName(nodes: DeclarationNode[])
+export function orderByTypeByAccessorByName(nodes: Node[])
 {
     return order(nodes, compareByTypeByAccessorByName);
 }
 
-export function orderByTypeByName(nodes: DeclarationNode[])
+export function orderByTypeByName(nodes: Node[])
 {
     return order(nodes, compareByTypeByName);
 }

@@ -3,43 +3,40 @@ import * as vscode from "vscode";
 import { DeclarationNode } from "./DeclarationNode";
 import { NodeImages } from "./NodeImages";
 import { Parameter } from "./Parameter";
+import { Configuration } from "../configuration/configuration";
+import { NodeAccessModifier } from "../enums/node-access-modifier";
+import { Node } from "./Node";
 
 export class MethodDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(methodName: string, public readonly accessModifier: string, public readonly isStatic: boolean, public readonly isAbstract: boolean, public readonly isAsync: boolean, parameters: Parameter[] | null, returnType: string | null, parent: DeclarationNode, command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(name: string, parameters: Parameter[], returnType: string, public readonly accessModifier: NodeAccessModifier, public readonly isStatic: boolean, public readonly isAbstract: boolean, public readonly isAsync: boolean, parent: Node, command: vscode.Command, start: vscode.Position, end: vscode.Position, configuration: Configuration)
     {
-        super();
+        super(name, parent, [], command, start, end);
 
-        this.name = methodName;
-        this.label = methodName;
-        this.description = parameters && returnType ? this.getDescription(parameters, returnType) : "";
+        this.label = name;
+        this.description = configuration.showMemberTypes ? this.getDescription(parameters, returnType, configuration) : "";
 
-        this.start = start;
-        this.end = end;
-
-        this.parent = parent;
-        this.children = [];
         this.command = command;
 
-        if (isStatic)
+        if (configuration.showStaticMemberIndicator && isStatic)
         {
-            if (accessModifier === "private")
+            if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.private)
             {
                 this.iconPath = {
                     light: NodeImages.methodPrivateStatic,
                     dark: NodeImages.methodPrivateStatic
                 };
             }
-            else if (accessModifier === "protected")
+            else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
             {
                 this.iconPath = {
                     light: NodeImages.methodProtectedStatic,
                     dark: NodeImages.methodProtectedStatic
                 };
             }
-            else if (accessModifier === "public")
+            else if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.public)
             {
                 this.iconPath = {
                     light: NodeImages.methodPublicStatic,
@@ -47,16 +44,16 @@ export class MethodDeclarationNode extends DeclarationNode
                 };
             }
         }
-        else if (isAbstract)
+        else if (isAbstract && configuration.showAbstractMemberIndicator)
         {
-            if (accessModifier === "protected")
+            if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
             {
                 this.iconPath = {
                     light: NodeImages.methodProtectedAbstract,
                     dark: NodeImages.methodProtectedAbstract
                 };
             }
-            else if (accessModifier === "public")
+            else if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.public)
             {
                 this.iconPath = {
                     light: NodeImages.methodPublicAbstract,
@@ -66,21 +63,21 @@ export class MethodDeclarationNode extends DeclarationNode
         }
         else
         {
-            if (accessModifier === "private")
+            if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.private)
             {
                 this.iconPath = {
                     light: NodeImages.methodPrivate,
                     dark: NodeImages.methodPrivate
                 };
             }
-            else if (accessModifier === "protected")
+            else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
             {
                 this.iconPath = {
                     light: NodeImages.methodProtected,
                     dark: NodeImages.methodProtected
                 };
             }
-            else if (accessModifier === "public")
+            else if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.public)
             {
                 this.iconPath = {
                     light: NodeImages.methodPublic,
@@ -94,15 +91,15 @@ export class MethodDeclarationNode extends DeclarationNode
 
     // #region Private Methods (1)
 
-    private getDescription(parameters: Parameter[], returnType: string | null): string | boolean
+    private getDescription(parameters: Parameter[], returnType: string | null, configuration: Configuration): string | boolean
     {
         let description = "";
 
         description += "(";
-        description += parameters.map(x => x.name + (x.type ? `: ${x.type}` : "")).join(", ");
+        description += parameters.map(x => x.name + (configuration.showMemberTypes ? `: ${x.type}` : "")).join(", ");
         description += ")";
         description += ": ";
-        description += returnType ? returnType : "void";
+        description += configuration.showMemberTypes ? returnType : "";
 
         return description;
     }

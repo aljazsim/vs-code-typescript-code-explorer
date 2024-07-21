@@ -2,19 +2,18 @@ import { addMemberCount, pluralize } from "./node-description-helper";
 import { compareByAccessor, compareByAccessorByName, compareByName, compareByType, compareByTypeByName } from "./node-compare-helper";
 import { getAccessor, getType } from "./node-value-helper";
 import { order, orderByType, orderByTypeByAccessor, orderByTypeByAccessorByName, orderByTypeByName } from "./node-order-helper";
-
 import { ClassDeclarationNode } from "../Nodes/ClassDeclarationNode";
-import { DeclarationNode } from "../Nodes/DeclarationNode";
 import { DescriptionNode } from "../Nodes/DescriptionNode";
 import { InterfaceDeclarationNode } from "../Nodes/InterfaceDeclarationNode";
-import { NodeGroupingAndOrderType } from "./node-grouping-and-order-type";
+import { NodeGroupingAndOrderType } from "../enums/node-grouping-and-order-type";
 import { TypeAliasDeclarationNode } from "../Nodes/TypeAliasDeclarationNode";
+import { Node } from "../Nodes/Node";
 
 // #region Functions (10)
 
-function group(nodes: DeclarationNode[], groupBy: (nodes: DeclarationNode[]) => Map<string, DeclarationNode[]>)
+function group(nodes: Node[], groupBy: (nodes: Node[]) => Map<string, Node[]>)
 {
-    let groupedNodes = Array<DeclarationNode>();
+    let groupedNodes = Array<Node>();
 
     for (const [groupName, groupNodes] of [...groupBy(nodes)])
     {
@@ -31,7 +30,7 @@ function group(nodes: DeclarationNode[], groupBy: (nodes: DeclarationNode[]) => 
     return groupedNodes;
 }
 
-export function groupAndOrder(nodes: DeclarationNode[], nodeOrderType: NodeGroupingAndOrderType, showMemberCount: boolean)
+export function groupAndOrder(nodes: Node[], nodeOrderType: NodeGroupingAndOrderType, showMemberCount: boolean)
 {
     if (nodeOrderType === NodeGroupingAndOrderType.orderByType)
     {
@@ -49,19 +48,19 @@ export function groupAndOrder(nodes: DeclarationNode[], nodeOrderType: NodeGroup
     {
         return orderByTypeByAccessorByName(nodes);
     }
-    else if (nodeOrderType === NodeGroupingAndOrderType.groupByType)
+    else if (nodeOrderType === NodeGroupingAndOrderType.groupByTypeOrderByType)
     {
         return groupByType(nodes, showMemberCount);
     }
-    else if (nodeOrderType === NodeGroupingAndOrderType.groupByTypeOrderByName)
+    else if (nodeOrderType === NodeGroupingAndOrderType.groupByTypeOrderByTypeByName)
     {
         return groupByTypeOrderByName(nodes, showMemberCount);
     }
-    else if (nodeOrderType === NodeGroupingAndOrderType.groupByTypeOrderByAccessor)
+    else if (nodeOrderType === NodeGroupingAndOrderType.groupByTypeOrderByTypeByAccessor)
     {
         return groupByTypeOrderByAccessor(nodes, showMemberCount);
     }
-    else if (nodeOrderType === NodeGroupingAndOrderType.groupByTypeOrderByAccessorByName)
+    else if (nodeOrderType === NodeGroupingAndOrderType.groupByTypeOrderByTypeByAccessorByName)
     {
         return groupByTypeOrderByAccessorByName(nodes, showMemberCount);
     }
@@ -75,7 +74,7 @@ export function groupAndOrder(nodes: DeclarationNode[], nodeOrderType: NodeGroup
     }
 }
 
-function groupByType(nodes: DeclarationNode[], showMemberCount: boolean)
+function groupByType(nodes: Node[], showMemberCount: boolean)
 {
     for (const node of nodes)
     {
@@ -84,6 +83,7 @@ function groupByType(nodes: DeclarationNode[], showMemberCount: boolean)
             node instanceof TypeAliasDeclarationNode)
         {
             node.children = group(node.children, mergeByType);
+            node.children = order(node.children, compareByType);
             node.children.forEach(n => pluralize(n));
             node.children.forEach(n => showMemberCount && addMemberCount(n));
         }
@@ -92,6 +92,7 @@ function groupByType(nodes: DeclarationNode[], showMemberCount: boolean)
     if (nodes.length > 1)
     {
         nodes = group(nodes, mergeByType);
+        nodes = order(nodes, compareByTypeByName);
         nodes.forEach(n => pluralize(n));
         nodes.forEach(n => showMemberCount && addMemberCount(n));
     }
@@ -99,7 +100,7 @@ function groupByType(nodes: DeclarationNode[], showMemberCount: boolean)
     return nodes;
 }
 
-function groupByTypeByAccessorOrderByTypeByAccessorByName(nodes: DeclarationNode[], showMemberCount: boolean)
+function groupByTypeByAccessorOrderByTypeByAccessorByName(nodes: Node[], showMemberCount: boolean)
 {
     for (const node of nodes)
     {
@@ -141,7 +142,7 @@ function groupByTypeByAccessorOrderByTypeByAccessorByName(nodes: DeclarationNode
     return nodes;
 }
 
-function groupByTypeOrderByAccessor(nodes: DeclarationNode[], showMemberCount: boolean)
+function groupByTypeOrderByAccessor(nodes: Node[], showMemberCount: boolean)
 {
     for (const node of nodes)
     {
@@ -169,7 +170,7 @@ function groupByTypeOrderByAccessor(nodes: DeclarationNode[], showMemberCount: b
     return nodes;
 }
 
-function groupByTypeOrderByAccessorByName(nodes: DeclarationNode[], showMemberCount: boolean)
+function groupByTypeOrderByAccessorByName(nodes: Node[], showMemberCount: boolean)
 {
     for (const node of nodes)
     {
@@ -197,7 +198,7 @@ function groupByTypeOrderByAccessorByName(nodes: DeclarationNode[], showMemberCo
     return nodes;
 }
 
-function groupByTypeOrderByName(nodes: DeclarationNode[], showMemberCount: boolean)
+function groupByTypeOrderByName(nodes: Node[], showMemberCount: boolean)
 {
     for (const node of nodes)
     {
@@ -223,9 +224,9 @@ function groupByTypeOrderByName(nodes: DeclarationNode[], showMemberCount: boole
     return nodes;
 }
 
-function merge(nodes: DeclarationNode[], mergeBy: (n: DeclarationNode) => string)
+function merge(nodes: Node[], mergeBy: (n: Node) => string)
 {
-    const groups = new Map<string, DeclarationNode[]>();
+    const groups = new Map<string, Node[]>();
 
     for (const node of nodes)
     {
@@ -244,12 +245,12 @@ function merge(nodes: DeclarationNode[], mergeBy: (n: DeclarationNode) => string
     return groups;
 }
 
-function mergeByAccessor(nodes: DeclarationNode[])
+function mergeByAccessor(nodes: Node[])
 {
     return merge(nodes, getAccessor);
 }
 
-function mergeByType(nodes: DeclarationNode[])
+function mergeByType(nodes: Node[])
 {
     return merge(nodes, getType);
 }

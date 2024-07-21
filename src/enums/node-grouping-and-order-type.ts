@@ -5,9 +5,9 @@ export enum NodeGroupingAndOrderType
     orderByTypeByName = "orderByTypeByName",
     orderByTypeByAccessor = "orderByTypeByAccessor",
     orderByTypeByAccessorByName = "orderByTypeByAccessorByName",
-    groupByType = "groupByType",
-    groupByTypeOrderByName = "groupByTypeOrderByName",
-    groupByTypeOrderByAccessor = "groupByTypeOrderByAccessor",
-    groupByTypeOrderByAccessorByName = "groupByTypeOrderByAccessorByName",
+    groupByTypeOrderByType = "groupByTypeOrderByType",
+    groupByTypeOrderByTypeByName = "groupByTypeOrderByTypeByName",
+    groupByTypeOrderByTypeByAccessor = "groupByTypeOrderByTypeByAccessor",
+    groupByTypeOrderByTypeByAccessorByName = "groupByTypeOrderByTypeByAccessorByName",
     groupByTypeByAccessorOrderByTypeByAccessorByName = "groupByTypeByAccessorOrderByTypeByAccessorByName"
 }

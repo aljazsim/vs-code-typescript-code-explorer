@@ -3,24 +3,21 @@ import * as vscode from "vscode";
 import { DeclarationNode } from "./DeclarationNode";
 import { NodeImages } from "./NodeImages";
 import { Parameter } from "./Parameter";
+import { NodeCaption } from "../enums/node-caption";
+import { Configuration } from "../configuration/configuration";
+import { Node } from "./Node";
 
 export class ConstructorDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(parameters: Parameter[] | null, parent: DeclarationNode, command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(parameters: Parameter[], parent: Node, command: vscode.Command, start: vscode.Position, end: vscode.Position, configuration: Configuration)
     {
-        super();
+        super(NodeCaption.constructor, parent, [], command, start, end);
 
-        this.name = "constructor";
         this.label = this.name;
-        this.description = parameters ? this.getDescription(parameters) : "";
+        this.description = parameters ? this.getDescription(parameters, configuration) : "";
 
-        this.start = start;
-        this.end = end;
-
-        this.parent = parent;
-        this.children = [];
         this.command = command;
 
         this.iconPath = {
@@ -33,14 +30,14 @@ export class ConstructorDeclarationNode extends DeclarationNode
 
     // #region Private Methods (1)
 
-    private getDescription(parameters: Parameter[]): string | boolean
+    private getDescription(parameters: Parameter[], configuration: Configuration): string | boolean
     {
         let description = "";
 
         if (parameters.length > 0)
         {
             description += "(";
-            description += parameters.map(x => x.name + (x.type ? `: ${x.type}` : "")).join(", ");
+            description += parameters.map(x => x.name + (configuration.showMemberTypes ? `: ${x.type}`: "")).join(", ");
             description += ")";
         }
 

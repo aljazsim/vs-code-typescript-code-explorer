@@ -3,29 +3,27 @@ import * as vscode from "vscode";
 import { DeclarationNode } from "./DeclarationNode";
 import { NodeImages } from "./NodeImages";
 import { Parameter } from "./Parameter";
+import { NodeCaption } from "../enums/node-caption";
+import { Configuration } from "../configuration/configuration";
+import { Node } from "./Node";
 
 export class IndexSignatureDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(indexParameters: Parameter[] | null, indexReturnType: string | null, public readonly isStatic: boolean, public readonly isReadOnly: boolean, parent: DeclarationNode, command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(parameters: Parameter[] , type: string , public readonly isStatic: boolean, public readonly isReadOnly: boolean, parent: Node, command: vscode.Command, start: vscode.Position, end: vscode.Position, configuration: Configuration)
     {
-        super();
+        super(NodeCaption.index, parent, [], command, start, end);
 
-        this.name = "index";
-        this.label = "index";
-        this.description = indexParameters && indexReturnType ? this.getDescription(indexParameters, indexReturnType) : "";
 
-        this.start = start;
-        this.end = end;
+        this.label = NodeCaption.index;
+        this.description = configuration.showMemberTypes ? this.getDescription(parameters, type, configuration): "";
 
-        this.parent = parent;
-        this.children = [];
         this.command = command;
 
         this.iconPath = {
-            light: isStatic ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic,
-            dark: isStatic ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic
+            light: configuration.showStaticMemberIndicator && isStatic ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic,
+            dark: configuration.showStaticMemberIndicator &&isStatic ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic
         };
     }
 
@@ -33,15 +31,15 @@ export class IndexSignatureDeclarationNode extends DeclarationNode
 
     // #region Private Methods (1)
 
-    private getDescription(parameters: Parameter[], returnType: string | null): string | boolean
+    private getDescription(parameters: Parameter[], returnType: string , configuration: Configuration): string | boolean
     {
         let description = "";
 
         description += "[";
-        description += parameters.map(x => x.name + (x.type ? `: ${x.type}` : "")).join(", ");
+        description += parameters.map(x => x.name + (configuration.showMemberTypes ? `: ${x.type}` : "")).join(", ");
         description += "]";
         description += ": ";
-        description += returnType ? returnType : "void";
+        description += configuration.showMemberTypes ? returnType : "";
 
         return description;
     }

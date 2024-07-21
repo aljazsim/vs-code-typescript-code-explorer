@@ -3,24 +3,21 @@ import * as vscode from "vscode";
 import { DeclarationNode } from "./DeclarationNode";
 import { NodeImages } from "./NodeImages";
 import { Parameter } from "./Parameter";
+import { Configuration } from "../configuration/configuration";
+import { Node } from "./Node";
 
 export class MethodSignatureDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(methodName: string, parameters: Parameter[] | null, returnType: string | null, parent: DeclarationNode, command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(name: string, parameters: Parameter[], returnType: string, parent: Node, command: vscode.Command, start: vscode.Position, end: vscode.Position, configuration: Configuration)
     {
-        super();
+        super(name, parent, [], command, start, end);
 
-        this.name = methodName;
-        this.label = methodName;
-        this.description = parameters && returnType ? this.getDescription(parameters, returnType) : "";
 
-        this.start = start;
-        this.end = end;
+        this.label = name;
+        this.description = configuration.showMemberTypes ? this.getDescription(parameters, returnType, configuration) : "";
 
-        this.parent = parent;
-        this.children = [];
         this.command = command;
 
         this.iconPath = {
@@ -33,15 +30,15 @@ export class MethodSignatureDeclarationNode extends DeclarationNode
 
     // #region Private Methods (1)
 
-    private getDescription(parameters: Parameter[], returnType: string | null): string | boolean
+    private getDescription(parameters: Parameter[], returnType: string, configuration: Configuration): string | boolean
     {
         let description = "";
 
         description += "(";
-        description += parameters.map(x => x.name + (x.type ? `: ${x.type}` : "")).join(", ");
+        description += parameters.map(x => x.name + (configuration.showMemberTypes ? `: ${x.type}` : "")).join(", ");
         description += ")";
         description += ": ";
-        description += returnType ? returnType : "void";
+        description += configuration.showMemberTypes ? returnType : "";
 
         return description;
     }

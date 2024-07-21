@@ -2,24 +2,20 @@ import * as vscode from "vscode";
 
 import { DeclarationNode } from "./DeclarationNode";
 import { NodeImages } from "./NodeImages";
+import { Configuration } from "../configuration/configuration";
+import { Node } from "./Node";
 
 export class EnumMemberDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(enumMemberName: string, enumValue: string | null, parent: DeclarationNode, command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(name: string, value: string | null, parent: Node, command: vscode.Command, start: vscode.Position, end: vscode.Position, configuration: Configuration)
     {
-        super();
+        super(name, parent, [], command, start, end);
 
-        this.name = enumMemberName;
-        this.label = enumMemberName;
-        this.description = enumValue === null ? "" : `= ${enumValue}`;
+        this.label = name;
+        this.description = configuration.showMemberTypes ? (value === null ? "" : `= ${value}`) : "";
 
-        this.start = start;
-        this.end = end;
-
-        this.parent = parent;
-        this.children = [];
         this.command = command;
 
         this.iconPath = {

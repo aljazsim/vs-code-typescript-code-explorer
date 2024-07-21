@@ -47,29 +47,30 @@
                     "tsce.groupingAndOrder": {
                         "type": "string",
                         "description": "Specifies how code elements should be organized.",
-                        "default": "group by: type, order by: accessor/name",
+                        "default": "group by: type, order by: type/accessor/name",
                         "enum": [
                             "none",
                             "order by: type",
                             "order by: type/name",
                             "order by: type/accessor",
                             "order by: type/accessor/name",
-                            "group by: type",
-                            "group by: type, order by: name",
-                            "group by: type, order by: accessor",
-                            "group by: type, order by: accessor/name",
+                            "group by: type, order by type",
+                            "group by: type, order by: type/name",
+                            "group by: type, order by: type/accessor",
+                            "group by: type, order by: type/accessor/name",
                             "group by: type/accessor, order by: type/accessor/name"
                         ],
                         "enumDescriptions": [
                             "Elements ordered in the same sequence as in code",
-                            "Elements ordered by structure type and by member type",
-                            "Elements ordered by structure type, by member type and by member accessor",
-                            "Elements ordered by structure type, by member type, by member accessor and by name",
-                            "Elements grouped by structure type and then grouped by member type",
-                            "Elements grouped by structure type, ordered by structure name, then grouped by member type and ordered by member name",
-                            "Elements grouped by structure type, ordered by structure accessor, then grouped by member type and ordered by member accessor",
-                            "Elements grouped by structure type, ordered by structure accessor, by structure name, then grouped by member type and ordered by member accessor, by member name",
-                            "Elements grouped by structure type, then by structure accessor, ordered by structure accessor, by name, then grouped by member type, then by member accessor, ordered by member name"
+                            "Elements ordered by: type",
+                            "Elements ordered by: type/name",
+                            "Elements ordered by: type/accessor",
+                            "Elements ordered by: type/accessor/name",
+                            "Elements grouped by: type and ordered ascending by type",
+                            "Elements grouped by: type and ordered ascending by: type/name",
+                            "Elements grouped by: type and ordered ascending by: type/accessor",
+                            "Elements grouped by: type and ordered ascending by: type/accessor/name",
+                            "Elements grouped by: type/accessor and ordered ascending by: type/accessor/name"
                         ]
                     },
                     "tsce.showMemberTypes": {

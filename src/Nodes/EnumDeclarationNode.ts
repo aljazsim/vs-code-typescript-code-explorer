@@ -2,33 +2,29 @@ import * as vscode from "vscode";
 
 import { DeclarationNode } from "./DeclarationNode";
 import { NodeImages } from "./NodeImages";
+import { Configuration } from "../configuration/configuration";
+import { Node } from "./Node";
 
 export class EnumDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(enumName: string, isExport: boolean, parent: DeclarationNode | null, children: DeclarationNode[], command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(name: string, public readonly isExport: boolean, parent: Node | null, children: Node[], command: vscode.Command, start: vscode.Position, end: vscode.Position, configuration: Configuration)
     {
-        super();
+        super(name, parent, children, command, start, end);
 
-        this.name = enumName;
-        this.label = enumName;
+        this.label = name;
 
-        this.start = start;
-        this.end = end;
-
-        this.parent = parent;
-        this.children = children;
         this.command = command;
 
-        if (isExport)
+        if (!configuration.showAccessorColorCoding || isExport)
         {
             this.iconPath = {
                 light: NodeImages.enumExported,
                 dark: NodeImages.enumExported
             };
         }
-        else
+        else (configuration.showAccessorColorCoding && !isExport);
         {
             this.iconPath = {
                 light: NodeImages.enum,

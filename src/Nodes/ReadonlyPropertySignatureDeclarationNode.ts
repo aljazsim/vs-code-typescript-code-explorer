@@ -2,30 +2,36 @@ import * as vscode from "vscode";
 
 import { DeclarationNode } from "./DeclarationNode";
 import { NodeImages } from "./NodeImages";
+import { Configuration } from "../configuration/configuration";
+import { Node } from "./Node";
 
 export class ReadonlyPropertySignatureDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(propertyName: string, propertyType: string | null, parent: DeclarationNode, command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(name: string, type: string, parent: Node, command: vscode.Command, start: vscode.Position, end: vscode.Position, configuration: Configuration)
     {
-        super();
+        super(name, parent, [], command, start, end);
 
-        this.name = propertyName;
-        this.label = propertyName;
-        this.description = propertyType ? `: ${propertyType}` : "";
+        this.label = name;
+        this.description = configuration.showMemberTypes ? `: ${type}` : "";
 
-        this.start = start;
-        this.end = end;
-
-        this.parent = parent;
-        this.children = [];
         this.command = command;
 
-        this.iconPath = {
-            light: NodeImages.propertyPublic,
-            dark: NodeImages.propertyPublic
-        };
+        if (configuration.showAccessorColorCoding)
+        {
+            this.iconPath = {
+                light: NodeImages.propertyPublic,
+                dark: NodeImages.propertyPublic
+            };
+        }
+        else
+        {
+            this.iconPath = {
+                light: NodeImages.propertyPrivate,
+                dark: NodeImages.propertyPrivate
+            };
+        }
     }
 
     // #endregion Constructors (1)

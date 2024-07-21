@@ -4,20 +4,21 @@ import * as vscode from "vscode";
 import { getAccessorDeclarationNode, getClassDeclarationNode, getConstructorDeclarationNode, getEnumDeclarationNode, getEnumMemberDeclarationNode, getFunctionDeclarationNode, getGetterDeclarationNode, getIndexSignatureDeclarationNode, getInterfaceDeclarationNode, getMethodDeclarationNode, getMethodSignatureDeclarationNode, getPropertyDeclarationNode, getPropertySignatureDeclarationNode, getSetterDeclarationNode, getStaticBlockDeclarationNode, getTypeAliasDeclarationNode, getVariableDeclarationNode } from "./helpers/node-helper";
 
 import { Configuration } from "./configuration/configuration";
-import { DeclarationNode } from "./Nodes/DeclarationNode";
-import { EmptyDeclarationNode } from "./Nodes/EmptyDeclarationNode";
+import { EmptyNode } from "./Nodes/EmptyNode";
 import { ProviderResult } from "vscode";
 import { groupAndOrder } from "./helpers/node-group-helper";
+import { Node } from "./Nodes/Node";
+import { DeclarationNode } from "./Nodes/DeclarationNode";
 
-export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<DeclarationNode>
+export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Node>
 {
     // #region Properties (4)
 
     private editor: vscode.TextEditor | null = null;
-    private onDidChangeTreeDataEvent: vscode.EventEmitter<DeclarationNode | undefined> = new vscode.EventEmitter<DeclarationNode | undefined>();
-    private rootElements: DeclarationNode[] = [new EmptyDeclarationNode()];
+    private onDidChangeTreeDataEvent: vscode.EventEmitter<Node | undefined> = new vscode.EventEmitter<Node | undefined>();
+    private rootElements: Node[] = [new EmptyNode()];
 
-    public readonly onDidChangeTreeData: vscode.Event<DeclarationNode | undefined> = this.onDidChangeTreeDataEvent.event;
+    public readonly onDidChangeTreeData: vscode.Event<Node | undefined> = this.onDidChangeTreeDataEvent.event;
 
     // #endregion Properties (4)
 
@@ -31,7 +32,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
 
     // #region Public Getters And Setters (1)
 
-    public get rootElement(): DeclarationNode
+    public get rootElement(): Node
     {
         return this.rootElements[0];
     }
@@ -40,9 +41,9 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
 
     // #region Public Methods (5)
 
-    public getChildren(element?: DeclarationNode): Thenable<DeclarationNode[]>
+    public getChildren(element?: Node): Thenable<Node[]>
     {
-        let children: DeclarationNode[] = [];
+        let children: Node[] = [];
 
         if (this.workspaceFolders &&
             this.workspaceFolders.length > 0 &&
@@ -59,7 +60,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         return this.findNode(this.rootElements, positionStart, positionEnd);
     }
 
-    public getParent?(element: DeclarationNode): ProviderResult<DeclarationNode>
+    public getParent?(element: Node): ProviderResult<Node>
     {
         if (element)
         {
@@ -71,7 +72,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         }
     }
 
-    public getTreeItem(element: DeclarationNode): vscode.TreeItem
+    public getTreeItem(element: Node): vscode.TreeItem
     {
         return element;
     }
@@ -95,7 +96,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         }
         else
         {
-            this.rootElements = [new EmptyDeclarationNode()];
+            this.rootElements = [new EmptyNode()];
         }
 
         this.onDidChangeTreeDataEvent.fire(undefined);
@@ -107,7 +108,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
 
     private analyzeSyntaxTree(editor: vscode.TextEditor, sourceCode: string, configuration: Configuration)
     {
-        const rootElements: DeclarationNode[] = [];
+        const rootElements: Node[] = [];
         const sourceFile = ts.createSourceFile("temp", sourceCode, ts.ScriptTarget.Latest, false, ts.ScriptKind.TS);
         // todo
         // const program = ts.createProgram(["temp"], { target: ts.ScriptTarget.Latest, source });
@@ -124,16 +125,16 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         if (rootElements.length == 0)
         {
             // default item
-            rootElements.push(new EmptyDeclarationNode());
+            rootElements.push(new EmptyNode());
         }
 
         // group and order
         return groupAndOrder(rootElements, configuration.groupingAndOrder, configuration.showMemberCount);
     }
 
-    private findNode(nodes: DeclarationNode[], positionStart: vscode.Position, positionEnd: vscode.Position): DeclarationNode | null
+    private findNode(nodes: Node[], positionStart: vscode.Position, positionEnd: vscode.Position): Node | null
     {
-        let result: DeclarationNode | null;
+        let result: Node | null;
 
         // try to find a match among the child nodes
         for (let node of nodes)
@@ -149,7 +150,8 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         // try to find a match among the nodes
         for (let node of nodes)
         {
-            if (node.start.isBeforeOrEqual(positionStart) &&
+            if (node instanceof DeclarationNode &&
+                node.start.isBeforeOrEqual(positionStart) &&
                 node.end.isAfterOrEqual(positionEnd))
             {
                 return node;
@@ -159,15 +161,15 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         return null;
     }
 
-    private visitSyntaxTree(editor: vscode.TextEditor, node: ts.Node, sourceFile: ts.SourceFile, parentElement: DeclarationNode | null, configuration: Configuration): DeclarationNode[]
+    private visitSyntaxTree(editor: vscode.TextEditor, node: ts.Node, sourceFile: ts.SourceFile, parentElement: Node | null, configuration: Configuration): Node[]
     {
-        let nodes: DeclarationNode[] = [];
-        let childElements: DeclarationNode[] = [];
+        let nodes: Node[] = [];
+        let childElements: Node[] = [];
 
         // enum elements
         if (ts.isEnumDeclaration(node))
         {
-            nodes.push(getEnumDeclarationNode(editor, sourceFile, node, parentElement, childElements));
+            nodes.push(getEnumDeclarationNode(editor, sourceFile, node, parentElement, childElements, configuration));
         }
         else if (ts.isEnumMember(node))
         {
@@ -177,11 +179,11 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         // interface / type alias elements
         if (ts.isInterfaceDeclaration(node))
         {
-            nodes.push(getInterfaceDeclarationNode(editor, sourceFile, node, parentElement, childElements));
+            nodes.push(getInterfaceDeclarationNode(editor, sourceFile, node, parentElement, childElements, configuration));
         }
         else if (ts.isTypeAliasDeclaration(node))
         {
-            nodes.push(getTypeAliasDeclarationNode(editor, sourceFile, node, parentElement, childElements));
+            nodes.push(getTypeAliasDeclarationNode(editor, sourceFile, node, parentElement, childElements, configuration));
         }
         else if (ts.isPropertySignature(node))
         {
@@ -199,7 +201,7 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Declarati
         // class elements
         if (ts.isClassDeclaration(node))
         {
-            nodes.push(getClassDeclarationNode(editor, sourceFile, node, parentElement, childElements));
+            nodes.push(getClassDeclarationNode(editor, sourceFile, node, parentElement, childElements, configuration));
         }
         else if (ts.isConstructorDeclaration(node))
         {

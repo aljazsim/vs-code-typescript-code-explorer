@@ -2,45 +2,42 @@ import * as vscode from "vscode";
 
 import { DeclarationNode } from "./DeclarationNode";
 import { NodeImages } from "./NodeImages";
+import { Configuration } from "../configuration/configuration";
+import { NodeAccessModifier } from "../enums/node-access-modifier";
+import { Node } from "./Node";
 
 export class SetterDeclarationNode extends DeclarationNode
 {
     // #region Constructors (1)
 
-    constructor(setterName: string, setterType: string | null, public readonly accessModifier: string, public readonly isStatic: boolean, public readonly isAbstract: boolean, parent: DeclarationNode, command: vscode.Command, start: vscode.Position, end: vscode.Position)
+    constructor(name: string, type: string, public readonly accessModifier: NodeAccessModifier, public readonly isStatic: boolean, public readonly isAbstract: boolean, parent: Node, command: vscode.Command, start: vscode.Position, end: vscode.Position, configuration: Configuration)
     {
-        super();
+        super(name, parent, [], command, start, end);
 
-        this.name = setterName;
-        this.label = setterName;
-        this.description = setterType ? `(value: ${setterType})` : "";
+        this.label = name;
+        this.description = configuration.showMemberTypes ? `(value: ${type})` : "";
 
-        this.start = start;
-        this.end = end;
-
-        this.parent = parent;
-        this.children = [];
         this.command = command;
 
-        if (accessModifier === "private")
+        if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.private)
         {
             this.iconPath = {
-                light: isStatic ? NodeImages.propertyPrivateStatic : NodeImages.propertyPrivate,
-                dark: isStatic ? NodeImages.propertyPrivateStatic : NodeImages.propertyPrivate
+                light: configuration.showStaticMemberIndicator && isStatic ? NodeImages.propertyPrivateStatic : NodeImages.propertyPrivate,
+                dark: configuration.showStaticMemberIndicator && isStatic ? NodeImages.propertyPrivateStatic : NodeImages.propertyPrivate
             };
         }
-        else if (accessModifier === "protected")
+        else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
         {
             this.iconPath = {
-                light: isStatic ? NodeImages.propertyProtectedStatic : NodeImages.propertyProtected,
-                dark: isStatic ? NodeImages.propertyProtectedStatic : NodeImages.propertyProtected
+                light: configuration.showStaticMemberIndicator && isStatic ? NodeImages.propertyProtectedStatic : NodeImages.propertyProtected,
+                dark: configuration.showStaticMemberIndicator && isStatic ? NodeImages.propertyProtectedStatic : NodeImages.propertyProtected
             };
         }
-        else if (accessModifier === "public")
+        else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.public)
         {
             this.iconPath = {
-                light: isStatic ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic,
-                dark: isStatic ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic
+                light: configuration.showStaticMemberIndicator && isStatic ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic,
+                dark: configuration.showStaticMemberIndicator && isStatic ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic
             };
         }
     }
