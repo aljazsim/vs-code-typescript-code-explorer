@@ -2,7 +2,7 @@ import * as path from "path";
 
 export abstract class NodeImages
 {
-    // #region Properties (46)
+    // #region Properties (48)
 
     private static readonly imageDir = path.join(__filename, "..", "..", "..", "resources");
 
@@ -16,7 +16,9 @@ export abstract class NodeImages
     public static readonly enumExported = path.join(this.imageDir, "members", "enum-exported.svg");
     public static readonly enumMember = path.join(this.imageDir, "members", "enum-member.svg");
     public static readonly function = path.join(this.imageDir, "members", "function.svg");
+    public static readonly functionAsync = path.join(this.imageDir, "members", "function-async.svg");
     public static readonly functionExported = path.join(this.imageDir, "members", "function-exported.svg");
+    public static readonly functionExportedAsync = path.join(this.imageDir, "members", "function-exported-async.svg");
     public static readonly interface = path.join(this.imageDir, "members", "interface.svg");
     public static readonly interfaceExported = path.join(this.imageDir, "members", "interface-exported.svg");
     public static readonly methodPrivate = path.join(this.imageDir, "members", "method-private.svg");
@@ -52,5 +54,5 @@ export abstract class NodeImages
     public static readonly variable = path.join(this.imageDir, "members", "variable.svg");
     public static readonly variableExported = path.join(this.imageDir, "members", "variable-exported.svg");
 
-    // #endregion Properties (46)
+    // #endregion Properties (48)
 }

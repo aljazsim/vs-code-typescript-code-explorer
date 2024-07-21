@@ -127,6 +127,11 @@
                         "type": "boolean",
                         "description": "Specifies if const arrow function variables should be treated as functions.",
                         "default": true
+                    },
+                    "tsce.showAsyncMethodIndicator": {
+                        "type": "boolean",
+                        "description": "Specifies if methods and functions should display a circle indicator for async methods and functions.",
+                        "default": true
                     }
                 }
             }

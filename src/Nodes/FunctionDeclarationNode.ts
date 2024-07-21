@@ -23,22 +23,22 @@ export class FunctionDeclarationNode extends DeclarationNode
         if (configuration.showAccessorColorCoding && isExport)
         {
             this.iconPath = {
-                light: NodeImages.functionExported,
-                dark: NodeImages.functionExported
+                light:configuration.showAsyncMethodIndicator ? NodeImages.functionExportedAsync :  NodeImages.functionExported,
+                dark:configuration.showAsyncMethodIndicator ? NodeImages.functionExportedAsync :  NodeImages.functionExported
             };
         }
         else if (configuration.showAccessorColorCoding && !isExport)
         {
             this.iconPath = {
-                light: NodeImages.function,
-                dark: NodeImages.function
+                light:configuration.showAsyncMethodIndicator ? NodeImages.functionAsync :  NodeImages.function,
+                dark:configuration.showAsyncMethodIndicator ? NodeImages.functionAsync :  NodeImages.function
             };
         }
         else
             {
                 this.iconPath = {
-                    light: NodeImages.methodPublic,
-                    dark: NodeImages.methodPublic
+                    light:configuration.showAsyncMethodIndicator ? NodeImages.methodPublicAsync :  NodeImages.methodPublic,
+                    dark: configuration.showAsyncMethodIndicator ? NodeImages.methodPublicAsync :  NodeImages.methodPublic
                 };
             }
     }

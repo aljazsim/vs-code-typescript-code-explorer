@@ -18,7 +18,8 @@ export class Configuration
         public readonly showArrowFunctionPropertiesAsMethods: boolean,
         public readonly showReadonlyArrowFunctionPropertiesAsMethods: boolean,
         public readonly showArrowFunctionVariablesAsMethods: boolean,
-        public readonly showArrowFunctionConstVariablesAsMethods: boolean
+        public readonly showArrowFunctionConstVariablesAsMethods: boolean,
+        public readonly showAsyncMethodIndicator: boolean
     )
     {
     }
@@ -43,7 +44,8 @@ export class Configuration
             configuration.get<boolean>("showArrowFunctionPropertiesAsMethods") === true,
             configuration.get<boolean>("showArrowFunctionReadOnlyPropertiesAsMethods") === true,
             configuration.get<boolean>("showArrowFunctionVariablesAsMethods") === true,
-            configuration.get<boolean>("showArrowFunctionConstVariablesAsMethods") === true
+            configuration.get<boolean>("showArrowFunctionConstVariablesAsMethods") === true,
+            configuration.get<boolean>("showAsyncMethodIndicator") === true
         );
     }
 

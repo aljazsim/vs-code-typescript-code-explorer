@@ -25,22 +25,22 @@ export class MethodDeclarationNode extends DeclarationNode
             if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.private)
             {
                 this.iconPath = {
-                    light: NodeImages.methodPrivateStatic,
-                    dark: NodeImages.methodPrivateStatic
+                    light: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPrivateStaticAsync : NodeImages.methodPrivateStatic,
+                    dark: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPrivateStaticAsync : NodeImages.methodPrivateStatic
                 };
             }
             else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
             {
                 this.iconPath = {
-                    light: NodeImages.methodProtectedStatic,
-                    dark: NodeImages.methodProtectedStatic
+                    light: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodProtectedStaticAsync : NodeImages.methodProtectedStatic,
+                    dark: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodProtectedStaticAsync : NodeImages.methodProtectedStatic
                 };
             }
             else if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.public)
             {
                 this.iconPath = {
-                    light: NodeImages.methodPublicStatic,
-                    dark: NodeImages.methodPublicStatic
+                    light: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPublicStaticAsync : NodeImages.methodPublicStatic,
+                    dark: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPublicStaticAsync : NodeImages.methodPublicStatic
                 };
             }
         }
@@ -49,15 +49,15 @@ export class MethodDeclarationNode extends DeclarationNode
             if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
             {
                 this.iconPath = {
-                    light: NodeImages.methodProtectedAbstract,
-                    dark: NodeImages.methodProtectedAbstract
+                    light: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodProtectedAbstractAsync : NodeImages.methodProtectedAbstract,
+                    dark: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodProtectedAbstractAsync : NodeImages.methodProtectedAbstract
                 };
             }
             else if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.public)
             {
                 this.iconPath = {
-                    light: NodeImages.methodPublicAbstract,
-                    dark: NodeImages.methodPublicAbstract
+                    light: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPublicAbstractAsync : NodeImages.methodPublicAbstract,
+                    dark: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPublicAbstractAsync : NodeImages.methodPublicAbstract
                 };
             }
         }
@@ -66,22 +66,22 @@ export class MethodDeclarationNode extends DeclarationNode
             if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.private)
             {
                 this.iconPath = {
-                    light: NodeImages.methodPrivate,
-                    dark: NodeImages.methodPrivate
+                    light: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPrivateAsync : NodeImages.methodPrivate,
+                    dark: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPrivateAsync : NodeImages.methodPrivate
                 };
             }
             else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
             {
                 this.iconPath = {
-                    light: NodeImages.methodProtected,
-                    dark: NodeImages.methodProtected
+                    light: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodProtectedAsync : NodeImages.methodProtected,
+                    dark: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodProtectedAsync : NodeImages.methodProtected
                 };
             }
             else if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.public)
             {
                 this.iconPath = {
-                    light: NodeImages.methodPublic,
-                    dark: NodeImages.methodPublic
+                    light: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPublicAsync : NodeImages.methodPublic,
+                    dark: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPublicAsync : NodeImages.methodPublic
                 };
             }
         }
