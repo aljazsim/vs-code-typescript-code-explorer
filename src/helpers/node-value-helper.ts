@@ -1,6 +1,3 @@
-
-// #region Functions (5)
-
 import { NodeAccessModifier } from "../enums/node-access-modifier";
 import { NodeCaption } from "../enums/node-caption";
 import { AccessorDeclarationNode } from "../Nodes/AccessorDeclarationNode";
@@ -27,6 +24,8 @@ import { SetterDeclarationNode } from "../Nodes/SetterDeclarationNode";
 import { StaticCodeBlockDeclarationNode } from "../Nodes/StaticCodeBlockDeclarationNode";
 import { TypeAliasDeclarationNode } from "../Nodes/TypeAliasDeclarationNode";
 import { VariableDeclarationNode } from "../Nodes/VariableDeclarationNode";
+
+// #region Functions (5)
 
 export function getAccessor(node: Node)
 {
@@ -57,7 +56,7 @@ export function getAccessor(node: Node)
     }
     else if (node instanceof DescriptionNode)
     {
-        return node.label as string;
+        return node.description as string;
     }
 
     return "";
@@ -103,23 +102,23 @@ export function getAccessorOrder(node: Node)
     }
     else if (node instanceof DescriptionNode)
     {
-        if (node.label === NodeCaption.exported)
+        if (node.description === NodeCaption.exported)
         {
             return "102";
         }
-        else if (node.label === NodeCaption.notExported)
+        else if (node.description === NodeCaption.notExported)
         {
             return "101";
         }
-        else if (node.label === NodeCaption.private)
+        else if (node.description === NodeCaption.private)
         {
             return "201";
         }
-        else if (node.label === NodeCaption.protected)
+        else if (node.description === NodeCaption.protected)
         {
             return "202";
         }
-        else if (node.label === NodeCaption.public)
+        else if (node.description === NodeCaption.public)
         {
             return "203";
         }
@@ -130,7 +129,22 @@ export function getAccessorOrder(node: Node)
 
 export function getName(node: Node)
 {
-    return node instanceof DeclarationNode ? node.name.toLowerCase() : node.label as string;
+    if (node instanceof DeclarationNode)
+    {
+        return node.name.toLowerCase();
+    }
+    else if (node instanceof DescriptionNode)
+    {
+        return node.description as string;
+    }
+    else if (node instanceof EmptyNode)
+    {
+        return node.description as string;
+    }
+    else
+    {
+        return node.label as string ?? "";
+    }
 }
 
 export function getType(node: Node)
@@ -236,75 +250,75 @@ export function getType(node: Node)
 export function getTypeOrder(node?: Node)
 {
     // module member types
-    if (node instanceof EnumDeclarationNode || (node instanceof DescriptionNode && node.label === NodeCaption.enum))
+    if (node instanceof EnumDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.enum))
     {
         return "101";
     }
-    else if (node instanceof InterfaceDeclarationNode || (node instanceof DescriptionNode && node.label === NodeCaption.interface))
+    else if (node instanceof InterfaceDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.interface))
     {
         return "102";
     }
-    else if (node instanceof ClassDeclarationNode || (node instanceof DescriptionNode && node.label === NodeCaption.class))
+    else if (node instanceof ClassDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.class))
     {
         return "103";
     }
-    else if (node instanceof TypeAliasDeclarationNode || (node instanceof DescriptionNode && node.label === NodeCaption.type))
+    else if (node instanceof TypeAliasDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.type))
     {
         return "104";
     }
-    else if (node instanceof ConstVariableDeclarationNode || (node instanceof DescriptionNode && node.label === NodeCaption.constVariable))
+    else if (node instanceof ConstVariableDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.constVariable))
     {
         return "105";
     }
-    else if (node instanceof VariableDeclarationNode || (node instanceof DescriptionNode && node.label === NodeCaption.variable))
+    else if (node instanceof VariableDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.variable))
     {
         return "106";
     }
-    else if (node instanceof FunctionDeclarationNode || (node instanceof DescriptionNode && node.label === NodeCaption.function))
+    else if (node instanceof FunctionDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.function))
     {
         return "107";
     }
 
     // enum member types
-    if (node instanceof EnumMemberDeclarationNode || (node instanceof DescriptionNode && node.label === NodeCaption.enumValue))
+    if (node instanceof EnumMemberDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.enumValue))
     {
         return "301";
     }
 
     // class/interface/type member types
-    if (node instanceof ReadonlyPropertyDeclarationNode || node instanceof ReadonlyPropertySignatureDeclarationNode || (node instanceof DescriptionNode && (node.label === NodeCaption.readonlyProperty)))
+    if (node instanceof ReadonlyPropertyDeclarationNode || node instanceof ReadonlyPropertySignatureDeclarationNode || (node instanceof DescriptionNode && (node.description === NodeCaption.readonlyProperty)))
     {
         return "401";
     }
-    else if (node instanceof PropertyDeclarationNode || node instanceof PropertySignatureDeclarationNode || (node instanceof DescriptionNode && node.label === NodeCaption.property))
+    else if (node instanceof PropertyDeclarationNode || node instanceof PropertySignatureDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.property))
     {
         return "402";
     }
-    else if (node instanceof ConstructorDeclarationNode || (node instanceof DescriptionNode && node.label === NodeCaption.constructor))
+    else if (node instanceof ConstructorDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.constructor))
     {
         return "403";
     }
-    else if (node instanceof StaticCodeBlockDeclarationNode || (node instanceof DescriptionNode && node.label === NodeCaption.staticConstructor))
+    else if (node instanceof StaticCodeBlockDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.staticConstructor))
     {
         return "404";
     }
-    else if (node instanceof IndexSignatureDeclarationNode || node instanceof IndexSignatureDeclarationNode || (node instanceof DescriptionNode && node.label === NodeCaption.index))
+    else if (node instanceof IndexSignatureDeclarationNode || node instanceof IndexSignatureDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.index))
     {
         return "405";
     }
-    else if (node instanceof AccessorDeclarationNode || (node instanceof DescriptionNode && node.label === NodeCaption.accessor))
+    else if (node instanceof AccessorDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.accessor))
     {
         return "406";
     }
-    else if (node instanceof GetterDeclarationNode || (node instanceof DescriptionNode && node.label === NodeCaption.getter))
+    else if (node instanceof GetterDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.getter))
     {
         return "407";
     }
-    else if (node instanceof SetterDeclarationNode || (node instanceof DescriptionNode && node.label === NodeCaption.setter))
+    else if (node instanceof SetterDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.setter))
     {
         return "408";
     }
-    else if (node instanceof MethodDeclarationNode || node instanceof MethodSignatureDeclarationNode || (node instanceof DescriptionNode && node.label === NodeCaption.method))
+    else if (node instanceof MethodDeclarationNode || node instanceof MethodSignatureDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.method))
     {
         return "409";
     }
