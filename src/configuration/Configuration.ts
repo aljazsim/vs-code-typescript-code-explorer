@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import { NodeGroupingAndOrderType } from "../enums/node-grouping-and-order-type";
+import { NodeGroupingAndOrderType } from "../enums/NodeGroupingAndOrderType";
 
 export class Configuration
 {

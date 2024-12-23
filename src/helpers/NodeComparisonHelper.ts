@@ -1,5 +1,5 @@
-import { getAccessorOrder, getName, getTypeOrder } from "./node-value-helper";
-import { Node } from "../Nodes/Node";
+import { getAccessorOrder, getName, getTypeOrder } from "./NodeValueHelper";
+import { Node } from "../nodes/Node";
 
 // #region Functions (8)
 

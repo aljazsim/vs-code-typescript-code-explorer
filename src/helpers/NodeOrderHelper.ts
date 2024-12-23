@@ -1,5 +1,5 @@
-import { compareByType, compareByTypeByAccessor, compareByTypeByAccessorByName, compareByTypeByName } from "./node-compare-helper";
-import { Node } from "../Nodes/Node";
+import { compareByType, compareByTypeByAccessor, compareByTypeByAccessorByName, compareByTypeByName } from "./NodeComparisonHelper";
+import { Node } from "../nodes/Node";
 
 // #region Functions (5)
 

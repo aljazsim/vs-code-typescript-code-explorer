@@ -1,14 +1,14 @@
 import * as ts from "typescript";
 import * as vscode from "vscode";
 
-import { getAccessorDeclarationNode, getClassDeclarationNode, getConstructorDeclarationNode, getEnumDeclarationNode, getEnumMemberDeclarationNode, getFunctionDeclarationNode, getGetterDeclarationNode, getIndexSignatureDeclarationNode, getInterfaceDeclarationNode, getMethodDeclarationNode, getMethodSignatureDeclarationNode, getPropertyDeclarationNode, getPropertySignatureDeclarationNode, getSetterDeclarationNode, getStaticBlockDeclarationNode, getTypeAliasDeclarationNode, getVariableDeclarationNode } from "./helpers/node-helper";
+import { getAccessorDeclarationNode, getClassDeclarationNode, getConstructorDeclarationNode, getEnumDeclarationNode, getEnumMemberDeclarationNode, getFunctionDeclarationNode, getGetterDeclarationNode, getIndexSignatureDeclarationNode, getInterfaceDeclarationNode, getMethodDeclarationNode, getMethodSignatureDeclarationNode, getPropertyDeclarationNode, getPropertySignatureDeclarationNode, getSetterDeclarationNode, getStaticBlockDeclarationNode, getTypeAliasDeclarationNode, getVariableDeclarationNode } from "./helpers/NodeHelper";
 
-import { Configuration } from "./configuration/configuration";
-import { EmptyNode } from "./Nodes/EmptyNode";
+import { Configuration } from "./configuration/Configuration";
+import { EmptyNode } from "./nodes/EmptyNode";
 import { ProviderResult } from "vscode";
-import { groupAndOrder } from "./helpers/node-group-helper";
-import { Node } from "./Nodes/Node";
-import { DeclarationNode } from "./Nodes/DeclarationNode";
+import { groupAndOrder } from "./helpers/NodeGroupHelper";
+import { Node } from "./nodes/Node";
+import { DeclarationNode } from "./nodes/DeclarationNode";
 
 export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Node>
 {

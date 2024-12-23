@@ -1,13 +1,13 @@
-import { addMemberCount, pluralize } from "./node-description-helper";
-import { compareByAccessor, compareByAccessorByName, compareByName, compareByType, compareByTypeByName } from "./node-compare-helper";
-import { getAccessor, getType } from "./node-value-helper";
-import { order, orderByType, orderByTypeByAccessor, orderByTypeByAccessorByName, orderByTypeByName } from "./node-order-helper";
-import { ClassDeclarationNode } from "../Nodes/ClassDeclarationNode";
-import { DescriptionNode } from "../Nodes/DescriptionNode";
-import { InterfaceDeclarationNode } from "../Nodes/InterfaceDeclarationNode";
-import { NodeGroupingAndOrderType } from "../enums/node-grouping-and-order-type";
-import { TypeAliasDeclarationNode } from "../Nodes/TypeAliasDeclarationNode";
-import { Node } from "../Nodes/Node";
+import { addMemberCount, pluralize } from "./NodeDescriptionHelper";
+import { compareByAccessor, compareByAccessorByName, compareByName, compareByType, compareByTypeByName } from "./NodeComparisonHelper";
+import { getAccessor, getType } from "./NodeValueHelper";
+import { order, orderByType, orderByTypeByAccessor, orderByTypeByAccessorByName, orderByTypeByName } from "./NodeOrderHelper";
+import { ClassDeclarationNode } from "../nodes/ClassDeclarationNode";
+import { DescriptionNode } from "../nodes/DescriptionNode";
+import { InterfaceDeclarationNode } from "../nodes/InterfaceDeclarationNode";
+import { NodeGroupingAndOrderType } from "../enums/NodeGroupingAndOrderType";
+import { TypeAliasDeclarationNode } from "../nodes/TypeAliasDeclarationNode";
+import { Node } from "../nodes/Node";
 
 // #region Functions (10)
 

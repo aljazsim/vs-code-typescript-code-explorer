@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import { Configuration } from "./configuration/configuration";
+import { Configuration } from "./configuration/Configuration";
 import { SyntaxTreeNodeProvider } from "./SyntaxTreeNodeProvider";
 
 export function activate(context: vscode.ExtensionContext)

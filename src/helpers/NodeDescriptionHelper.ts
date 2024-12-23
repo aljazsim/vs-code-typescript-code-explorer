@@ -1,5 +1,5 @@
-import { DescriptionNode } from "../Nodes/DescriptionNode";
-import { Node } from "../Nodes/Node";
+import { DescriptionNode } from "../nodes/DescriptionNode";
+import { Node } from "../nodes/Node";
 
 // #region Functions (3)
 
@@ -29,11 +29,12 @@ function pluralizeString(noun: string)
     {
         return noun + "es";
     }
-    else if(noun != "")
+    else if (noun != "")
     {
         return noun + "s";
     }
-    else {
+    else
+    {
         return noun;
     }
 }
