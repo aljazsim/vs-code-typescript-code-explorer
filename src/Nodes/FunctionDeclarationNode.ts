@@ -8,44 +8,17 @@ import { Node } from "./Node";
 
 export class FunctionDeclarationNode extends DeclarationNode
 {
-    // #region Constructors (1)
-
     constructor(name: string, public readonly isExport: boolean, public readonly isAsync: boolean, parameters: Parameter[], returnType: string, parent: Node, command: vscode.Command, start: vscode.Position, end: vscode.Position, configuration: Configuration)
     {
         super(name, parent, [], command, start, end);
-
 
         this.label = name;
         this.description = configuration.showMemberTypes ? (parameters && returnType ? this.getDescription(parameters, returnType, configuration) : "") : "";
 
         this.command = command;
 
-        if (configuration.showAccessorColorCoding && isExport)
-        {
-            this.iconPath = {
-                light:configuration.showAsyncMethodIndicator ? NodeImages.functionExportedAsync :  NodeImages.functionExported,
-                dark:configuration.showAsyncMethodIndicator ? NodeImages.functionExportedAsync :  NodeImages.functionExported
-            };
-        }
-        else if (configuration.showAccessorColorCoding && !isExport)
-        {
-            this.iconPath = {
-                light:configuration.showAsyncMethodIndicator ? NodeImages.functionAsync :  NodeImages.function,
-                dark:configuration.showAsyncMethodIndicator ? NodeImages.functionAsync :  NodeImages.function
-            };
-        }
-        else
-            {
-                this.iconPath = {
-                    light:configuration.showAsyncMethodIndicator ? NodeImages.methodPublicAsync :  NodeImages.methodPublic,
-                    dark: configuration.showAsyncMethodIndicator ? NodeImages.methodPublicAsync :  NodeImages.methodPublic
-                };
-            }
+        this.iconPath = this.getIconPath(configuration, isExport, isAsync);
     }
-
-    // #endregion Constructors (1)
-
-    // #region Private Methods (1)
 
     private getDescription(parameters: Parameter[], returnType: string | null, configuration: Configuration): string | boolean
     {
@@ -60,5 +33,28 @@ export class FunctionDeclarationNode extends DeclarationNode
         return description;
     }
 
-    // #endregion Private Methods (1)
+    private getIconPath(configuration: Configuration, isExport: boolean, isAsync: boolean)
+    {
+        if (configuration.showAccessorColorCoding && isExport)
+        {
+            return {
+                light: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.functionExportedAsync : NodeImages.functionExported,
+                dark: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.functionExportedAsync : NodeImages.functionExported
+            };
+        }
+        else if (configuration.showAccessorColorCoding && !isExport)
+        {
+            return {
+                light: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.functionAsync : NodeImages.function,
+                dark: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.functionAsync : NodeImages.function
+            };
+        }
+        else
+        {
+            return {
+                light: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPublicAsync : NodeImages.methodPublic,
+                dark: configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPublicAsync : NodeImages.methodPublic
+            };
+        }
+    }
 }
