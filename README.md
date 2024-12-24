@@ -72,3 +72,4 @@ You can invoke command "TypeScript Class Explorer: Show Code Explorer" by using 
 * added support for displaying arrow function variables as methods
 * added support for displaying const function variables as methods
 * fixed displaying non-async functions as async
+* fixed incorrect ordering
