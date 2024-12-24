@@ -5,42 +5,50 @@ import { merge, mergeBy } from "./NodeMergeHelper";
 
 export type group = (nodes: Node[]) => Node[];
 
-function groupBy(nodes: Node[], mergeBy: mergeBy[])
+function groupBy(nodes: Node[], mergeBy: mergeBy[][])
 {
     let descriptionNodes = Array<Node>();
 
-    for (const [groupName, groupNodes] of [...merge(nodes, mergeBy[0])])
-    {
-        if (groupName === "")
-        {
-            groupNodes.forEach(n => descriptionNodes.push(n));
-        }
-        else 
-        {
-            descriptionNodes.push(new DescriptionNode(groupName, groupNodes[0].parent, groupNodes));
-        }
-    }
-
     if (mergeBy.length > 1)
     {
-        for (const descriptionNode of descriptionNodes)
+        // recursively group children
+        nodes.forEach(n => n.children = groupBy(n.children, mergeBy.slice(1)))
+    }
+
+    if (mergeBy.length >= 1)
+    {
+        if (mergeBy[0].length >= 1)
         {
-            for (const parentNode of descriptionNode.children)
+            for (const [groupName, groupNodes] of [...merge(nodes, mergeBy[0][0])])
             {
-                parentNode.children = groupBy(parentNode.children, mergeBy.slice(1));
+                if (groupName === "")
+                {
+                    groupNodes.forEach(n => descriptionNodes.push(n));
+                }
+                else 
+                {
+                    descriptionNodes.push(new DescriptionNode(groupName, groupNodes[0].parent, groupNodes));
+
+                }
             }
+        }
+
+        if (mergeBy[0].length > 1)
+        {
+            // recursively group current node
+            descriptionNodes.forEach(dn => dn.children = groupBy(dn.children, [mergeBy[0].slice(1)]));
         }
     }
 
     return descriptionNodes;
 }
 
-export function groupByTypeByAccessor(nodes: Node[])
-{
-    return groupBy(nodes, [getType, getMemberType, getAccessor]);
-}
-
 export function groupByType(nodes: Node[])
 {
-    return groupBy(nodes, [getType, getMemberType]);
+    return groupBy(nodes, [[getType], [getMemberType]]);
+}
+
+export function groupByTypeByAccessor(nodes: Node[])
+{
+    return groupBy(nodes, [[getType], [getMemberType, getAccessor]]);
 }

@@ -3,6 +3,7 @@ import { order, orderByType, orderByTypeByAccessor, orderByTypeByAccessorByName,
 import { NodeGroupingAndOrderType } from "../enums/NodeGroupingAndOrderType";
 import { Node } from "../nodes/Node";
 import { group, groupByType, groupByTypeByAccessor } from "./NodeGroupHelper";
+import { DescriptionNode } from "../nodes/DescriptionNode";
 
 export function groupAndOrder(nodes: Node[], nodeOrderType: NodeGroupingAndOrderType, showMemberCount: boolean)
 {
@@ -64,5 +65,13 @@ function organize(nodes: Node[], group: group, order: order, showMemberCount: bo
     nodes = order(nodes);
     nodes = modifyRecursively(nodes, showMemberCount);
 
-    return nodes;
+    if (nodes.length == 1 && nodes[0] instanceof DescriptionNode && nodes[0].children.length == 1 && !(nodes[0].children[0] instanceof DescriptionNode))
+    {
+        // top grouping only has one child -> remove grouping
+        return nodes[0].children;
+    }
+    else
+    {
+        return nodes;
+    }
 }
