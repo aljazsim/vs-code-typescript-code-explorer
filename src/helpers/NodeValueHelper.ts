@@ -124,7 +124,7 @@ export function getAccessorOrder(node: Node)
         }
     }
 
-    return "";
+    return "999";
 }
 
 export function getName(node: Node)
@@ -179,6 +179,17 @@ export function getType(node: Node)
         return NodeCaption.function;
     }
 
+    // empty
+    if (node instanceof EmptyNode)
+    {
+        return "";
+    }
+
+    return "-";
+}
+
+export function getMemberType(node: Node)
+{
     // interface / type alias member types
     if (node instanceof ReadonlyPropertySignatureDeclarationNode)
     {
@@ -195,12 +206,6 @@ export function getType(node: Node)
     else if (node instanceof MethodSignatureDeclarationNode)
     {
         return NodeCaption.method;
-    }
-
-    // enum member types
-    if (node instanceof EnumMemberDeclarationNode)
-    {
-        return NodeCaption.enumValue;
     }
 
     // class member types
@@ -236,6 +241,12 @@ export function getType(node: Node)
     else if (node instanceof MethodDeclarationNode)
     {
         return NodeCaption.method;
+    }
+
+    // enum member types
+    if (node instanceof EnumMemberDeclarationNode)
+    {
+        return NodeCaption.enumValue;
     }
 
     // empty
@@ -279,51 +290,56 @@ export function getTypeOrder(node?: Node)
         return "107";
     }
 
-    // enum member types
-    if (node instanceof EnumMemberDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.enumValue))
-    {
-        return "301";
-    }
+    return "999";
+}
 
+export function getTypeMemberOrder(node?: Node)
+{
     // class/interface/type member types
     if (node instanceof ReadonlyPropertyDeclarationNode || node instanceof ReadonlyPropertySignatureDeclarationNode || (node instanceof DescriptionNode && (node.description === NodeCaption.readonlyProperty)))
     {
-        return "401";
+        return "101";
     }
     else if (node instanceof PropertyDeclarationNode || node instanceof PropertySignatureDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.property))
     {
-        return "402";
+        return "102";
     }
     else if (node instanceof ConstructorDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.constructor))
     {
-        return "403";
+        return "103";
     }
     else if (node instanceof StaticCodeBlockDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.staticConstructor))
     {
-        return "404";
+        return "104";
     }
     else if (node instanceof IndexSignatureDeclarationNode || node instanceof IndexSignatureDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.index))
     {
-        return "405";
+        return "105";
     }
     else if (node instanceof AccessorDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.accessor))
     {
-        return "406";
+        return "106";
     }
     else if (node instanceof GetterDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.getter))
     {
-        return "407";
+        return "107";
     }
     else if (node instanceof SetterDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.setter))
     {
-        return "408";
+        return "108";
     }
     else if (node instanceof MethodDeclarationNode || node instanceof MethodSignatureDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.method))
     {
-        return "409";
+        return "109";
     }
 
-    return "501";
+    // enum member types
+    if (node instanceof EnumMemberDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.enumValue))
+    {
+        return "201";
+    }
+
+    return "999";
 }
 
 // #endregion Functions (5)

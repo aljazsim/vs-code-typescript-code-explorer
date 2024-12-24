@@ -26,8 +26,6 @@ import { ReadonlyPropertySignatureDeclarationNode } from "../nodes/ReadonlyPrope
 import { NodeAccessModifier } from "../enums/NodeAccessModifier";
 import { Node } from "../nodes/Node";
 
-// #region Functions (18)
-
 export function getAccessorDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.AutoAccessorPropertyDeclaration, parent: Node, configuration: Configuration)
 {
     const hasKeyword = (node: ts.AutoAccessorPropertyDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
@@ -512,4 +510,9 @@ export function getVariableDeclarationNode(editor: vscode.TextEditor, sourceFile
     return declarationNodes;
 }
 
-// #endregion Functions (18)
+export function hasMembers(node: Node)
+{
+    return node instanceof InterfaceDeclarationNode ||
+        node instanceof ClassDeclarationNode ||
+        node instanceof TypeAliasDeclarationNode;
+}

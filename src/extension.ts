@@ -1,7 +1,8 @@
 import * as vscode from "vscode";
-
 import { Configuration } from "./configuration/Configuration";
 import { SyntaxTreeNodeProvider } from "./SyntaxTreeNodeProvider";
+
+let configuration = Configuration.getConfiguration();
 
 export function activate(context: vscode.ExtensionContext)
 {
@@ -93,4 +94,4 @@ export function activate(context: vscode.ExtensionContext)
     }
 }
 
-let configuration = Configuration.getConfiguration();
+

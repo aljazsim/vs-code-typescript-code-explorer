@@ -6,7 +6,7 @@ import { getAccessorDeclarationNode, getClassDeclarationNode, getConstructorDecl
 import { Configuration } from "./configuration/Configuration";
 import { EmptyNode } from "./nodes/EmptyNode";
 import { ProviderResult } from "vscode";
-import { groupAndOrder } from "./helpers/NodeGroupHelper";
+import { groupAndOrder } from "./helpers/NodeOrganizeHelper";
 import { Node } from "./nodes/Node";
 import { DeclarationNode } from "./nodes/DeclarationNode";
 
@@ -86,7 +86,8 @@ export class SyntaxTreeNodeProvider implements vscode.TreeDataProvider<Node>
             try
             {
                 this.rootElements = this.analyzeSyntaxTree(this.editor, this.editor!.document.getText(), configuration);
-            } catch (error)
+            }
+            catch (error)
             {
                 this.rootElements = [];
 

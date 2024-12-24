@@ -1,44 +1,30 @@
-import { compareByType, compareByTypeByAccessor, compareByTypeByAccessorByName, compareByTypeByName } from "./NodeComparisonHelper";
+import { compare, compareBy } from "./NodeComparisonHelper";
 import { Node } from "../nodes/Node";
+import { getAccessorOrder, getName, getTypeMemberOrder, getTypeOrder } from "./NodeValueHelper";
 
-// #region Functions (5)
+export type order = (nodes: Node[]) => Node[];
 
-export function order(nodes: Node[], orderBy: ((a: Node, b: Node) => number))
+function orderBy(nodes: Node[], compareBy: compareBy[])
 {
-    if (orderBy.length > 0)
-    {
-        nodes = nodes.sort(orderBy);
-    }
-
-    if (orderBy.length > 1)
-    {
-        for (const node of nodes)
-        {
-            node.children = order(node.children, orderBy);
-        }
-    }
-
-    return nodes;
+    return nodes.length > 1 ? nodes.sort((a, b) => compare(a, b, compareBy)) : nodes;
 }
 
 export function orderByType(nodes: Node[])
 {
-    return order(nodes, compareByType);
+    return orderBy(nodes, [getTypeOrder]);
 }
 
 export function orderByTypeByAccessor(nodes: Node[])
 {
-    return order(nodes, compareByTypeByAccessor);
+    return orderBy(nodes, [getTypeOrder, getTypeMemberOrder, getAccessorOrder]);
 }
 
 export function orderByTypeByAccessorByName(nodes: Node[])
 {
-    return order(nodes, compareByTypeByAccessorByName);
+    return orderBy(nodes, [getTypeOrder, getTypeMemberOrder, getAccessorOrder, getName]);
 }
 
 export function orderByTypeByName(nodes: Node[])
 {
-    return order(nodes, compareByTypeByName);
+    return orderBy(nodes, [getTypeOrder, getName]);
 }
-
-// #endregion Functions (5)
