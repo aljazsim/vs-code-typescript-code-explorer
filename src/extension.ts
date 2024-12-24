@@ -1,7 +1,8 @@
 import * as vscode from "vscode";
-
-import { Configuration } from "./configuration/configuration";
+import { Configuration } from "./configuration/Configuration";
 import { SyntaxTreeNodeProvider } from "./SyntaxTreeNodeProvider";
+
+// #region Functions (1)
 
 export function activate(context: vscode.ExtensionContext)
 {
@@ -93,4 +94,10 @@ export function activate(context: vscode.ExtensionContext)
     }
 }
 
+// #endregion Functions (1)
+
+// #region Variables (1)
+
 let configuration = Configuration.getConfiguration();
+
+// #endregion Variables (1)

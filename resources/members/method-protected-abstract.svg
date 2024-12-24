@@ -6,7 +6,7 @@
    version="1.1"
    id="svg1"
    sodipodi:docname="method-protected-abstract.svg"
-   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -27,8 +27,8 @@
      inkscape:cy="64.000003"
      inkscape:window-width="3840"
      inkscape:window-height="1529"
-     inkscape:window-x="2552"
-     inkscape:window-y="-8"
+     inkscape:window-x="-8"
+     inkscape:window-y="89"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg1"
      showgrid="false" />
@@ -37,15 +37,9 @@
      d="m13.51 4l-5-3h-1l-5 3l-.49.86v6l.49.85l5 3h1l5-3l.49-.85v-6zm-6 9.56l-4.5-2.7V5.7l4.5 2.45zM3.27 4.7l4.74-2.84l4.74 2.84l-4.74 2.59zm9.74 6.16l-4.5 2.7V8.15l4.5-2.45z"
      id="path1"
      style="fill:#02a2c7;fill-opacity:1" />
-  <text
-     xml:space="preserve"
-     style="font-size:9.44766px;fill:#ea580c;fill-opacity:1;stroke-width:0.787303"
-     x="9.4532375"
-     y="15.873183"
-     id="text1"><tspan
-       sodipodi:role="line"
-       id="tspan1"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Arial Rounded MT Bold';-inkscape-font-specification:'Arial Rounded MT Bold, ';fill:#ea580c;fill-opacity:1;stroke-width:0.787303"
-       x="9.4532375"
-       y="15.873183">A</tspan></text>
+  <path
+     style="font-size:9.44766px;font-family:'Arial Rounded MT Bold';-inkscape-font-specification:'Arial Rounded MT Bold, ';fill:#ea580c;stroke-width:0.787303"
+     d="M 14.518438,15.107406 14.19552,14.258593 h -2.749417 l -0.322918,0.867266 q -0.189137,0.507442 -0.322918,0.687354 -0.13378,0.175298 -0.438246,0.175298 -0.258334,0 -0.4566982,-0.189138 -0.1983639,-0.189137 -0.1983639,-0.429019 0,-0.138394 0.046131,-0.286013 0.046131,-0.14762 0.1522328,-0.410568 l 1.7299182,-4.391686 q 0.07381,-0.189137 0.175299,-0.452085 0.106101,-0.2675607 0.221429,-0.4428591 0.119941,-0.1752984 0.309079,-0.2814 0.193751,-0.1107148 0.475151,-0.1107148 0.286013,0 0.475151,0.1107148 0.19375,0.1061016 0.309078,0.2767869 0.119941,0.1706853 0.198364,0.3690492 0.08304,0.1937509 0.20759,0.521282 l 1.766824,4.364007 q 0.20759,0.498217 0.20759,0.724259 0,0.235269 -0.198364,0.433633 -0.193751,0.193751 -0.470538,0.193751 -0.161459,0 -0.276787,-0.05997 -0.115328,-0.05536 -0.193751,-0.152233 -0.07842,-0.101489 -0.170685,-0.304466 -0.08765,-0.20759 -0.152233,-0.364436 z m -2.712512,-1.877538 h 2.020545 l -1.019499,-2.790935 z"
+     id="text1"
+     aria-label="A" />
 </svg>

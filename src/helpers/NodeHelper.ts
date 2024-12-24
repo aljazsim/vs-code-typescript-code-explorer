@@ -1,32 +1,32 @@
 import ts from "typescript";
 import * as vscode from "vscode";
-import { AccessorDeclarationNode } from "../Nodes/AccessorDeclarationNode";
-import { ClassDeclarationNode } from "../Nodes/ClassDeclarationNode";
-import { ConstructorDeclarationNode } from "../Nodes/ConstructorDeclarationNode";
-import { Parameter } from "../Nodes/Parameter";
-import { PropertyDeclarationNode } from "../Nodes/PropertyDeclarationNode";
-import { PropertySignatureDeclarationNode } from "../Nodes/PropertySignatureDeclarationNode";
-import { SetterDeclarationNode } from "../Nodes/SetterDeclarationNode";
-import { StaticCodeBlockDeclarationNode } from "../Nodes/StaticCodeBlockDeclarationNode";
-import { EnumDeclarationNode } from "../Nodes/EnumDeclarationNode";
-import { EnumMemberDeclarationNode } from "../Nodes/EnumMemberDeclarationNode";
-import { FunctionDeclarationNode } from "../Nodes/FunctionDeclarationNode";
-import { IndexSignatureDeclarationNode } from "../Nodes/IndexSignatureDeclarationNode";
-import { InterfaceDeclarationNode } from "../Nodes/InterfaceDeclarationNode";
-import { MethodDeclarationNode } from "../Nodes/MethodDeclarationNode";
-import { TypeAliasDeclarationNode } from "../Nodes/TypeAliasDeclarationNode";
-import { VariableDeclarationNode } from "../Nodes/VariableDeclarationNode";
-import { MethodSignatureDeclarationNode } from "../Nodes/MethodSignatureDeclarationNode";
-import { GetterDeclarationNode } from "../Nodes/GetterDeclarationNode";
-import { DeclarationNode } from "../Nodes/DeclarationNode";
-import { ReadonlyPropertyDeclarationNode } from "../Nodes/ReadonlyPropertyDeclarationNode";
-import { Configuration } from "../configuration/configuration";
-import { ConstVariableDeclarationNode } from "../Nodes/ConstVariableDeclarationNode";
-import { ReadonlyPropertySignatureDeclarationNode } from "../Nodes/ReadonlyPropertySignatureDeclarationNode";
-import { NodeAccessModifier } from "../enums/node-access-modifier";
-import { Node } from "../Nodes/Node";
+import { AccessorDeclarationNode } from "../nodes/AccessorDeclarationNode";
+import { ClassDeclarationNode } from "../nodes/ClassDeclarationNode";
+import { ConstructorDeclarationNode } from "../nodes/ConstructorDeclarationNode";
+import { Parameter } from "../nodes/Parameter";
+import { PropertyDeclarationNode } from "../nodes/PropertyDeclarationNode";
+import { PropertySignatureDeclarationNode } from "../nodes/PropertySignatureDeclarationNode";
+import { SetterDeclarationNode } from "../nodes/SetterDeclarationNode";
+import { StaticCodeBlockDeclarationNode } from "../nodes/StaticCodeBlockDeclarationNode";
+import { EnumDeclarationNode } from "../nodes/EnumDeclarationNode";
+import { EnumMemberDeclarationNode } from "../nodes/EnumMemberDeclarationNode";
+import { FunctionDeclarationNode } from "../nodes/FunctionDeclarationNode";
+import { IndexSignatureDeclarationNode } from "../nodes/IndexSignatureDeclarationNode";
+import { InterfaceDeclarationNode } from "../nodes/InterfaceDeclarationNode";
+import { MethodDeclarationNode } from "../nodes/MethodDeclarationNode";
+import { TypeAliasDeclarationNode } from "../nodes/TypeAliasDeclarationNode";
+import { VariableDeclarationNode } from "../nodes/VariableDeclarationNode";
+import { MethodSignatureDeclarationNode } from "../nodes/MethodSignatureDeclarationNode";
+import { GetterDeclarationNode } from "../nodes/GetterDeclarationNode";
+import { DeclarationNode } from "../nodes/DeclarationNode";
+import { ReadonlyPropertyDeclarationNode } from "../nodes/ReadonlyPropertyDeclarationNode";
+import { Configuration } from "../configuration/Configuration";
+import { ConstVariableDeclarationNode } from "../nodes/ConstVariableDeclarationNode";
+import { ReadonlyPropertySignatureDeclarationNode } from "../nodes/ReadonlyPropertySignatureDeclarationNode";
+import { NodeAccessModifier } from "../enums/NodeAccessModifier";
+import { Node } from "../nodes/Node";
 
-// #region Functions (18)
+// #region Functions (19)
 
 export function getAccessorDeclarationNode(editor: vscode.TextEditor, sourceFile: ts.SourceFile, node: ts.AutoAccessorPropertyDeclaration, parent: Node, configuration: Configuration)
 {
@@ -232,7 +232,7 @@ export function getMethodDeclarationNode(editor: vscode.TextEditor, sourceFile: 
     const isAbstract = hasKeyword(node, ts.SyntaxKind.AbstractKeyword);
     const isStatic = hasKeyword(node, ts.SyntaxKind.StaticKeyword);
     const isAsync = hasKeyword(node, ts.SyntaxKind.AsyncKeyword);
-    const returnType: string  = node.type?.getText(sourceFile) ?? "void";
+    const returnType: string = node.type?.getText(sourceFile) ?? "void";
     const start = editor!.document.positionAt(node.getStart(sourceFile, false));
     const end = editor!.document.positionAt(node.getEnd());
     const command = getGotoCommand(editor, position);
@@ -255,7 +255,7 @@ export function getMethodSignatureDeclarationNode(editor: vscode.TextEditor, sou
     const position = sourceFile.getLineAndCharacterOfPosition(identifier.getStart(sourceFile, false));
     const methodName = identifier.escapedText.toString();
     const parameters: Parameter[] = [];
-    const returnType: string  = node.type?.getText(sourceFile) ?? "any";
+    const returnType: string = node.type?.getText(sourceFile) ?? "any";
     const start = editor!.document.positionAt(node.getStart(sourceFile, false));
     const end = editor!.document.positionAt(node.getEnd());
     const command = getGotoCommand(editor, position);
@@ -297,8 +297,8 @@ export function getPropertyDeclarationNode(editor: vscode.TextEditor, sourceFile
         {
             const arrowFunctionHasModifier = (node: ts.ArrowFunction, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
             const arrowFunctionNode = <ts.FunctionTypeNode>node.type;
-            const arrowFunctionParameters: Parameter[]= [];
-            const arrowFunctionReturnType: string  = arrowFunctionNode.type?.getText(sourceFile) ?? "void";
+            const arrowFunctionParameters: Parameter[] = [];
+            const arrowFunctionReturnType: string = arrowFunctionNode.type?.getText(sourceFile) ?? "void";
             const arrowFunctionIsAsync = node.initializer ? arrowFunctionHasModifier(node.initializer as ts.ArrowFunction, ts.SyntaxKind.AsyncKeyword) : false;
 
             // arrow function parameters
@@ -316,8 +316,8 @@ export function getPropertyDeclarationNode(editor: vscode.TextEditor, sourceFile
         {
             const functionHasModifier = (node: ts.FunctionLikeDeclaration, keyword: ts.SyntaxKind) => (node.modifiers ?? []).map(m => m.kind).some(m => m == keyword);
             const functionNode = <ts.FunctionLikeDeclaration>node.initializer;
-            const functionParameters: Parameter[]= [];
-            const functionReturnType: string  = functionNode.type?.getText(sourceFile) ?? "void";
+            const functionParameters: Parameter[] = [];
+            const functionReturnType: string = functionNode.type?.getText(sourceFile) ?? "void";
             const functionIsAsync = node.initializer ? functionHasModifier(node.initializer as ts.ArrowFunction, ts.SyntaxKind.AsyncKeyword) : false;
 
             // function parameters
@@ -364,7 +364,7 @@ export function getPropertySignatureDeclarationNode(editor: vscode.TextEditor, s
         {
             const arrowFunction = <ts.FunctionTypeNode>node.type;
             const arrowFunctionParameters: Parameter[] = [];
-            const arrowFunctionReturnType: string  = arrowFunction.type?.getText(sourceFile) ?? null;
+            const arrowFunctionReturnType: string = arrowFunction.type?.getText(sourceFile) ?? null;
 
             // arrow function parameters
             for (const parameter of arrowFunction.parameters)
@@ -512,4 +512,11 @@ export function getVariableDeclarationNode(editor: vscode.TextEditor, sourceFile
     return declarationNodes;
 }
 
-// #endregion Functions (18)
+export function hasMembers(node: Node)
+{
+    return node instanceof InterfaceDeclarationNode ||
+        node instanceof ClassDeclarationNode ||
+        node instanceof TypeAliasDeclarationNode;
+}
+
+// #endregion Functions (19)

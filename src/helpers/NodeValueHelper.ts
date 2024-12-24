@@ -1,31 +1,31 @@
-import { NodeAccessModifier } from "../enums/node-access-modifier";
-import { NodeCaption } from "../enums/node-caption";
-import { AccessorDeclarationNode } from "../Nodes/AccessorDeclarationNode";
-import { ClassDeclarationNode } from "../Nodes/ClassDeclarationNode";
-import { ConstructorDeclarationNode } from "../Nodes/ConstructorDeclarationNode";
-import { ConstVariableDeclarationNode } from "../Nodes/ConstVariableDeclarationNode";
-import { DeclarationNode } from "../Nodes/DeclarationNode";
-import { DescriptionNode } from "../Nodes/DescriptionNode";
-import { EmptyNode } from "../Nodes/EmptyNode";
-import { EnumDeclarationNode } from "../Nodes/EnumDeclarationNode";
-import { EnumMemberDeclarationNode } from "../Nodes/EnumMemberDeclarationNode";
-import { FunctionDeclarationNode } from "../Nodes/FunctionDeclarationNode";
-import { GetterDeclarationNode } from "../Nodes/GetterDeclarationNode";
-import { IndexSignatureDeclarationNode } from "../Nodes/IndexSignatureDeclarationNode";
-import { InterfaceDeclarationNode } from "../Nodes/InterfaceDeclarationNode";
-import { MethodDeclarationNode } from "../Nodes/MethodDeclarationNode";
-import { MethodSignatureDeclarationNode } from "../Nodes/MethodSignatureDeclarationNode";
-import { Node } from "../Nodes/Node";
-import { PropertyDeclarationNode } from "../Nodes/PropertyDeclarationNode";
-import { PropertySignatureDeclarationNode } from "../Nodes/PropertySignatureDeclarationNode";
-import { ReadonlyPropertyDeclarationNode } from "../Nodes/ReadonlyPropertyDeclarationNode";
-import { ReadonlyPropertySignatureDeclarationNode } from "../Nodes/ReadonlyPropertySignatureDeclarationNode";
-import { SetterDeclarationNode } from "../Nodes/SetterDeclarationNode";
-import { StaticCodeBlockDeclarationNode } from "../Nodes/StaticCodeBlockDeclarationNode";
-import { TypeAliasDeclarationNode } from "../Nodes/TypeAliasDeclarationNode";
-import { VariableDeclarationNode } from "../Nodes/VariableDeclarationNode";
+import { NodeAccessModifier } from "../enums/NodeAccessModifier";
+import { NodeCaption } from "../enums/NodeCaption";
+import { AccessorDeclarationNode } from "../nodes/AccessorDeclarationNode";
+import { ClassDeclarationNode } from "../nodes/ClassDeclarationNode";
+import { ConstructorDeclarationNode } from "../nodes/ConstructorDeclarationNode";
+import { ConstVariableDeclarationNode } from "../nodes/ConstVariableDeclarationNode";
+import { DeclarationNode } from "../nodes/DeclarationNode";
+import { DescriptionNode } from "../nodes/DescriptionNode";
+import { EmptyNode } from "../nodes/EmptyNode";
+import { EnumDeclarationNode } from "../nodes/EnumDeclarationNode";
+import { EnumMemberDeclarationNode } from "../nodes/EnumMemberDeclarationNode";
+import { FunctionDeclarationNode } from "../nodes/FunctionDeclarationNode";
+import { GetterDeclarationNode } from "../nodes/GetterDeclarationNode";
+import { IndexSignatureDeclarationNode } from "../nodes/IndexSignatureDeclarationNode";
+import { InterfaceDeclarationNode } from "../nodes/InterfaceDeclarationNode";
+import { MethodDeclarationNode } from "../nodes/MethodDeclarationNode";
+import { MethodSignatureDeclarationNode } from "../nodes/MethodSignatureDeclarationNode";
+import { Node } from "../nodes/Node";
+import { PropertyDeclarationNode } from "../nodes/PropertyDeclarationNode";
+import { PropertySignatureDeclarationNode } from "../nodes/PropertySignatureDeclarationNode";
+import { ReadonlyPropertyDeclarationNode } from "../nodes/ReadonlyPropertyDeclarationNode";
+import { ReadonlyPropertySignatureDeclarationNode } from "../nodes/ReadonlyPropertySignatureDeclarationNode";
+import { SetterDeclarationNode } from "../nodes/SetterDeclarationNode";
+import { StaticCodeBlockDeclarationNode } from "../nodes/StaticCodeBlockDeclarationNode";
+import { TypeAliasDeclarationNode } from "../nodes/TypeAliasDeclarationNode";
+import { VariableDeclarationNode } from "../nodes/VariableDeclarationNode";
 
-// #region Functions (5)
+// #region Functions (7)
 
 export function getAccessor(node: Node)
 {
@@ -124,7 +124,77 @@ export function getAccessorOrder(node: Node)
         }
     }
 
-    return "";
+    return "999";
+}
+
+export function getMemberType(node: Node)
+{
+    // interface / type alias member types
+    if (node instanceof ReadonlyPropertySignatureDeclarationNode)
+    {
+        return NodeCaption.readonlyProperty;
+    }
+    else if (node instanceof PropertySignatureDeclarationNode)
+    {
+        return NodeCaption.property;
+    }
+    else if (node instanceof IndexSignatureDeclarationNode)
+    {
+        return NodeCaption.index;
+    }
+    else if (node instanceof MethodSignatureDeclarationNode)
+    {
+        return NodeCaption.method;
+    }
+
+    // class member types
+    if (node instanceof ReadonlyPropertyDeclarationNode)
+    {
+        return NodeCaption.readonlyProperty;
+    }
+    else if (node instanceof PropertyDeclarationNode)
+    {
+        return NodeCaption.property;
+    }
+    else if (node instanceof ReadonlyPropertyDeclarationNode)
+    {
+        return NodeCaption.readonlyProperty;
+    }
+    else if (node instanceof ConstructorDeclarationNode ||
+        node instanceof StaticCodeBlockDeclarationNode)
+    {
+        return NodeCaption.constructor;
+    }
+    else if (node instanceof AccessorDeclarationNode)
+    {
+        return NodeCaption.accessor;
+    }
+    else if (node instanceof GetterDeclarationNode)
+    {
+        return NodeCaption.getter;
+    }
+    else if (node instanceof SetterDeclarationNode)
+    {
+        return NodeCaption.setter;
+    }
+    else if (node instanceof MethodDeclarationNode)
+    {
+        return NodeCaption.method;
+    }
+
+    // enum member types
+    if (node instanceof EnumMemberDeclarationNode)
+    {
+        return NodeCaption.enumValue;
+    }
+
+    // empty
+    if (node instanceof EmptyNode)
+    {
+        return "";
+    }
+
+    return "-";
 }
 
 export function getName(node: Node)
@@ -179,65 +249,6 @@ export function getType(node: Node)
         return NodeCaption.function;
     }
 
-    // interface / type alias member types
-    if (node instanceof ReadonlyPropertySignatureDeclarationNode)
-    {
-        return NodeCaption.readonlyProperty;
-    }
-    else if (node instanceof PropertySignatureDeclarationNode)
-    {
-        return NodeCaption.property;
-    }
-    else if (node instanceof IndexSignatureDeclarationNode)
-    {
-        return NodeCaption.index;
-    }
-    else if (node instanceof MethodSignatureDeclarationNode)
-    {
-        return NodeCaption.method;
-    }
-
-    // enum member types
-    if (node instanceof EnumMemberDeclarationNode)
-    {
-        return NodeCaption.enumValue;
-    }
-
-    // class member types
-    if (node instanceof ReadonlyPropertyDeclarationNode)
-    {
-        return NodeCaption.readonlyProperty;
-    }
-    else if (node instanceof PropertyDeclarationNode)
-    {
-        return NodeCaption.property;
-    }
-    else if (node instanceof ReadonlyPropertyDeclarationNode)
-    {
-        return NodeCaption.readonlyProperty;
-    }
-    else if (node instanceof ConstructorDeclarationNode ||
-        node instanceof StaticCodeBlockDeclarationNode)
-    {
-        return NodeCaption.constructor;
-    }
-    else if (node instanceof AccessorDeclarationNode)
-    {
-        return NodeCaption.accessor;
-    }
-    else if (node instanceof GetterDeclarationNode)
-    {
-        return NodeCaption.getter;
-    }
-    else if (node instanceof SetterDeclarationNode)
-    {
-        return NodeCaption.setter;
-    }
-    else if (node instanceof MethodDeclarationNode)
-    {
-        return NodeCaption.method;
-    }
-
     // empty
     if (node instanceof EmptyNode)
     {
@@ -245,6 +256,55 @@ export function getType(node: Node)
     }
 
     return "-";
+}
+
+export function getTypeMemberOrder(node?: Node)
+{
+    // class/interface/type member types
+    if (node instanceof ReadonlyPropertyDeclarationNode || node instanceof ReadonlyPropertySignatureDeclarationNode || (node instanceof DescriptionNode && (node.description === NodeCaption.readonlyProperty)))
+    {
+        return "101";
+    }
+    else if (node instanceof PropertyDeclarationNode || node instanceof PropertySignatureDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.property))
+    {
+        return "102";
+    }
+    else if (node instanceof ConstructorDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.constructor))
+    {
+        return "103";
+    }
+    else if (node instanceof StaticCodeBlockDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.staticConstructor))
+    {
+        return "104";
+    }
+    else if (node instanceof IndexSignatureDeclarationNode || node instanceof IndexSignatureDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.index))
+    {
+        return "105";
+    }
+    else if (node instanceof AccessorDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.accessor))
+    {
+        return "106";
+    }
+    else if (node instanceof GetterDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.getter))
+    {
+        return "107";
+    }
+    else if (node instanceof SetterDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.setter))
+    {
+        return "108";
+    }
+    else if (node instanceof MethodDeclarationNode || node instanceof MethodSignatureDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.method))
+    {
+        return "109";
+    }
+
+    // enum member types
+    if (node instanceof EnumMemberDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.enumValue))
+    {
+        return "201";
+    }
+
+    return "999";
 }
 
 export function getTypeOrder(node?: Node)
@@ -279,51 +339,7 @@ export function getTypeOrder(node?: Node)
         return "107";
     }
 
-    // enum member types
-    if (node instanceof EnumMemberDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.enumValue))
-    {
-        return "301";
-    }
-
-    // class/interface/type member types
-    if (node instanceof ReadonlyPropertyDeclarationNode || node instanceof ReadonlyPropertySignatureDeclarationNode || (node instanceof DescriptionNode && (node.description === NodeCaption.readonlyProperty)))
-    {
-        return "401";
-    }
-    else if (node instanceof PropertyDeclarationNode || node instanceof PropertySignatureDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.property))
-    {
-        return "402";
-    }
-    else if (node instanceof ConstructorDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.constructor))
-    {
-        return "403";
-    }
-    else if (node instanceof StaticCodeBlockDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.staticConstructor))
-    {
-        return "404";
-    }
-    else if (node instanceof IndexSignatureDeclarationNode || node instanceof IndexSignatureDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.index))
-    {
-        return "405";
-    }
-    else if (node instanceof AccessorDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.accessor))
-    {
-        return "406";
-    }
-    else if (node instanceof GetterDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.getter))
-    {
-        return "407";
-    }
-    else if (node instanceof SetterDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.setter))
-    {
-        return "408";
-    }
-    else if (node instanceof MethodDeclarationNode || node instanceof MethodSignatureDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.method))
-    {
-        return "409";
-    }
-
-    return "501";
+    return "999";
 }
 
-// #endregion Functions (5)
+// #endregion Functions (7)
