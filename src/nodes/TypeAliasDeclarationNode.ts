@@ -17,22 +17,27 @@ export class TypeAliasDeclarationNode extends DeclarationNode
 
         this.command = command;
 
-        if (!configuration.showAccessorColorCoding || isExport)
-        {
-            this.iconPath = {
-                light: NodeImages.typeExported,
-                dark: NodeImages.typeExported
-
-            };
-        }
-        else if (configuration.showAccessorColorCoding && !isExport)
-        {
-            this.iconPath = {
-                light: NodeImages.type,
-                dark: NodeImages.type
-            };
-        }
+        this.iconPath = {
+            dark: this.getIconPath(configuration, isExport),
+            light: this.getIconPath(configuration, isExport)
+        };
     }
 
     // #endregion Constructors (1)
+
+    // #region Private Methods (1)
+
+    private getIconPath(configuration: Configuration, isExport: boolean)
+    {
+        if (!configuration.showAccessorColorCoding || isExport)
+        {
+            return NodeImages.typeExported;
+        }
+        else if (configuration.showAccessorColorCoding && !isExport)
+        {
+            return NodeImages.type;
+        }
+    }
+
+    // #endregion Private Methods (1)
 }

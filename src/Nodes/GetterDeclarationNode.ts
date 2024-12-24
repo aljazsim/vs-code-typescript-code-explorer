@@ -19,72 +19,61 @@ export class GetterDeclarationNode extends DeclarationNode
 
         this.command = command;
 
+        this.iconPath = {
+            dark: this.getIconPath(configuration, accessModifier, isStatic, isAbstract),
+            light: this.getIconPath(configuration, accessModifier, isStatic, isAbstract)
+        };
+    }
+
+    // #endregion Constructors (1)
+
+    // #region Private Methods (1)
+
+    private getIconPath(configuration: Configuration, accessModifier: NodeAccessModifier, isStatic: boolean, isAbstract: boolean)
+    {
         if (configuration.showStaticMemberIndicator && isStatic)
         {
             if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.private)
             {
-                this.iconPath = {
-                    light: NodeImages.propertyPrivateStatic,
-                    dark: NodeImages.propertyPrivateStatic
-                };
+                return NodeImages.propertyPrivateStatic;
             }
             else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
             {
-                this.iconPath = {
-                    light: NodeImages.propertyProtectedStatic,
-                    dark: NodeImages.propertyProtectedStatic
-                };
+                return NodeImages.propertyProtectedStatic;
             }
             else if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.public)
             {
-                this.iconPath = {
-                    light: NodeImages.propertyPublicStatic,
-                    dark: NodeImages.propertyPublicStatic
-                };
+                return NodeImages.propertyPublicStatic;
             }
         }
         else if (isAbstract && configuration.showAbstractMemberIndicator)
         {
             if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
             {
-                this.iconPath = {
-                    light: NodeImages.propertyProtectedAbstract,
-                    dark: NodeImages.propertyProtectedAbstract
-                };
+                return NodeImages.propertyProtectedAbstract;
             }
             else if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.public)
             {
-                this.iconPath = {
-                    light: NodeImages.propertyPublicAbstract,
-                    dark: NodeImages.propertyPublicAbstract
-                };
+                return NodeImages.propertyPublicAbstract;
             }
         }
+
         else
         {
             if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.private)
             {
-                this.iconPath = {
-                    light: NodeImages.propertyPrivate,
-                    dark: NodeImages.propertyPrivate
-                };
+                return NodeImages.propertyPrivate;
             }
             else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
             {
-                this.iconPath = {
-                    light: NodeImages.propertyProtected,
-                    dark: NodeImages.propertyProtected
-                };
+                return NodeImages.propertyProtected;
             }
             else if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.public)
             {
-                this.iconPath = {
-                    light: NodeImages.propertyPublic,
-                    dark: NodeImages.propertyPublic
-                };
+                return NodeImages.propertyPublic;
             }
         }
     }
 
-    // #endregion Constructors (1)
+    // #endregion Private Methods (1)
 }

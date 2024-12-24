@@ -19,28 +19,31 @@ export class ReadonlyPropertyDeclarationNode extends DeclarationNode
 
         this.command = command;
 
-        if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.private)
-        {
-            this.iconPath = {
-                light: isStatic && configuration.showStaticMemberIndicator ? NodeImages.readonlyPropertyPrivateStatic : NodeImages.readonlyPropertyPrivate,
-                dark: isStatic && configuration.showStaticMemberIndicator ? NodeImages.readonlyPropertyPrivateStatic : NodeImages.readonlyPropertyPrivate
-            };
-        }
-        else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
-        {
-            this.iconPath = {
-                light: isStatic && configuration.showStaticMemberIndicator ? NodeImages.readonlyPropertyProtectedStatic : NodeImages.readonlyPropertyProtected,
-                dark: isStatic && configuration.showStaticMemberIndicator ? NodeImages.readonlyPropertyProtectedStatic : NodeImages.readonlyPropertyProtected
-            };
-        }
-        else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.public)
-        {
-            this.iconPath = {
-                light: isStatic && configuration.showStaticMemberIndicator ? NodeImages.readonlyPropertyPublicStatic : NodeImages.readonlyPropertyPublic,
-                dark: isStatic && configuration.showStaticMemberIndicator ? NodeImages.readonlyPropertyPublicStatic : NodeImages.readonlyPropertyPublic
-            };
-        }
+        this.iconPath = {
+            dark: this.getIconPath(configuration, accessModifier, isStatic),
+            light: this.getIconPath(configuration, accessModifier, isStatic)
+        };
     }
 
     // #endregion Constructors (1)
+
+    // #region Private Methods (1)
+
+    private getIconPath(configuration: Configuration, accessModifier: NodeAccessModifier, isStatic: boolean)
+    {
+        if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.private)
+        {
+            return isStatic && configuration.showStaticMemberIndicator ? NodeImages.readonlyPropertyPrivateStatic : NodeImages.readonlyPropertyPrivate;
+        }
+        else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
+        {
+            return isStatic && configuration.showStaticMemberIndicator ? NodeImages.readonlyPropertyProtectedStatic : NodeImages.readonlyPropertyProtected;
+        }
+        else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.public)
+        {
+            return isStatic && configuration.showStaticMemberIndicator ? NodeImages.readonlyPropertyPublicStatic : NodeImages.readonlyPropertyPublic;
+        }
+    }
+
+    // #endregion Private Methods (1)
 }

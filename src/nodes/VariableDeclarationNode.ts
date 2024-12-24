@@ -18,28 +18,31 @@ export class VariableDeclarationNode extends DeclarationNode
 
         this.command = command;
 
-        if (configuration.showAccessorColorCoding && isExport)
-        {
-            this.iconPath = {
-                light: NodeImages.variableExported,
-                dark: NodeImages.variableExported
-            };
-        }
-        else if (configuration.showAccessorColorCoding && !isExport)
-        {
-            this.iconPath = {
-                light: NodeImages.variable,
-                dark: NodeImages.variable
-            };
-        }
-        else
-        {
-            this.iconPath = {
-                light: NodeImages.propertyPrivate,
-                dark: NodeImages.propertyPrivate
-            };
-        }
+        this.iconPath = {
+            dark: this.getIconPath(configuration, isExport),
+            light: this.getIconPath(configuration, isExport)
+        };
     }
 
     // #endregion Constructors (1)
+
+    // #region Private Methods (1)
+
+    private getIconPath(configuration: Configuration, isExport: boolean)
+    {
+        if (configuration.showAccessorColorCoding && isExport)
+        {
+            return NodeImages.variableExported;
+        }
+        else if (configuration.showAccessorColorCoding && !isExport)
+        {
+            return NodeImages.variable;
+        }
+        else
+        {
+            return NodeImages.propertyPrivate;
+        }
+    }
+
+    // #endregion Private Methods (1)
 }

@@ -17,21 +17,27 @@ export class EnumDeclarationNode extends DeclarationNode
 
         this.command = command;
 
-        if (!configuration.showAccessorColorCoding || isExport)
-        {
-            this.iconPath = {
-                light: NodeImages.enumExported,
-                dark: NodeImages.enumExported
-            };
-        }
-        else (configuration.showAccessorColorCoding && !isExport);
-        {
-            this.iconPath = {
-                light: NodeImages.enum,
-                dark: NodeImages.enum
-            };
-        }
+        this.iconPath = {
+            dark: this.getIconPath(configuration, isExport),
+            light: this.getIconPath(configuration, isExport)
+        };
     }
 
     // #endregion Constructors (1)
+
+    // #region Private Methods (1)
+
+    private getIconPath(configuration: Configuration, isExport: boolean)
+    {
+        if (!configuration.showAccessorColorCoding || isExport)
+        {
+            return NodeImages.enumExported;
+        }
+        else (configuration.showAccessorColorCoding && !isExport);
+        {
+            return NodeImages.enum;
+        }
+    }
+
+    // #endregion Private Methods (1)
 }

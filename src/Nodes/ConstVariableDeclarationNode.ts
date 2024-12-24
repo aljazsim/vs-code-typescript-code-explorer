@@ -16,28 +16,29 @@ export class ConstVariableDeclarationNode extends DeclarationNode
         this.label = name;
         this.description = configuration.showMemberTypes ? `: ${type}` : "";
 
-        if (configuration.showAccessorColorCoding && isExport)
-        {
-            this.iconPath = {
-                light: NodeImages.constVariableExported,
-                dark: NodeImages.constVariableExported
-            };
-        }
-        else if (configuration.showAccessorColorCoding && !isExport)
-        {
-            this.iconPath = {
-                light: NodeImages.constVariable,
-                dark: NodeImages.constVariable
-            };
-        }
-        else
-        {
-            this.iconPath = {
-                light: NodeImages.readonlyPropertyPrivate,
-                dark: NodeImages.readonlyPropertyPrivate
-            };
-        }
+        this.getIconPath(configuration, isExport);
     }
 
     // #endregion Constructors (1)
+
+    // #region Private Methods (1)
+
+    private getIconPath(configuration: Configuration, isExport: boolean)
+    {
+        if (configuration.showAccessorColorCoding && isExport)
+        {
+            return NodeImages.constVariableExported;
+        }
+        else if (configuration.showAccessorColorCoding && !isExport)
+        {
+            return NodeImages.constVariable;
+        }
+
+        else
+        {
+            return NodeImages.readonlyPropertyPrivate;
+        }
+    }
+
+    // #endregion Private Methods (1)
 }

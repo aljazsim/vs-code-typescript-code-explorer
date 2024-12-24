@@ -16,21 +16,27 @@ export class ClassDeclarationNode extends DeclarationNode
         this.label = name;
         this.description = isAbstract ? "abstract" : "";
 
-        if (!configuration.showAccessorColorCoding || isExport)
-        {
-            this.iconPath = {
-                light: NodeImages.classExported,
-                dark: NodeImages.classExported
-            };
-        }
-        else if (!isExport)
-        {
-            this.iconPath = {
-                light: NodeImages.class,
-                dark: NodeImages.class
-            };
-        }
+        this.iconPath = {
+            dark: this.getIconPath(configuration, isExport),
+            light: this.getIconPath(configuration, isExport)
+        };
     }
 
     // #endregion Constructors (1)
+
+    // #region Private Methods (1)
+
+    private getIconPath(configuration: Configuration, isExport: boolean)
+    {
+        if (!configuration.showAccessorColorCoding || isExport)
+        {
+            return NodeImages.classExported;
+        }
+        else if (!isExport)
+        {
+            return NodeImages.class;
+        }
+    }
+
+    // #endregion Private Methods (1)
 }

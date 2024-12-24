@@ -19,28 +19,31 @@ export class PropertyDeclarationNode extends DeclarationNode
 
         this.command = command;
 
-        if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.private)
-        {
-            this.iconPath = {
-                light: isStatic && configuration.showStaticMemberIndicator ? NodeImages.propertyPrivateStatic : NodeImages.propertyPrivate,
-                dark: isStatic && configuration.showStaticMemberIndicator ? NodeImages.propertyPrivateStatic : NodeImages.propertyPrivate
-            };
-        }
-        else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
-        {
-            this.iconPath = {
-                light: isStatic && configuration.showStaticMemberIndicator ? NodeImages.propertyProtectedStatic : NodeImages.propertyProtected,
-                dark: isStatic && configuration.showStaticMemberIndicator ? NodeImages.propertyProtectedStatic : NodeImages.propertyProtected
-            };
-        }
-        else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.public)
-        {
-            this.iconPath = {
-                light: isStatic && configuration.showStaticMemberIndicator ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic,
-                dark: isStatic && configuration.showStaticMemberIndicator ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic
-            };
-        }
+        this.iconPath = {
+            dark: this.getIconPath(configuration, accessModifier, isStatic),
+            light: this.getIconPath(configuration, accessModifier, isStatic)
+        };
     }
 
     // #endregion Constructors (1)
+
+    // #region Private Methods (1)
+
+    private getIconPath(configuration: Configuration, accessModifier: NodeAccessModifier, isStatic: boolean)
+    {
+        if (!configuration.showAccessorColorCoding || accessModifier === NodeAccessModifier.private)
+        {
+            return isStatic && configuration.showStaticMemberIndicator ? NodeImages.propertyPrivateStatic : NodeImages.propertyPrivate;
+        }
+        else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.protected)
+        {
+            return isStatic && configuration.showStaticMemberIndicator ? NodeImages.propertyProtectedStatic : NodeImages.propertyProtected;
+        }
+        else if (configuration.showAccessorColorCoding && accessModifier === NodeAccessModifier.public)
+        {
+            return isStatic && configuration.showStaticMemberIndicator ? NodeImages.propertyPublicStatic : NodeImages.propertyPublic;
+        }
+    }
+
+    // #endregion Private Methods (1)
 }

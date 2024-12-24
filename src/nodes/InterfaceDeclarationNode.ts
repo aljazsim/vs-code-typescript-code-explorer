@@ -17,21 +17,27 @@ export class InterfaceDeclarationNode extends DeclarationNode
 
         this.command = command;
 
-        if (!configuration.showAccessorColorCoding || isExport)
-        {
-            this.iconPath = {
-                light: NodeImages.interfaceExported,
-                dark: NodeImages.interfaceExported
-            };
-        }
-        else if (configuration.showAccessorColorCoding && isExport)
-        {
-            this.iconPath = {
-                light: NodeImages.interface,
-                dark: NodeImages.interface
-            };
-        }
+        this.iconPath = {
+            dark: this.getIconPath(configuration, isExport),
+            light: this.getIconPath(configuration, isExport)
+        };
     }
 
     // #endregion Constructors (1)
+
+    // #region Private Methods (1)
+
+    private getIconPath(configuration: Configuration, isExport: boolean)
+    {
+        if (!configuration.showAccessorColorCoding || isExport)
+        {
+            return NodeImages.interfaceExported;
+        }
+        else if (configuration.showAccessorColorCoding && isExport)
+        {
+            return NodeImages.interface;
+        }
+    }
+
+    // #endregion Private Methods (1)
 }

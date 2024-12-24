@@ -18,21 +18,27 @@ export class ReadonlyPropertySignatureDeclarationNode extends DeclarationNode
 
         this.command = command;
 
-        if (configuration.showAccessorColorCoding)
-        {
-            this.iconPath = {
-                light: NodeImages.propertyPublic,
-                dark: NodeImages.propertyPublic
-            };
-        }
-        else
-        {
-            this.iconPath = {
-                light: NodeImages.propertyPrivate,
-                dark: NodeImages.propertyPrivate
-            };
-        }
+        this.iconPath = {
+            dark: this.getIconPath(configuration),
+            light: this.getIconPath(configuration)
+        };
     }
 
     // #endregion Constructors (1)
+
+    // #region Private Methods (1)
+
+    private getIconPath(configuration: Configuration)
+    {
+        if (configuration.showAccessorColorCoding)
+        {
+            return NodeImages.propertyPublic;
+        }
+        else
+        {
+            return NodeImages.propertyPrivate;
+        }
+    }
+
+    // #endregion Private Methods (1)
 }
