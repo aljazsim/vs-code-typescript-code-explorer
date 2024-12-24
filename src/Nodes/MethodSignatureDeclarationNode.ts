@@ -14,7 +14,6 @@ export class MethodSignatureDeclarationNode extends DeclarationNode
     {
         super(name, parent, [], command, start, end);
 
-
         this.label = name;
         this.description = configuration.showMemberTypes ? this.getDescription(parameters, returnType, configuration) : "";
 

@@ -1,6 +1,12 @@
 import { Node } from "../nodes/Node";
 
+// #region Type aliases (1)
+
 export type compareBy = ((node: Node) => string);
+
+// #endregion Type aliases (1)
+
+// #region Functions (1)
 
 export function compare(a: Node, b: Node, compareBy: compareBy[])
 {
@@ -24,3 +30,5 @@ export function compare(a: Node, b: Node, compareBy: compareBy[])
         return 0;
     }
 }
+
+// #endregion Functions (1)

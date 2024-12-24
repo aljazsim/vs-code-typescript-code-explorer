@@ -8,6 +8,8 @@ import { Node } from "./Node";
 
 export class FunctionDeclarationNode extends DeclarationNode
 {
+    // #region Constructors (1)
+
     constructor(name: string, public readonly isExport: boolean, public readonly isAsync: boolean, parameters: Parameter[], returnType: string, parent: Node, command: vscode.Command, start: vscode.Position, end: vscode.Position, configuration: Configuration)
     {
         super(name, parent, [], command, start, end);
@@ -22,6 +24,10 @@ export class FunctionDeclarationNode extends DeclarationNode
             light: this.getIconPath(configuration, isExport, isAsync)
         };
     }
+
+    // #endregion Constructors (1)
+
+    // #region Private Methods (2)
 
     private getDescription(parameters: Parameter[], returnType: string | null, configuration: Configuration): string | boolean
     {
@@ -51,4 +57,6 @@ export class FunctionDeclarationNode extends DeclarationNode
             return configuration.showAsyncMethodIndicator && isAsync ? NodeImages.methodPublicAsync : NodeImages.methodPublic;
         }
     }
+
+    // #endregion Private Methods (2)
 }

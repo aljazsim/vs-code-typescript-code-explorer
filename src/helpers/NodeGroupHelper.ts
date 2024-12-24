@@ -3,7 +3,13 @@ import { Node } from "../nodes/Node";
 import { getAccessor, getMemberType, getType } from "./NodeValueHelper";
 import { merge, mergeBy } from "./NodeMergeHelper";
 
+// #region Type aliases (1)
+
 export type group = (nodes: Node[]) => Node[];
+
+// #endregion Type aliases (1)
+
+// #region Functions (3)
 
 function groupBy(nodes: Node[], mergeBy: mergeBy[][])
 {
@@ -28,7 +34,6 @@ function groupBy(nodes: Node[], mergeBy: mergeBy[][])
                 else 
                 {
                     descriptionNodes.push(new DescriptionNode(groupName, groupNodes[0].parent, groupNodes));
-
                 }
             }
         }
@@ -52,3 +57,5 @@ export function groupByTypeByAccessor(nodes: Node[])
 {
     return groupBy(nodes, [[getType], [getMemberType, getAccessor]]);
 }
+
+// #endregion Functions (3)

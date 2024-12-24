@@ -5,6 +5,8 @@ import { Node } from "../nodes/Node";
 import { group, groupByType, groupByTypeByAccessor } from "./NodeGroupHelper";
 import { DescriptionNode } from "../nodes/DescriptionNode";
 
+// #region Functions (3)
+
 export function groupAndOrder(nodes: Node[], nodeOrderType: NodeGroupingAndOrderType, showMemberCount: boolean)
 {
     if (nodeOrderType === NodeGroupingAndOrderType.orderByType)
@@ -75,3 +77,5 @@ function organize(nodes: Node[], group: group, order: order, showMemberCount: bo
         return nodes;
     }
 }
+
+// #endregion Functions (3)

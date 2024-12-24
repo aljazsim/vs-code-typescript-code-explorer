@@ -2,7 +2,13 @@ import { compare, compareBy } from "./NodeComparisonHelper";
 import { Node } from "../nodes/Node";
 import { getAccessorOrder, getMemberType, getName, getTypeMemberOrder, getTypeOrder } from "./NodeValueHelper";
 
+// #region Type aliases (1)
+
 export type order = (nodes: Node[]) => Node[];
+
+// #endregion Type aliases (1)
+
+// #region Functions (5)
 
 function orderBy(nodes: Node[], compareBy: compareBy[])
 {
@@ -31,3 +37,5 @@ export function orderByTypeByName(nodes: Node[])
 {
     return orderBy(nodes, [getTypeOrder, getTypeMemberOrder, getName]);
 }
+
+// #endregion Functions (5)

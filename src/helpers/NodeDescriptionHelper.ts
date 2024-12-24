@@ -1,7 +1,7 @@
 import { DescriptionNode } from "../nodes/DescriptionNode";
 import { Node } from "../nodes/Node";
 
-// #region Functions (3)
+// #region Functions (4)
 
 export function addMemberCount(node: Node)
 {
@@ -11,21 +11,20 @@ export function addMemberCount(node: Node)
     }
 }
 
+function getDescendantNodeCount(node: Node): number
+{
+    const childrenCount = node.children.filter(n => !(n instanceof DescriptionNode)).length;
+    const subChildrenCount = node.children.map(n => getDescendantNodeCount(n)).reduce((sum, current) => sum + current, 0)
+
+    return childrenCount + subChildrenCount;
+}
+
 export function pluralize(node: Node)
 {
     if (node instanceof DescriptionNode && getDescendantNodeCount(node) > 1)
     {
         node.description = pluralizeString(node.description as string ?? "");
     }
-}
-
-function getDescendantNodeCount(node: Node): number
-{
-    const childrenCount = node.children.filter(n => !(n instanceof DescriptionNode)).length;
-    const subChildrenCount = node.children.map(n => getDescendantNodeCount(n)).reduce((sum, current) => sum + current, 0)
-
-
-    return childrenCount + subChildrenCount;
 }
 
 function pluralizeString(noun: string)
@@ -54,4 +53,4 @@ function pluralizeString(noun: string)
     }
 }
 
-// #endregion Functions (3)
+// #endregion Functions (4)

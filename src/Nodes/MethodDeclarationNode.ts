@@ -9,6 +9,8 @@ import { Node } from "./Node";
 
 export class MethodDeclarationNode extends DeclarationNode
 {
+    // #region Constructors (1)
+
     constructor(name: string, parameters: Parameter[], returnType: string, public readonly accessModifier: NodeAccessModifier, public readonly isStatic: boolean, public readonly isAbstract: boolean, public readonly isAsync: boolean, parent: Node, command: vscode.Command, start: vscode.Position, end: vscode.Position, configuration: Configuration)
     {
         super(name, parent, [], command, start, end);
@@ -23,6 +25,10 @@ export class MethodDeclarationNode extends DeclarationNode
             light: this.getIconPath(configuration, isStatic, accessModifier, isAsync, isAbstract),
         };
     }
+
+    // #endregion Constructors (1)
+
+    // #region Private Methods (2)
 
     private getDescription(parameters: Parameter[], returnType: string | null, configuration: Configuration): string | boolean
     {
@@ -81,4 +87,6 @@ export class MethodDeclarationNode extends DeclarationNode
             }
         }
     }
+
+    // #endregion Private Methods (2)
 }

@@ -49,9 +49,12 @@ export class Configuration
         );
     }
 
+    // #endregion Public Static Methods (1)
+
+    // #region Private Static Methods (1)
+
     private static toGroupingAndOrder(value: string)
     {
-
         if (value === "order by: type")
         {
             return NodeGroupingAndOrderType.orderByType;
@@ -92,5 +95,5 @@ export class Configuration
         return NodeGroupingAndOrderType.none;
     }
 
-    // #endregion Public Static Methods (1)
+    // #endregion Private Static Methods (1)
 }

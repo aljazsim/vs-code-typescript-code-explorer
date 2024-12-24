@@ -15,7 +15,6 @@ export class IndexSignatureDeclarationNode extends DeclarationNode
     {
         super(NodeCaption.index, parent, [], command, start, end);
 
-
         this.label = NodeCaption.index;
         this.description = configuration.showMemberTypes ? this.getDescription(parameters, type, configuration) : "";
 

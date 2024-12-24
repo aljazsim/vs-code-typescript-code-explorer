@@ -86,7 +86,6 @@ export class AccessorDeclarationNode extends DeclarationNode
                 };
             }
         }
-
     }
 
     // #endregion Constructors (1)

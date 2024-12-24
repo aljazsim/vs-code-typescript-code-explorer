@@ -1,6 +1,12 @@
 import { Node } from "../nodes/Node";
 
+// #region Type aliases (1)
+
 export type mergeBy = (node: Node) => string;
+
+// #endregion Type aliases (1)
+
+// #region Functions (1)
 
 export function merge(nodes: Node[], mergeBy: mergeBy)
 {
@@ -22,3 +28,5 @@ export function merge(nodes: Node[], mergeBy: mergeBy)
 
     return groups;
 }
+
+// #endregion Functions (1)

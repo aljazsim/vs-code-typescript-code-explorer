@@ -25,7 +25,7 @@ import { StaticCodeBlockDeclarationNode } from "../nodes/StaticCodeBlockDeclarat
 import { TypeAliasDeclarationNode } from "../nodes/TypeAliasDeclarationNode";
 import { VariableDeclarationNode } from "../nodes/VariableDeclarationNode";
 
-// #region Functions (5)
+// #region Functions (7)
 
 export function getAccessor(node: Node)
 {
@@ -127,67 +127,6 @@ export function getAccessorOrder(node: Node)
     return "999";
 }
 
-export function getName(node: Node)
-{
-    if (node instanceof DeclarationNode)
-    {
-        return node.name.toLowerCase();
-    }
-    else if (node instanceof DescriptionNode)
-    {
-        return node.description as string;
-    }
-    else if (node instanceof EmptyNode)
-    {
-        return node.description as string;
-    }
-    else
-    {
-        return node.label as string ?? "";
-    }
-}
-
-export function getType(node: Node)
-{
-    // module member types
-    if (node instanceof EnumDeclarationNode)
-    {
-        return NodeCaption.enum;
-    }
-    if (node instanceof InterfaceDeclarationNode)
-    {
-        return NodeCaption.interface;
-    }
-    else if (node instanceof ClassDeclarationNode)
-    {
-        return NodeCaption.class;
-    }
-    else if (node instanceof TypeAliasDeclarationNode)
-    {
-        return NodeCaption.type;
-    }
-    else if (node instanceof VariableDeclarationNode)
-    {
-        return NodeCaption.variable;
-    }
-    else if (node instanceof ConstVariableDeclarationNode)
-    {
-        return NodeCaption.constVariable;
-    }
-    else if (node instanceof FunctionDeclarationNode)
-    {
-        return NodeCaption.function;
-    }
-
-    // empty
-    if (node instanceof EmptyNode)
-    {
-        return "";
-    }
-
-    return "-";
-}
-
 export function getMemberType(node: Node)
 {
     // interface / type alias member types
@@ -258,39 +197,65 @@ export function getMemberType(node: Node)
     return "-";
 }
 
-export function getTypeOrder(node?: Node)
+export function getName(node: Node)
+{
+    if (node instanceof DeclarationNode)
+    {
+        return node.name.toLowerCase();
+    }
+    else if (node instanceof DescriptionNode)
+    {
+        return node.description as string;
+    }
+    else if (node instanceof EmptyNode)
+    {
+        return node.description as string;
+    }
+    else
+    {
+        return node.label as string ?? "";
+    }
+}
+
+export function getType(node: Node)
 {
     // module member types
-    if (node instanceof EnumDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.enum))
+    if (node instanceof EnumDeclarationNode)
     {
-        return "101";
+        return NodeCaption.enum;
     }
-    else if (node instanceof InterfaceDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.interface))
+    if (node instanceof InterfaceDeclarationNode)
     {
-        return "102";
+        return NodeCaption.interface;
     }
-    else if (node instanceof ClassDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.class))
+    else if (node instanceof ClassDeclarationNode)
     {
-        return "103";
+        return NodeCaption.class;
     }
-    else if (node instanceof TypeAliasDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.type))
+    else if (node instanceof TypeAliasDeclarationNode)
     {
-        return "104";
+        return NodeCaption.type;
     }
-    else if (node instanceof ConstVariableDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.constVariable))
+    else if (node instanceof VariableDeclarationNode)
     {
-        return "105";
+        return NodeCaption.variable;
     }
-    else if (node instanceof VariableDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.variable))
+    else if (node instanceof ConstVariableDeclarationNode)
     {
-        return "106";
+        return NodeCaption.constVariable;
     }
-    else if (node instanceof FunctionDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.function))
+    else if (node instanceof FunctionDeclarationNode)
     {
-        return "107";
+        return NodeCaption.function;
     }
 
-    return "999";
+    // empty
+    if (node instanceof EmptyNode)
+    {
+        return "";
+    }
+
+    return "-";
 }
 
 export function getTypeMemberOrder(node?: Node)
@@ -342,4 +307,39 @@ export function getTypeMemberOrder(node?: Node)
     return "999";
 }
 
-// #endregion Functions (5)
+export function getTypeOrder(node?: Node)
+{
+    // module member types
+    if (node instanceof EnumDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.enum))
+    {
+        return "101";
+    }
+    else if (node instanceof InterfaceDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.interface))
+    {
+        return "102";
+    }
+    else if (node instanceof ClassDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.class))
+    {
+        return "103";
+    }
+    else if (node instanceof TypeAliasDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.type))
+    {
+        return "104";
+    }
+    else if (node instanceof ConstVariableDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.constVariable))
+    {
+        return "105";
+    }
+    else if (node instanceof VariableDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.variable))
+    {
+        return "106";
+    }
+    else if (node instanceof FunctionDeclarationNode || (node instanceof DescriptionNode && node.description === NodeCaption.function))
+    {
+        return "107";
+    }
+
+    return "999";
+}
+
+// #endregion Functions (7)
